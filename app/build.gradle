@@ -43,7 +43,7 @@ android {
     // 默认项目配置信息
     defaultConfig {
         //应用的id，这里决定应用的唯一标识。
-        applicationId "com.cj.vrapp"
+        applicationId "com.axzl.mobile.refueling"
 
         //决定此应用最低兼容的安卓系统版本
         minSdkVersion rootProject.ext.android["minSdkVersion"]
