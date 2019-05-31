@@ -109,12 +109,13 @@ android {
 //            buildConfigField "String", "SERVER_URL_VALUE", "\"http://192.168.0.156/RecycleOrgApp/\""
 
             //AndroidManifest中用到的配置
-//            manifestPlaceholders = [APP_NAME             : "@string/app_name_debug"
+            manifestPlaceholders = [APP_NAME             : "@string/app_name_debug"
 //                                    , BAIDU_APP_ID       : "@string/baidu_map_api_key_debug"
 //                                    , JPUSH_APP_ID       : "@string/jpush_api_key_debug"
 //                                    , ALICLOUD_APP_ID    : "@string/alicloud_app_id_debug"
 //                                    , ALICLOUD_APP_SECRET: "@string/alicloud_app_secret_debug"
-//                                    , ALICLOUD_APP_RSA   : "@string/alicloud_app_rsa_debug"]
+//                                    , ALICLOUD_APP_RSA   : "@string/alicloud_app_rsa_debug"
+            ]
         }
 
         //正式发布版
@@ -151,12 +152,13 @@ android {
 //            buildConfigField "String", "SERVER_URL_VALUE", "\"http://buypb.e1.luyouxia.net:28708/RecycleOrgApp/\""
 
             //AndroidManifest中用到的配置
-//            manifestPlaceholders = [APP_NAME             : "@string/app_name"
+            manifestPlaceholders = [APP_NAME             : "@string/app_name"
 //                                    , BAIDU_APP_ID       : "@string/baidu_map_api_key"
 //                                    , JPUSH_APP_ID       : "@string/jpush_api_key"
 //                                    , ALICLOUD_APP_ID    : "@string/alicloud_app_id"
 //                                    , ALICLOUD_APP_SECRET: "@string/alicloud_app_secret"
-//                                    , ALICLOUD_APP_RSA   : "@string/alicloud_app_rsa"]
+//                                    , ALICLOUD_APP_RSA   : "@string/alicloud_app_rsa"
+            ]
         }
     }
 
@@ -246,7 +248,21 @@ dependencies {
     implementation rootProject.ext.dependencies["lifecyclemodel"]
 
     //network
+    implementation(rootProject.ext.dependencies["retrofit-converter-gson"]) {
+        exclude module: 'gson'
+        exclude module: 'okhttp'
+        exclude module: 'okio'
+        exclude module: 'retrofit'
+    }
+    implementation(rootProject.ext.dependencies["retrofit-adapter-rxjava2"]) {
+        exclude module: 'rxjava'
+        exclude module: 'okhttp'
+        exclude module: 'retrofit'
+        exclude module: 'okio'
+    }
 
     //################################第三方工具################################
     implementation rootProject.ext.dependencies["bugly-crashreport"]                                // 添加腾讯bug崩溃日志跟踪(其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.1.9)
+    implementation rootProject.ext.dependencies["utilcode"]                                         // 工具类(https://github.com/Blankj/AndroidUtilCode)
+    implementation rootProject.ext.dependencies["tray"]                                             // 支持多进程、多线程的TrayPreferences代替SharedPreferences 的总结(https://github.com/grandcentrix/tray)
 }

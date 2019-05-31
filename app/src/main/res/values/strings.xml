@@ -1,3 +1,19 @@
 <resources>
-    <string name="app_name">IntelligentRefuelingAndroid</string>
+    <!--系统-->
+    <string name="app_name">我要加油</string>
+    <string name="app_name_debug">Test我要加油</string>
+    <string name="app_name_preview">Preview我要加油</string>
+    <!--通用-->
+    <item name="tag_first" type="id"/>
+    <item name="tag_second" type="id"/>
+
+    <string name="common_tips">温馨提示</string>
+    <string name="common_no">取消</string>
+    <string name="common_ok">确定</string>
+    <string name="common_save">保存</string>
+    <string name="common_submit">提交</string>
+    <string name="common_exit_app_tips">你真的要退出吗？</string>
+    <string name="common_execute">正在处理中，请稍候……</string>
+    <string name="common_upload">正在上传照片中，请稍候……</string>
+    <string name="common_exit">再按一次退出</string>
 </resources>
