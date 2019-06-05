@@ -17,27 +17,27 @@ public interface Constant {
     /**
      * 图片路径
      */
-    String IMAGE_PATH = SDCardUtils.getSDCardPathByEnvironment() + "/aptitude/Image/";
+    String IMAGE_PATH = SDCardUtils.getSDCardPathByEnvironment() + "/Refueling/Image/";
 
     /**
      * 业务缓存目录
      */
-    String CACHE_PATH = SDCardUtils.getSDCardPathByEnvironment() + "/aptitude/Cache/";
+    String CACHE_PATH = SDCardUtils.getSDCardPathByEnvironment() + "/Refueling/Cache/";
 
     /**
      * APP升级路径
      */
-    String APP_UPDATE_PATH = SDCardUtils.getSDCardPathByEnvironment() + "/aptitude/AppUpdate/";
+    String APP_UPDATE_PATH = SDCardUtils.getSDCardPathByEnvironment() + "/Refueling/AppUpdate/";
 
     /**
      * log路径
      */
-    String LOG_PATH = SDCardUtils.getSDCardPathByEnvironment() + "/aptitude/Log/";
+    String LOG_PATH = SDCardUtils.getSDCardPathByEnvironment() + "/Refueling/Log/";
 
     /**
      * 视频缓存路径
      */
-    String VIDEO_PATH = SDCardUtils.getSDCardPathByEnvironment() + "/aptitude/Video/";
+    String VIDEO_PATH = SDCardUtils.getSDCardPathByEnvironment() + "/Refueling/Video/";
 
     /*----------------------------------------------------业务变量-------------------------------------------------------*/
 

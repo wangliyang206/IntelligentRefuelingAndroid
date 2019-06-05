@@ -27,7 +27,6 @@ import com.axzl.mobile.refueling.app.config.FragmentLifecycleCallbacksImpl;
 import com.axzl.mobile.refueling.app.config.GlobalHttpHandlerImpl;
 import com.axzl.mobile.refueling.app.config.ResponseErrorListenerImpl;
 import com.axzl.mobile.refueling.app.config.SSLSocketClient;
-import com.axzl.mobile.refueling.app.global.Constant;
 import com.jess.arms.base.delegate.AppLifecycles;
 import com.jess.arms.di.module.GlobalConfigModule;
 import com.jess.arms.http.imageloader.glide.GlideImageLoaderStrategy;

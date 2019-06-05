@@ -1,8 +1,7 @@
 <resources>
     <!--系统-->
-    <string name="app_name">我要加油</string>
-    <string name="app_name_debug">Test我要加油</string>
-    <string name="app_name_preview">Preview我要加油</string>
+    <string name="app_name">快捷加油</string>
+    <string name="app_name_debug">快捷加油</string>
     <!--通用-->
     <item name="tag_first" type="id"/>
     <item name="tag_second" type="id"/>
