@@ -6,33 +6,31 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.jess.arms.base.BaseActivity;
-import com.jess.arms.di.component.AppComponent;
-import com.jess.arms.utils.ArmsUtils;
-
+import com.axzl.mobile.refueling.R;
 import com.axzl.mobile.refueling.di.component.DaggerMainComponent;
 import com.axzl.mobile.refueling.mvp.contract.MainContract;
 import com.axzl.mobile.refueling.mvp.presenter.MainPresenter;
-
-import com.axzl.mobile.refueling.R;
-
+import com.jess.arms.base.BaseActivity;
+import com.jess.arms.di.component.AppComponent;
+import com.jess.arms.utils.ArmsUtils;
 
 import static com.jess.arms.utils.Preconditions.checkNotNull;
 
 
 /**
  * ================================================
- * Description:
- * <p>
- * Created by MVPArmsTemplate on 05/31/2019 10:34
- * <a href="mailto:jess.yan.effort@gmail.com">Contact me</a>
- * <a href="https://github.com/JessYanCoding">Follow me</a>
- * <a href="https://github.com/JessYanCoding/MVPArms">Star me</a>
- * <a href="https://github.com/JessYanCoding/MVPArms/wiki">See me</a>
- * <a href="https://github.com/JessYanCoding/MVPArmsTemplate">模版请保持更新</a>
+ * Description:首页
  * ================================================
  */
 public class MainActivity extends BaseActivity<MainPresenter> implements MainContract.View {
+
+    /**
+     * 关闭滑动返回
+     */
+    @Override
+    public boolean supportSlideBack() {
+        return false;
+    }
 
     @Override
     public void setupActivityComponent(@NonNull AppComponent appComponent) {

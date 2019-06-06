@@ -265,10 +265,10 @@ dependencies {
     implementation rootProject.ext.dependencies["bugly-crashreport"]                                // 添加腾讯bug崩溃日志跟踪(其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.1.9)
     implementation rootProject.ext.dependencies["utilcode"]                                         // 工具类(https://github.com/Blankj/AndroidUtilCode)
     implementation rootProject.ext.dependencies["tray"]                                             // 支持多进程、多线程的TrayPreferences代替SharedPreferences 的总结(https://github.com/grandcentrix/tray)
-//    implementation(rootProject.ext.dependencies["permissionsdispatcher"]) {                         // 权限注解(https://github.com/permissions-dispatcher/PermissionsDispatcher)
-//        // if you don't use android.app.Fragment you can exclude support for them
-//        exclude module: "support-v13"
-//    }
-//    annotationProcessor rootProject.ext.dependencies["permission-processor"]
+    implementation(rootProject.ext.dependencies["permissionsdispatcher"]) {                         // 权限注解(https://github.com/permissions-dispatcher/PermissionsDispatcher)
+        // if you don't use android.app.Fragment you can exclude support for them
+        exclude module: "support-v13"
+    }
+    annotationProcessor rootProject.ext.dependencies["permission-processor"]
 
 }

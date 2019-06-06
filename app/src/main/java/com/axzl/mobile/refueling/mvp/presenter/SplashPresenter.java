@@ -5,18 +5,24 @@ import android.app.Application;
 import com.axzl.mobile.refueling.BuildConfig;
 import com.axzl.mobile.refueling.app.global.AccountManager;
 import com.axzl.mobile.refueling.app.global.Constant;
+import com.axzl.mobile.refueling.mvp.contract.SplashContract;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ThreadUtils;
-import com.jess.arms.integration.AppManager;
 import com.jess.arms.di.scope.ActivityScope;
-import com.jess.arms.mvp.BasePresenter;
 import com.jess.arms.http.imageloader.ImageLoader;
+import com.jess.arms.integration.AppManager;
+import com.jess.arms.mvp.BasePresenter;
+import com.jess.arms.utils.RxLifecycleUtils;
 
-import me.jessyan.rxerrorhandler.core.RxErrorHandler;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import com.axzl.mobile.refueling.mvp.contract.SplashContract;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import me.jessyan.rxerrorhandler.core.RxErrorHandler;
 
 
 /**
@@ -59,8 +65,8 @@ public class SplashPresenter extends BasePresenter<SplashContract.Model, SplashC
         // 定时清理日志
         initLog();
 
-        // 验证Token
-//        validToken();
+        // 倒计时5秒后跳转至主界面
+        jumbToMain();
     }
 
     /**
@@ -95,6 +101,36 @@ public class SplashPresenter extends BasePresenter<SplashContract.Model, SplashC
                 accountManager.setStartTime(++num);
             }
         }
+    }
+
+    /**
+     * 倒计时5秒后跳转至主界面
+     */
+    private void jumbToMain() {
+        Observable.timer(5, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())                                          // 切换线程
+                .compose(RxLifecycleUtils.bindToLifecycle(mRootView))                               // 使用 Rxlifecycle,使 Disposable 和 Activity 一起销毁
+                .subscribe(new Observer<Long>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Long aLong) {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        mRootView.jumbToMain();
+                    }
+                });
     }
 
     @Override

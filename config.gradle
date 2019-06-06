@@ -111,8 +111,8 @@ ext {
                 "material-lifecycle"       : "com.afollestad.material-dialogs:lifecycle:2.6.0",
                 "android-crop"             : "com.soundcloud.android:android-crop:1.0.1@aar",       // 图片裁剪(https://github.com/jdamcd/android-crop)
                 // 权限注解(https://github.com/permissions-dispatcher/PermissionsDispatcher)
-                "permissionsdispatcher"    : "org.permissionsdispatcher:permissionsdispatcher:4.3.0",
-                "permission-processor"     : "org.permissionsdispatcher:permissionsdispatcher-processor:4.3.0",
+                "permissionsdispatcher"    : "com.github.hotchemi:permissionsdispatcher:3.2.0",
+                "permission-processor"     : "com.github.hotchemi:permissionsdispatcher-processor:3.2.0",
 
                 //test
                 "junit"                    : "junit:junit:4.12",
