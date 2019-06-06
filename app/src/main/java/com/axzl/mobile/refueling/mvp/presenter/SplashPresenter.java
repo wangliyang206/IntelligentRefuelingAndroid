@@ -107,7 +107,7 @@ public class SplashPresenter extends BasePresenter<SplashContract.Model, SplashC
      * 倒计时5秒后跳转至主界面
      */
     private void jumbToMain() {
-        Observable.timer(5, TimeUnit.SECONDS)
+        Observable.timer(3, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())                                          // 切换线程
                 .compose(RxLifecycleUtils.bindToLifecycle(mRootView))                               // 使用 Rxlifecycle,使 Disposable 和 Activity 一起销毁
                 .subscribe(new Observer<Long>() {
