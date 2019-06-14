@@ -22,6 +22,7 @@ import com.axzl.mobile.refueling.app.observer.DuiMessageObserver;
 import com.axzl.mobile.refueling.app.observer.DuiNativeApiObserver;
 import com.axzl.mobile.refueling.app.observer.DuiUpdateObserver;
 import com.axzl.mobile.refueling.app.service.DDSService;
+import com.axzl.mobile.refueling.app.utils.CommonUtils;
 import com.axzl.mobile.refueling.app.utils.EventBusTags;
 import com.axzl.mobile.refueling.di.component.DaggerMainComponent;
 import com.axzl.mobile.refueling.mvp.contract.MainContract;
@@ -42,6 +43,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import timber.log.Timber;
 
 import static com.jess.arms.utils.Preconditions.checkNotNull;
 
@@ -160,6 +162,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
         // 初始化监听器
         initObserver();
+
+        Timber.i("#####"+CommonUtils.getApplicationNameByPackageName(this,"微信"));
     }
 
     /**

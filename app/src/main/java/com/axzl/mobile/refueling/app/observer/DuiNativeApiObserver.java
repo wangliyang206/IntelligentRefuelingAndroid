@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.ContactsContract;
-import android.util.Log;
 
 import com.aispeech.dui.dds.DDS;
 import com.aispeech.dui.dsk.duiwidget.ContentWidget;
@@ -14,6 +13,8 @@ import com.aispeech.dui.dsk.duiwidget.NativeApiObserver;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import timber.log.Timber;
 
 /*
  * 注册NativeApiObserver, 用于客户端响应DUI平台技能配置里的资源调用指令, 同一个NativeApiObserver可以处理多个native api.
@@ -50,7 +51,7 @@ public class DuiNativeApiObserver implements NativeApiObserver {
      */
     @Override
     public void onQuery(String nativeApi, String data) {
-        Log.e(TAG, "nativeApi: " + nativeApi + "  data: " + data);
+        Timber.i(TAG, "nativeApi: " + nativeApi + "  data: " + data);
         if (NATIVE_API_CONTACT.equals(nativeApi)) {
             String searchName = null;
             ListWidget searchNums = null;
@@ -62,7 +63,7 @@ public class DuiNativeApiObserver implements NativeApiObserver {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Log.e(TAG, "query back:" + searchName + "-" + (searchNums != null ? searchNums.toString() : "null"));
+            Timber.i(TAG, "query back:" + searchName + "-" + (searchNums != null ? searchNums.toString() : "null"));
             DDS.getInstance().getAgent().feedbackNativeApiResult(nativeApi, searchNums);
         }
     }
@@ -71,7 +72,7 @@ public class DuiNativeApiObserver implements NativeApiObserver {
         ContentResolver cr = mContext.getContentResolver();
         Cursor cursor = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
         if (null == cursor) {
-            Log.e(TAG, "contacts null");
+            Timber.i(TAG, "contacts null");
             return null;
         }
         ListWidget listWidget = new ListWidget();
@@ -83,7 +84,7 @@ public class DuiNativeApiObserver implements NativeApiObserver {
             ), null).toString();
             String flag = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.LABEL));
             if (name.contains(searchName)) {
-                Log.e(TAG, name + ":" + number);
+                Timber.i(TAG, name + ":" + number);
                 ContentWidget widget = new ContentWidget()
                         .setTitle(name)
                         .setSubTitle(type + ":" + number)

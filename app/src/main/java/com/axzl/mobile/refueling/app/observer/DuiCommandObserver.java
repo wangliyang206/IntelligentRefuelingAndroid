@@ -1,14 +1,15 @@
 package com.axzl.mobile.refueling.app.observer;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.util.Log;
 
 import com.aispeech.dui.dds.DDS;
 import com.aispeech.dui.dsk.duiwidget.CommandObserver;
 
 import org.json.JSONObject;
+
+import timber.log.Timber;
 
 /**
  * 客户端CommandObserver, 用于处理客户端动作的执行以及快捷唤醒中的命令响应.
@@ -19,16 +20,17 @@ public class DuiCommandObserver implements CommandObserver {
     private String TAG = "DuiCommandObserver";
     private static final String COMMAND_CALL = "sys.action.call";
     private static final String COMMAND_SELECT = "sys.action.call.select";
+    private static final String OPEN_WINDOW = "open_window";
     private String mSelectedPhone = null;
-    private Activity mContent;
+    private Context mContent;
 
     public DuiCommandObserver() {
     }
 
     // 注册当前更新消息
-    public void regist(Activity mContent) {
+    public void regist(Context mContent) {
         this.mContent = mContent;
-        DDS.getInstance().getAgent().subscribe(new String[]{COMMAND_CALL, COMMAND_SELECT},
+        DDS.getInstance().getAgent().subscribe(new String[]{COMMAND_CALL, COMMAND_SELECT, OPEN_WINDOW},
                 this);
     }
 
@@ -39,7 +41,7 @@ public class DuiCommandObserver implements CommandObserver {
 
     @Override
     public void onCall(String command, String data) {
-        Log.e(TAG, "command: " + command + "  data: " + data);
+        Timber.i(TAG, "command: " + command + "  data: " + data);
         try {
             if (COMMAND_CALL.equals(command)) {
                 String number = new JSONObject(data).optString("phone");
@@ -51,6 +53,11 @@ public class DuiCommandObserver implements CommandObserver {
                 }
             } else if (COMMAND_SELECT.equals(command)) {
                 mSelectedPhone = new JSONObject(data).optString("phone");
+            } else if (OPEN_WINDOW.equals(command)) {
+                JSONObject jsonData = new JSONObject(data);
+                String intentName = jsonData.optString("intentName");
+                String w = jsonData.optString("w");
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -62,7 +69,7 @@ public class DuiCommandObserver implements CommandObserver {
         if (number == null) {
             return;
         }
-        Log.e(TAG, "phoneDial:" + number);
+        Timber.e(TAG, "phoneDial:" + number);
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_CALL);
         intent.addCategory(Intent.CATEGORY_DEFAULT);

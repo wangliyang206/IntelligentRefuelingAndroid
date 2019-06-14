@@ -1,7 +1,6 @@
 package com.axzl.mobile.refueling.app.observer;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.aispeech.dui.dds.DDS;
 import com.aispeech.dui.dds.agent.MessageObserver;
@@ -13,11 +12,13 @@ import org.json.JSONObject;
 
 import java.util.LinkedList;
 
+import timber.log.Timber;
+
 /**
  * 客户端MessageObserver, 用于处理客户端动作的消息响应.
  */
 public class DuiMessageObserver implements MessageObserver {
-    private final String Tag = "DuiMessageObserver";
+    private String Tag = "DuiMessageObserver";
 
     public interface MessageCallback {
         void onMessage();
@@ -53,7 +54,7 @@ public class DuiMessageObserver implements MessageObserver {
 
     @Override
     public void onMessage(String message, String data) {
-        Log.d(Tag, "message : " + message + " data : " + data);
+        Timber.i(Tag, "message : " + message + " data : " + data);
         MessageBean bean = null;
         switch (message) {
             case "context.output.text":

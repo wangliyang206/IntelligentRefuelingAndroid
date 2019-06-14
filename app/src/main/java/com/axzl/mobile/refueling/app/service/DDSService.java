@@ -9,7 +9,6 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.aispeech.dui.dds.DDS;
@@ -23,11 +22,13 @@ import org.simple.eventbus.EventBus;
 
 import java.util.UUID;
 
+import timber.log.Timber;
+
 /**
  * 参见Android SDK集成文档: https://www.dui.ai/docs/operation/#/ct_common_Andriod_SDK
  */
 public class DDSService extends Service {
-    public static final String TAG = "DDSService";
+    public String TAG = "DDSService";
 
     public DDSService() {
     }
@@ -58,7 +59,6 @@ public class DDSService extends Service {
     private DDSInitListener mInitListener = new DDSInitListener() {
         @Override
         public void onInitComplete(boolean isFull) {
-            Log.d(TAG, "onInitComplete");
             if (isFull) {
                 EventBus.getDefault().post("onInitComplete", EventBusTags.ddsInitSuccess);
             }
@@ -66,7 +66,7 @@ public class DDSService extends Service {
 
         @Override
         public void onError(int what, final String msg) {
-            Log.e(TAG, "Init onError: " + what + ", error: " + msg);
+            Timber.e(TAG, "Init onError: " + what + ", error: " + msg);
             new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show());
         }
     };
@@ -75,13 +75,13 @@ public class DDSService extends Service {
     private DDSAuthListener mAuthListener = new DDSAuthListener() {
         @Override
         public void onAuthSuccess() {
-            Log.d(TAG, "onAuthSuccess");
+            Timber.d(TAG, "onAuthSuccess");
             EventBus.getDefault().post("onAuthSuccess", EventBusTags.ddsAuthSuccess);
         }
 
         @Override
         public void onAuthFailed(final String errId, final String error) {
-            Log.e(TAG, "onAuthFailed: " + errId + ", error:" + error);
+            Timber.e(TAG, "onAuthFailed: " + errId + ", error:" + error);
             new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(getApplicationContext(),
                     "授权错误:" + errId + ":\n" + error + "\n请查看手册处理", Toast.LENGTH_SHORT).show());
             EventBus.getDefault().post("onAuthFailed", EventBusTags.ddsAuthFailed);
@@ -156,7 +156,7 @@ public class DDSService extends Service {
         // config.addConfig(DDSConfig.K_MIC_ARRAY_BEAMFORMING_CFG, "/data/beamforming.bin"); // 麦克风阵列beamforming资源的磁盘绝对路径，需要开发者确保在这个路径下这个资源存在
         // config.addConfig(DDSConfig.K_MIC_ARRAY_WAKEUP_CFG, "/data/wakeup_cfg.bin"); // 麦克风阵列wakeup配置资源的磁盘绝对路径，需要开发者确保在这个路径下这个资源存在。
 
-        Log.i(TAG, "config->" + config.toString());
+        Timber.i(TAG, "config->" + config.toString());
         return config;
     }
 

@@ -1,17 +1,17 @@
 package com.axzl.mobile.refueling.app.observer;
 
-import android.util.Log;
-
 import com.aispeech.dui.dds.DDS;
 import com.aispeech.dui.dds.agent.MessageObserver;
 import com.aispeech.dui.dds.exceptions.DDSNotInitCompleteException;
 import com.aispeech.dui.dds.update.DDSUpdateListener;
 
+import timber.log.Timber;
+
 /**
  * 更新Observer,用于更新当前dds组件
  */
 public class DuiUpdateObserver implements MessageObserver {
-    private static final String Tag = "DuiUpdateObserver";
+    private String Tag = "DuiUpdateObserver";
     public static final int START = 0; // 开始更新
     public static final int UPDATEING = 1; // 正在更新
     public static final int FINISH = 2;// 更新完成
@@ -83,7 +83,7 @@ public class DuiUpdateObserver implements MessageObserver {
             if (mUpdateCallback != null) {
                 mUpdateCallback.onUpdate(ERROR, "更新失败,详情看Log");
             }
-            Log.e(Tag, "what = " + what + ", error = " + error);
+            Timber.i(Tag, "what = " + what + ", error = " + error);
         }
 
         @Override
