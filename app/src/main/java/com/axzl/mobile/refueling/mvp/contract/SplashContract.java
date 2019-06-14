@@ -21,6 +21,9 @@ public interface SplashContract {
     interface View extends IView {
         /**跳转致首页*/
         void jumbToMain();
+
+        /**显示授权弹框给用户*/
+        void showDoAuthDialog();
     }
 
     //Model层定义接口,外部只需关心Model返回的数据,无需关心内部细节,即是否使用缓存

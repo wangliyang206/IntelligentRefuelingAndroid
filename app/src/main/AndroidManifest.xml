@@ -21,6 +21,13 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
 
+    <!-- 思必驰AI语音 -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+
     <application
         android:name="com.jess.arms.base.BaseApplication"
         android:allowBackup="true"
@@ -51,6 +58,9 @@
         <meta-data
             android:name="com.axzl.mobile.refueling.app.global.GlobalConfiguration"
             android:value="ConfigModule" />
+
+        <!-- 思必驰AI语音服务 -->
+        <service android:name="com.axzl.mobile.refueling.app.service.DDSService" />
     </application>
 
 </manifest>

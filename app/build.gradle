@@ -68,12 +68,26 @@ android {
 
         //使MultiDex支持
         multiDexEnabled true
+
+        // 思必驰AI语音
+        ndk {
+            // 设置支持的SO库架构
+            abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a'//, 'x86', , 'x86_64'
+        }
     }
 
     // 指定哪些源文件
     sourceSets {
         // 设置依赖SO库路径
         main.jniLibs.srcDirs = ['libs']
+    }
+
+    //如果使用aar必须这么写
+    repositories {
+        //配置使用本地文件夹
+        flatDir {
+            dirs 'libs'
+        }
     }
 
     //构建类型(一般是release和debug，还可以自定义)
@@ -209,6 +223,9 @@ dependencies {
 
     //view
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    annotationProcessor(rootProject.ext.dependencies["butterknife-compiler"]) {
+        exclude module: 'support-annotations'
+    }
 
     //arms
     implementation project(':arms')
@@ -265,10 +282,12 @@ dependencies {
     implementation rootProject.ext.dependencies["bugly-crashreport"]                                // 添加腾讯bug崩溃日志跟踪(其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.1.9)
     implementation rootProject.ext.dependencies["utilcode"]                                         // 工具类(https://github.com/Blankj/AndroidUtilCode)
     implementation rootProject.ext.dependencies["tray"]                                             // 支持多进程、多线程的TrayPreferences代替SharedPreferences 的总结(https://github.com/grandcentrix/tray)
+    implementation rootProject.ext.dependencies["dialogs"]                                          // 对话框(https://github.com/afollestad/material-dialogs)
     implementation(rootProject.ext.dependencies["permissionsdispatcher"]) {                         // 权限注解(https://github.com/permissions-dispatcher/PermissionsDispatcher)
         // if you don't use android.app.Fragment you can exclude support for them
         exclude module: "support-v13"
     }
     annotationProcessor rootProject.ext.dependencies["permission-processor"]
-
+    implementation(name: 'lib-dds-1.1.4.1-release', ext: 'aar')                                     // 思必驰AI语音
+    implementation 'com.facebook.fresco:fresco:1.5.0'
 }

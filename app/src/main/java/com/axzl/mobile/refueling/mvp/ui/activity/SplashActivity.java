@@ -8,7 +8,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.aispeech.dui.dds.DDS;
+import com.aispeech.dui.dds.exceptions.DDSNotInitCompleteException;
 import com.axzl.mobile.refueling.R;
+import com.axzl.mobile.refueling.app.service.DDSService;
 import com.axzl.mobile.refueling.di.component.DaggerSplashComponent;
 import com.axzl.mobile.refueling.mvp.contract.SplashContract;
 import com.axzl.mobile.refueling.mvp.presenter.SplashPresenter;
@@ -16,6 +20,9 @@ import com.blankj.utilcode.util.ActivityUtils;
 import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
+
+import org.simple.eventbus.Subscriber;
+import org.simple.eventbus.ThreadMode;
 
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
@@ -30,6 +37,45 @@ import static com.jess.arms.utils.Preconditions.checkNotNull;
  */
 @RuntimePermissions
 public class SplashActivity extends BaseActivity<SplashPresenter> implements SplashContract.View {
+
+    /*--------------------------------业务信息--------------------------------*/
+
+    /**
+     * 认证弹出框
+     */
+    private MaterialDialog mDialog;
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mDialog != null && mDialog.isShowing()) {
+            mDialog.dismiss();
+        }
+        killMyself();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mDialog = null;
+    }
+
+    /**
+     * dds认证状态监听器,监听auth是否成功    回调
+     */
+    @Subscriber(tag = "DDSAuthSuccess_tag", mode = ThreadMode.POST)
+    private void DDSAuthSuccess(String str) {
+        jumbToMain();
+    }
+
+
+    /**
+     * dds认证状态监听器,监听auth是否失败    回调
+     */
+    @Subscriber(tag = "DDSAuthFailed_tag", mode = ThreadMode.POST)
+    private void DDSAuthFailed(String str) {
+        mPresenter.doAutoAuth();
+    }
 
     @Override
     public void setupActivityComponent(@NonNull AppComponent appComponent) {
@@ -63,11 +109,48 @@ public class SplashActivity extends BaseActivity<SplashPresenter> implements Spl
      */
     @NeedsPermission({
             Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.RECORD_AUDIO
     })
     public void runApp() {
+        // 初始化Loading对话框
+        mDialog = new MaterialDialog.Builder(this)
+                .content("产品未授权，请先授权！")
+                .positiveText("授权")
+                .negativeText("退出")
+                .onPositive((dialog, which) -> {
+                    try {
+                        DDS.getInstance().doAuth();
+                    } catch (DDSNotInitCompleteException e) {
+                        e.printStackTrace();
+                    }
+                    dialog.dismiss();
+                })
+                .onNegative((dialog, which) -> {
+                    dialog.dismiss();
+                    killMyself();
+                })
+                .cancelable(false)
+                .build();
+        // 启动后台服务
+        startService(new Intent(this, DDSService.class));
+        // 初始化数据
         mPresenter.initPresenter();
+
     }
+
+    /**
+     * 显示授权弹框给用户
+     */
+    public void showDoAuthDialog() {
+        runOnUiThread(() -> {
+            if (mDialog != null && mDialog.isShowing()) {
+                mDialog.dismiss();
+            }
+            mDialog.show();
+        });
+    }
+
 
     /**
      * 关闭滑动返回
@@ -133,4 +216,5 @@ public class SplashActivity extends BaseActivity<SplashPresenter> implements Spl
         ActivityUtils.startActivity(MainActivity.class);
         killMyself();
     }
+
 }
