@@ -13,6 +13,7 @@ import com.aispeech.dui.dds.DDS;
 import com.aispeech.dui.dds.exceptions.DDSNotInitCompleteException;
 import com.axzl.mobile.refueling.R;
 import com.axzl.mobile.refueling.app.service.DDSService;
+import com.axzl.mobile.refueling.app.utils.EventBusTags;
 import com.axzl.mobile.refueling.di.component.DaggerSplashComponent;
 import com.axzl.mobile.refueling.mvp.contract.SplashContract;
 import com.axzl.mobile.refueling.mvp.presenter.SplashPresenter;
@@ -63,7 +64,7 @@ public class SplashActivity extends BaseActivity<SplashPresenter> implements Spl
     /**
      * dds认证状态监听器,监听auth是否成功    回调
      */
-    @Subscriber(tag = "DDSAuthSuccess_tag", mode = ThreadMode.POST)
+    @Subscriber(tag = EventBusTags.ddsAuthSuccess, mode = ThreadMode.POST)
     private void DDSAuthSuccess(String str) {
         jumbToMain();
     }
@@ -72,7 +73,7 @@ public class SplashActivity extends BaseActivity<SplashPresenter> implements Spl
     /**
      * dds认证状态监听器,监听auth是否失败    回调
      */
-    @Subscriber(tag = "DDSAuthFailed_tag", mode = ThreadMode.POST)
+    @Subscriber(tag = EventBusTags.ddsAuthFailed, mode = ThreadMode.POST)
     private void DDSAuthFailed(String str) {
         mPresenter.doAutoAuth();
     }

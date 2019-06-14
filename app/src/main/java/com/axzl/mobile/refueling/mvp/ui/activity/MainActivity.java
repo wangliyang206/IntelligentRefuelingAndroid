@@ -22,6 +22,7 @@ import com.axzl.mobile.refueling.app.observer.DuiMessageObserver;
 import com.axzl.mobile.refueling.app.observer.DuiNativeApiObserver;
 import com.axzl.mobile.refueling.app.observer.DuiUpdateObserver;
 import com.axzl.mobile.refueling.app.service.DDSService;
+import com.axzl.mobile.refueling.app.utils.EventBusTags;
 import com.axzl.mobile.refueling.di.component.DaggerMainComponent;
 import com.axzl.mobile.refueling.mvp.contract.MainContract;
 import com.axzl.mobile.refueling.mvp.model.entity.MessageBean;
@@ -250,8 +251,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     /**
      * dds状态监听器，监听init是否成功    回调
      */
-    @Subscriber(tag = "DDSStatus_tag", mode = ThreadMode.POST)
-    private void DDSStatus(String str) {
+    @Subscriber(tag = EventBusTags.ddsInitSuccess, mode = ThreadMode.POST)
+    private void DDSInitSuccess(String str) {
         enableWakeup();
         refreshTv("等待唤醒...");
         // 此处等待200ms,等待wakeup节点完成初始成功

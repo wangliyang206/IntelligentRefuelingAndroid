@@ -28,5 +28,16 @@ package com.axzl.mobile.refueling.app.utils;
  * ================================================
  */
 public interface EventBusTags {
-
+    /**
+     * dds认证成功状态
+     */
+    String ddsAuthSuccess = "DDSAuthSuccess_tag";
+    /**
+     * dds认证失败状态
+     */
+    String ddsAuthFailed = "DDSAuthFailed_tag";
+    /**
+     * dds初始化成功状态
+     */
+    String ddsInitSuccess = "DDSInitSuccess_tag";
 }

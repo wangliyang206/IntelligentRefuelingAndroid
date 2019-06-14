@@ -17,6 +17,7 @@ import com.aispeech.dui.dds.DDSAuthListener;
 import com.aispeech.dui.dds.DDSConfig;
 import com.aispeech.dui.dds.DDSInitListener;
 import com.aispeech.dui.dds.auth.AuthType;
+import com.axzl.mobile.refueling.app.utils.EventBusTags;
 
 import org.simple.eventbus.EventBus;
 
@@ -59,19 +60,14 @@ public class DDSService extends Service {
         public void onInitComplete(boolean isFull) {
             Log.d(TAG, "onInitComplete");
             if (isFull) {
-                EventBus.getDefault().post("onInitComplete", "DDSStatus_tag");
+                EventBus.getDefault().post("onInitComplete", EventBusTags.ddsInitSuccess);
             }
         }
 
         @Override
         public void onError(int what, final String msg) {
             Log.e(TAG, "Init onError: " + what + ", error: " + msg);
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
-                }
-            });
+            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show());
         }
     };
 
@@ -80,20 +76,15 @@ public class DDSService extends Service {
         @Override
         public void onAuthSuccess() {
             Log.d(TAG, "onAuthSuccess");
-            EventBus.getDefault().post("onAuthSuccess", "DDSAuthSuccess_tag");
+            EventBus.getDefault().post("onAuthSuccess", EventBusTags.ddsAuthSuccess);
         }
 
         @Override
         public void onAuthFailed(final String errId, final String error) {
             Log.e(TAG, "onAuthFailed: " + errId + ", error:" + error);
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getApplicationContext(),
-                            "授权错误:" + errId + ":\n" + error + "\n请查看手册处理", Toast.LENGTH_SHORT).show();
-                }
-            });
-            EventBus.getDefault().post("onAuthFailed", "DDSAuthFailed_tag");
+            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(getApplicationContext(),
+                    "授权错误:" + errId + ":\n" + error + "\n请查看手册处理", Toast.LENGTH_SHORT).show());
+            EventBus.getDefault().post("onAuthFailed", EventBusTags.ddsAuthFailed);
         }
     };
 
@@ -122,10 +113,10 @@ public class DDSService extends Service {
 
 
         // 资源更新配置项
-         config.addConfig(DDSConfig.K_DUICORE_ZIP, "duicore.zip"); // 预置在指定目录下的DUI内核资源包名, 避免在线下载内核消耗流量, 推荐使用
-         config.addConfig(DDSConfig.K_CUSTOM_ZIP, "custom.zip"); // 预置在指定目录下的DUI产品配置资源包名, 避免在线下载产品配置消耗流量, 推荐使用
-         config.addConfig(DDSConfig.K_USE_UPDATE_DUICORE, "false"); //设置为false可以关闭dui内核的热更新功能，可以配合内置dui内核资源使用
-         config.addConfig(DDSConfig.K_USE_UPDATE_NOTIFICATION, "false"); // 是否使用内置的资源更新通知栏
+        config.addConfig(DDSConfig.K_DUICORE_ZIP, "duicore.zip"); // 预置在指定目录下的DUI内核资源包名, 避免在线下载内核消耗流量, 推荐使用
+        config.addConfig(DDSConfig.K_CUSTOM_ZIP, "custom.zip"); // 预置在指定目录下的DUI产品配置资源包名, 避免在线下载产品配置消耗流量, 推荐使用
+        config.addConfig(DDSConfig.K_USE_UPDATE_DUICORE, "false"); //设置为false可以关闭dui内核的热更新功能，可以配合内置dui内核资源使用
+        config.addConfig(DDSConfig.K_USE_UPDATE_NOTIFICATION, "false"); // 是否使用内置的资源更新通知栏
 
         // 录音配置项
 //         config.addConfig(DDSConfig.K_RECORDER_MODE, "internal"); //录音机模式：external（使用外置录音机，需主动调用拾音接口）、internal（使用内置录音机，DDS自动录音）
