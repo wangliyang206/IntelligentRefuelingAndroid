@@ -15,18 +15,13 @@
  */
 package com.axzl.mobile.refueling.app.utils;
 
+import com.axzl.mobile.refueling.app.config.CommonRetryWithDelay;
 import com.jess.arms.mvp.IView;
 import com.jess.arms.utils.RxLifecycleUtils;
-import com.trello.rxlifecycle2.LifecycleTransformer;
-import com.trello.rxlifecycle2.RxLifecycle;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -44,40 +39,62 @@ public class RxUtils {
     }
 
     public static <T> ObservableTransformer<T, T> applySchedulers(final IView view) {
-        return new ObservableTransformer<T, T>() {
-            @Override
-            public Observable<T> apply(Observable<T> observable) {
-                return observable.subscribeOn(Schedulers.io())
-                        .doOnSubscribe(new Consumer<Disposable>() {
-                            @Override
-                            public void accept(@NonNull Disposable disposable) throws Exception {
-                                view.showLoading();//显示进度条
-                            }
-                        })
-                        .subscribeOn(AndroidSchedulers.mainThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .doFinally(new Action() {
-                            @Override
-                            public void run() {
-                                view.hideLoading();//隐藏进度条
-                            }
-                        }).compose(RxLifecycleUtils.bindToLifecycle(view));
-            }
-        };
+        return applySchedulers(view, false, false);
     }
 
     /**
-     * 此方法已废弃
+     * 通用配置(1、设置切换线程；2、设置loading显隐；3、View 同步生命周期；4、错误时重试机制；)
      *
-     * @param view
-     * @param <T>
-     * @return
-     * @see RxLifecycleUtils 此类可以实现 {@link RxLifecycle} 的所有功能, 使用方法和之前一致
-     * @deprecated Use {@link RxLifecycleUtils#bindToLifecycle(IView)} instead
+     * @param view        视图
+     * @param isShowEmpty 请求时是否隐藏loading(false 代表 执行显示Loading，true 代表 不执行显示Loading)
+     * @param isHideEmpty 结束时是否可控制loading(false 代表 执行隐藏Loading，true 代表 不执行隐藏Loading)
+     * @param <T>         Observable<T>
+     * @return 返回Observable<T>
      */
-    @Deprecated
-    public static <T> LifecycleTransformer<T> bindToLifecycle(IView view) {
-        return RxLifecycleUtils.bindToLifecycle(view);
+    public static <T> ObservableTransformer<T, T> applySchedulers(final IView view, final boolean isShowEmpty, final boolean isHideEmpty) {
+        return upstream ->
+                upstream.subscribeOn(Schedulers.io())
+                        .retryWhen(new CommonRetryWithDelay(2, 2))    // 遇到错误时重试,第一个参数为重试几次,第二个参数为重试的间隔
+                        .doOnSubscribe(disposable -> {
+                            if (!isShowEmpty)
+                                view.showLoading();                                                     // 显示进度条
+                        })
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doFinally(() -> {
+                            if (!isHideEmpty)
+                                view.hideLoading();                                                     // 隐藏进度条
+                        }).compose(RxLifecycleUtils.bindToLifecycle(view));
+
+    }
+
+    /**
+     * 主线程做操作
+     */
+    public static void doOnUIThread(final IView view, UITask uiTask) {
+        Observable.just(uiTask)
+                .observeOn(AndroidSchedulers.mainThread())
+                .compose(RxLifecycleUtils.bindToLifecycle(view))
+                .subscribe(uiTask1 -> uiTask1.doOnUI());
+
+    }
+
+    /**
+     * io线程做操作
+     */
+    public static void doOnThread(final IView view, ThreadTask threadTask) {
+        Observable.just(threadTask)
+                .observeOn(Schedulers.io())
+                .compose(RxLifecycleUtils.bindToLifecycle(view))
+                .subscribe(threadTask1 -> threadTask1.doOnThread());
+    }
+
+    public interface ThreadTask {
+        void doOnThread();
+    }
+
+    public interface UITask {
+        void doOnUI();
     }
 
 }

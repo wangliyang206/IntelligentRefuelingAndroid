@@ -3,13 +3,11 @@ package com.axzl.mobile.refueling.mvp.ui.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -23,6 +21,7 @@ import com.axzl.mobile.refueling.app.observer.DuiNativeApiObserver;
 import com.axzl.mobile.refueling.app.observer.DuiUpdateObserver;
 import com.axzl.mobile.refueling.app.service.DDSService;
 import com.axzl.mobile.refueling.app.utils.EventBusTags;
+import com.axzl.mobile.refueling.app.utils.RxUtils;
 import com.axzl.mobile.refueling.di.component.DaggerMainComponent;
 import com.axzl.mobile.refueling.mvp.contract.MainContract;
 import com.axzl.mobile.refueling.mvp.model.entity.MessageBean;
@@ -42,6 +41,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import timber.log.Timber;
 
 import static com.jess.arms.utils.Preconditions.checkNotNull;
 
@@ -78,7 +78,6 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     private DuiNativeApiObserver mNativeApiObserver;
     // dds更新监听器
     private DuiUpdateObserver mUpdateObserver;
-    private Handler mHandler = new Handler();
 
     @Override
     protected void onStart() {
@@ -207,7 +206,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         } else if (wakeupWords != null && wakeupWords.length > 0) {
             hiStr = getString(R.string.hi_str, wakeupWords[0]);
         }
-        Log.e("dengzi", "histr = " + hiStr);
+        Timber.i(TAG + "histr = " + hiStr);
         if (!TextUtils.isEmpty(hiStr)) {
             MessageBean bean = new MessageBean();
             bean.setText(hiStr);
@@ -222,9 +221,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
      * 更新 tv状态
      */
     private void refreshTv(final String text) {
-        runOnUiThread(() -> mInputTv.setText(text));
+        RxUtils.doOnUIThread(this, () -> mInputTv.setText(text));
     }
-
 
     /**
      * 打开唤醒，调用后才能语音唤醒
@@ -261,7 +259,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         // 开发者使用时就认为此处不需要等待即可,dds在后续的升级中会解决此问题
         new Thread(() -> {
             SystemClock.sleep(200);
-            runOnUiThread(() -> sendHiMessage());
+            RxUtils.doOnUIThread(this, () -> sendHiMessage());
         }).start();
     }
 
@@ -319,7 +317,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
      * 更新ui列表展示
      */
     public void notifyItemInserted() {
-        mHandler.post(() -> {
+        RxUtils.doOnUIThread(this, () -> {
             mAdapter.notifyDataSetChanged();
             mRecyclerView.smoothScrollToPosition(mMessageList.size());
         });
@@ -363,7 +361,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         if (!mIsActivityShowing) {
             return;
         }
-        runOnUiThread(() -> {
+        RxUtils.doOnUIThread(this, () -> {
             if (type == DuiUpdateObserver.START) {
                 mInputTv.setEnabled(false);
             } else if (type == DuiUpdateObserver.FINISH) {

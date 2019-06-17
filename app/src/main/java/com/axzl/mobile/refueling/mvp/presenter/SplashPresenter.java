@@ -6,7 +6,7 @@ import com.aispeech.dui.dds.exceptions.DDSNotInitCompleteException;
 import com.axzl.mobile.refueling.BuildConfig;
 import com.axzl.mobile.refueling.app.global.AccountManager;
 import com.axzl.mobile.refueling.app.global.Constant;
-import com.axzl.mobile.refueling.app.subscriber.RxSchedulers;
+import com.axzl.mobile.refueling.app.utils.RxUtils;
 import com.axzl.mobile.refueling.mvp.contract.SplashContract;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ThreadUtils;
@@ -60,7 +60,7 @@ public class SplashPresenter extends BasePresenter<SplashContract.Model, SplashC
         initLog();
 
         // 开启检查dds初始
-        RxSchedulers.doOnThread(mRootView, () -> checkDDSReady());
+        RxUtils.doOnThread(mRootView, () -> checkDDSReady());
 
     }
 
@@ -107,7 +107,7 @@ public class SplashPresenter extends BasePresenter<SplashContract.Model, SplashC
                 e.printStackTrace();
             }
         } else {
-            RxSchedulers.doOnUIThread(mRootView, () -> mRootView.showDoAuthDialog());
+            RxUtils.doOnUIThread(mRootView, () -> mRootView.showDoAuthDialog());
         }
     }
 
