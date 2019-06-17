@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -17,6 +16,7 @@ import com.aispeech.dui.dds.DDSConfig;
 import com.aispeech.dui.dds.DDSInitListener;
 import com.aispeech.dui.dds.auth.AuthType;
 import com.axzl.mobile.refueling.app.utils.EventBusTags;
+import com.blankj.utilcode.util.PhoneUtils;
 
 import org.simple.eventbus.EventBus;
 
@@ -162,8 +162,21 @@ public class DDSService extends Service {
 
     // 获取手机的唯一标识符: deviceId
     private String getDeviceId(Context context) {
-        TelephonyManager telephonyMgr = (TelephonyManager) context.getSystemService(TELEPHONY_SERVICE);
-        String imei = telephonyMgr.getDeviceId();
+        String imei = "";
+        try {
+            imei = PhoneUtils.getDeviceId();
+        } catch (Exception e) {
+            try {
+                imei = PhoneUtils.getIMEI();
+            } catch (Exception e1) {
+                try {
+                    imei = PhoneUtils.getMEID();
+                } catch (Exception e2) {
+                    imei = "201906171551";//正版设备：869545030806024
+                }
+            }
+        }
+
         String serial = Build.SERIAL;
         String uuid;
         if (TextUtils.isEmpty(imei)) {
