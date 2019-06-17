@@ -6,6 +6,7 @@ import com.aispeech.dui.dds.exceptions.DDSNotInitCompleteException;
 import com.axzl.mobile.refueling.BuildConfig;
 import com.axzl.mobile.refueling.app.global.AccountManager;
 import com.axzl.mobile.refueling.app.global.Constant;
+import com.axzl.mobile.refueling.app.utils.EventBusTags;
 import com.axzl.mobile.refueling.app.utils.RxUtils;
 import com.axzl.mobile.refueling.mvp.contract.SplashContract;
 import com.blankj.utilcode.util.FileUtils;
@@ -13,6 +14,8 @@ import com.blankj.utilcode.util.ThreadUtils;
 import com.jess.arms.di.scope.ActivityScope;
 import com.jess.arms.mvp.BasePresenter;
 import com.jess.arms.utils.RxLifecycleUtils;
+
+import org.simple.eventbus.EventBus;
 
 import java.util.concurrent.TimeUnit;
 
@@ -72,6 +75,8 @@ public class SplashPresenter extends BasePresenter<SplashContract.Model, SplashC
             if (DDS.getInstance().getInitStatus() == DDS.INIT_COMPLETE_FULL ||
                     DDS.getInstance().getInitStatus() == DDS.INIT_COMPLETE_NOT_FULL) {
                 try {
+                    RxUtils.doOnUIThread(mRootView, () -> EventBus.getDefault().post(false, EventBusTags.splashLoading));
+
                     if (DDS.getInstance().isAuthSuccess()) {
                         mRootView.jumbToMain();
                         break;
@@ -85,6 +90,7 @@ public class SplashPresenter extends BasePresenter<SplashContract.Model, SplashC
                 break;
             } else {
                 AILog.w(TAG, "waiting  init complete finish...");
+                RxUtils.doOnUIThread(mRootView, () -> EventBus.getDefault().post(true, EventBusTags.splashLoading));
             }
             try {
                 Thread.sleep(800);

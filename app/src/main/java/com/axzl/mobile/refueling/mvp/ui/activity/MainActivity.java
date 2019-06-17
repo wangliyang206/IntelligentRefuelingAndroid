@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.aispeech.ailog.AILog;
 import com.aispeech.dui.dds.DDS;
 import com.aispeech.dui.dds.exceptions.DDSNotInitCompleteException;
@@ -78,6 +79,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     private DuiNativeApiObserver mNativeApiObserver;
     // dds更新监听器
     private DuiUpdateObserver mUpdateObserver;
+    private MaterialDialog mDialog;
 
     @Override
     protected void onStart() {
@@ -112,6 +114,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     protected void onStop() {
         AILog.d(TAG, "onStop() " + this.hashCode());
         mIsActivityShowing = false;
+        hideLoading();
         super.onStop();
     }
 
@@ -120,14 +123,22 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         //super.onDestroy()之后会unbind,所有view被置为null,所以必须在之前调用
         DefaultAdapter.releaseAllHolder(mRecyclerView);
         super.onDestroy();
+        this.mAdapter = null;
+        this.mLayoutManager = null;
+        this.mMessageList = null;
+        this.mDialog = null;
+
+        mMessageObserver.unregist();
         mUpdateObserver.unregist();
         mCommandObserver.unregist();
         mNativeApiObserver.unregist();
 
         // 停止service, 释放dds组件
         stopService(new Intent(MainActivity.this, DDSService.class));
-    }
 
+        // 释放
+        DDS.getInstance().release();
+    }
 
     /**
      * 关闭滑动返回
@@ -160,6 +171,12 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         // 初始化监听器
         initObserver();
 
+        // 初始化Loading对话框
+        mDialog = new MaterialDialog.Builder(this)
+                .content(R.string.common_execute)
+                .progress(true, 0)
+                .cancelable(false)
+                .build();
     }
 
     /**
@@ -285,14 +302,29 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         return this;
     }
 
+    /**
+     * 控制显示与隐藏进度
+     */
+    @Subscriber(tag = EventBusTags.mainLoading, mode = ThreadMode.POST)
+    private void mainLoading(Boolean val) {
+        if (val)
+            showLoading();
+        else
+            hideLoading();
+    }
+
     @Override
     public void showLoading() {
-
+        if (mDialog != null) {
+            mDialog.show();
+        }
     }
 
     @Override
     public void hideLoading() {
-
+        if (mDialog != null && mDialog.isShowing()) {
+            mDialog.dismiss();
+        }
     }
 
     @Override

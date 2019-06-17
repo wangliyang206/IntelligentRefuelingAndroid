@@ -40,4 +40,12 @@ public interface EventBusTags {
      * dds初始化成功状态
      */
     String ddsInitSuccess = "DDSInitSuccess_tag";
+    /**
+     * 欢迎界面 显示or隐藏进度
+     */
+    String splashLoading = "SplashLoading_tag";
+    /**
+     * 首页 显示or隐藏进度
+     */
+    String mainLoading = "MainLoading_tag";
 }

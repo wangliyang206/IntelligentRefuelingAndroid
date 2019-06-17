@@ -7,11 +7,18 @@ import android.net.Uri;
 import com.aispeech.dui.dds.DDS;
 import com.aispeech.dui.dsk.duiwidget.CommandObserver;
 import com.axzl.mobile.refueling.app.utils.CommonUtils;
+import com.axzl.mobile.refueling.app.utils.EventBusTags;
 import com.axzl.mobile.refueling.mvp.model.entity.AppInfo;
 import com.jess.arms.widget.etoast2.Toast;
 
 import org.json.JSONObject;
+import org.simple.eventbus.EventBus;
 
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -61,17 +68,52 @@ public class DuiCommandObserver implements CommandObserver {
                 String intentName = jsonData.optString("intentName");
                 String w = jsonData.optString("w");
                 Timber.i(TAG + intentName + w);
-                new Thread(() -> {
-                    AppInfo app = CommonUtils.getAppMessage(mContent, w);
-                    if (app != null) {
-                        try {
-                            Intent intent = mContent.getPackageManager().getLaunchIntentForPackage(app.getPageName());
-                            mContent.startActivity(intent);
-                        } catch (Exception e) {
-                            Toast.makeText(mContent, "检查您是否有安装" + w, android.widget.Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }).start();
+
+                // 根据APP名称搜索本机应用程序，得到结果后打开。
+                Observable.just("")
+                        .subscribeOn(Schedulers.io())
+                        .doOnSubscribe(disposable -> {
+                            // 显示进度条
+                            EventBus.getDefault().post(true, EventBusTags.mainLoading);
+                        })
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doFinally(() -> {
+                            // 隐藏进度条
+                            EventBus.getDefault().post(false, EventBusTags.mainLoading);
+                        })
+                        .subscribe(new Observer<String>() {
+                            private Disposable disposable;
+
+                            @Override
+                            public void onSubscribe(Disposable d) {
+                                disposable = d;
+                            }
+
+                            @Override
+                            public void onNext(String s) {
+                                AppInfo app = CommonUtils.getAppMessage(mContent, w);
+                                if (app != null) {
+                                    try {
+                                        Intent intent = mContent.getPackageManager().getLaunchIntentForPackage(app.getPageName());
+                                        mContent.startActivity(intent);
+                                    } catch (Exception e) {
+                                        Toast.makeText(mContent, "检查您是否有安装" + w, android.widget.Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Timber.i("###onError" + e.getMessage());
+                            }
+
+                            @Override
+                            public void onComplete() {
+                                disposable.dispose();
+                            }
+                        });
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -83,7 +125,7 @@ public class DuiCommandObserver implements CommandObserver {
         if (number == null) {
             return;
         }
-        Timber.i(TAG+ "phoneDial:" + number);
+        Timber.i(TAG + "phoneDial:" + number);
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_CALL);
         intent.addCategory(Intent.CATEGORY_DEFAULT);

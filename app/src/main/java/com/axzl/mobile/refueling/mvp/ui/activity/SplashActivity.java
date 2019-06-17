@@ -45,6 +45,7 @@ public class SplashActivity extends BaseActivity<SplashPresenter> implements Spl
      * 认证弹出框
      */
     private MaterialDialog mDialog;
+    private MaterialDialog mDialogLoading;
 
     @Override
     protected void onStop() {
@@ -52,6 +53,7 @@ public class SplashActivity extends BaseActivity<SplashPresenter> implements Spl
         if (mDialog != null && mDialog.isShowing()) {
             mDialog.dismiss();
         }
+        hideLoading();
         killMyself();
     }
 
@@ -59,6 +61,7 @@ public class SplashActivity extends BaseActivity<SplashPresenter> implements Spl
     protected void onDestroy() {
         super.onDestroy();
         mDialog = null;
+        mDialogLoading = null;
     }
 
     /**
@@ -115,6 +118,11 @@ public class SplashActivity extends BaseActivity<SplashPresenter> implements Spl
     })
     public void runApp() {
         // 初始化Loading对话框
+        mDialogLoading = new MaterialDialog.Builder(this)
+                .content("正在初始AI语音，请稍候……")
+                .progress(true,0)
+                .cancelable(false)
+                .build();
         mDialog = new MaterialDialog.Builder(this)
                 .content("产品未授权，请先授权！")
                 .positiveText("授权")
@@ -164,14 +172,29 @@ public class SplashActivity extends BaseActivity<SplashPresenter> implements Spl
         return this;
     }
 
+    /**
+     * 控制显示与隐藏进度
+     */
+    @Subscriber(tag = EventBusTags.splashLoading, mode = ThreadMode.POST)
+    private void splashLoading(Boolean val) {
+        if (val)
+            showLoading();
+        else
+            hideLoading();
+    }
+
     @Override
     public void showLoading() {
-
+        if (mDialogLoading != null && !mDialogLoading.isShowing()) {
+            mDialogLoading.show();
+        }
     }
 
     @Override
     public void hideLoading() {
-
+        if (mDialogLoading != null && mDialogLoading.isShowing()) {
+            mDialogLoading.dismiss();
+        }
     }
 
     @Override
