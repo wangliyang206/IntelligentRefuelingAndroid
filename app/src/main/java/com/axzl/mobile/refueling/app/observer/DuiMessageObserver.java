@@ -54,7 +54,7 @@ public class DuiMessageObserver implements MessageObserver {
 
     @Override
     public void onMessage(String message, String data) {
-        Timber.i(Tag, "message : " + message + " data : " + data);
+        Timber.i(Tag+ "message : " + message + " data : " + data);
         MessageBean bean = null;
         switch (message) {
             case "context.output.text":

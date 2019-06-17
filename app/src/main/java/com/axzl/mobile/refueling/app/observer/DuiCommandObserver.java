@@ -6,6 +6,9 @@ import android.net.Uri;
 
 import com.aispeech.dui.dds.DDS;
 import com.aispeech.dui.dsk.duiwidget.CommandObserver;
+import com.axzl.mobile.refueling.app.utils.CommonUtils;
+import com.axzl.mobile.refueling.mvp.model.entity.AppInfo;
+import com.jess.arms.widget.etoast2.Toast;
 
 import org.json.JSONObject;
 
@@ -41,7 +44,7 @@ public class DuiCommandObserver implements CommandObserver {
 
     @Override
     public void onCall(String command, String data) {
-        Timber.i(TAG, "command: " + command + "  data: " + data);
+        Timber.i(TAG + "command: " + command + "  data: " + data);
         try {
             if (COMMAND_CALL.equals(command)) {
                 String number = new JSONObject(data).optString("phone");
@@ -57,7 +60,18 @@ public class DuiCommandObserver implements CommandObserver {
                 JSONObject jsonData = new JSONObject(data);
                 String intentName = jsonData.optString("intentName");
                 String w = jsonData.optString("w");
-
+                Timber.i(TAG + intentName + w);
+                new Thread(() -> {
+                    AppInfo app = CommonUtils.getAppMessage(mContent, w);
+                    if (app != null) {
+                        try {
+                            Intent intent = mContent.getPackageManager().getLaunchIntentForPackage(app.getPageName());
+                            mContent.startActivity(intent);
+                        } catch (Exception e) {
+                            Toast.makeText(mContent, "检查您是否有安装" + w, android.widget.Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }).start();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -69,7 +83,7 @@ public class DuiCommandObserver implements CommandObserver {
         if (number == null) {
             return;
         }
-        Timber.e(TAG, "phoneDial:" + number);
+        Timber.i(TAG+ "phoneDial:" + number);
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_CALL);
         intent.addCategory(Intent.CATEGORY_DEFAULT);

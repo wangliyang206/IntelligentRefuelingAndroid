@@ -51,7 +51,7 @@ public class DuiNativeApiObserver implements NativeApiObserver {
      */
     @Override
     public void onQuery(String nativeApi, String data) {
-        Timber.i(TAG, "nativeApi: " + nativeApi + "  data: " + data);
+        Timber.i(TAG+ "nativeApi: " + nativeApi + "  data: " + data);
         if (NATIVE_API_CONTACT.equals(nativeApi)) {
             String searchName = null;
             ListWidget searchNums = null;
@@ -63,7 +63,7 @@ public class DuiNativeApiObserver implements NativeApiObserver {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Timber.i(TAG, "query back:" + searchName + "-" + (searchNums != null ? searchNums.toString() : "null"));
+            Timber.i(TAG+ "query back:" + searchName + "-" + (searchNums != null ? searchNums.toString() : "null"));
             DDS.getInstance().getAgent().feedbackNativeApiResult(nativeApi, searchNums);
         }
     }
@@ -72,7 +72,7 @@ public class DuiNativeApiObserver implements NativeApiObserver {
         ContentResolver cr = mContext.getContentResolver();
         Cursor cursor = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
         if (null == cursor) {
-            Timber.i(TAG, "contacts null");
+            Timber.i(TAG+ "contacts null");
             return null;
         }
         ListWidget listWidget = new ListWidget();

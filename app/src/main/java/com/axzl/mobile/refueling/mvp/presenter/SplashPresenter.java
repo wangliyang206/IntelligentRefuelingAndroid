@@ -1,19 +1,16 @@
 package com.axzl.mobile.refueling.mvp.presenter;
 
-import android.app.Application;
-
 import com.aispeech.ailog.AILog;
 import com.aispeech.dui.dds.DDS;
 import com.aispeech.dui.dds.exceptions.DDSNotInitCompleteException;
 import com.axzl.mobile.refueling.BuildConfig;
 import com.axzl.mobile.refueling.app.global.AccountManager;
 import com.axzl.mobile.refueling.app.global.Constant;
+import com.axzl.mobile.refueling.app.subscriber.RxSchedulers;
 import com.axzl.mobile.refueling.mvp.contract.SplashContract;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.jess.arms.di.scope.ActivityScope;
-import com.jess.arms.http.imageloader.ImageLoader;
-import com.jess.arms.integration.AppManager;
 import com.jess.arms.mvp.BasePresenter;
 import com.jess.arms.utils.RxLifecycleUtils;
 
@@ -25,7 +22,6 @@ import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import me.jessyan.rxerrorhandler.core.RxErrorHandler;
 
 
 /**
@@ -42,14 +38,6 @@ import me.jessyan.rxerrorhandler.core.RxErrorHandler;
  */
 @ActivityScope
 public class SplashPresenter extends BasePresenter<SplashContract.Model, SplashContract.View> {
-    @Inject
-    RxErrorHandler mErrorHandler;
-    @Inject
-    Application mApplication;
-    @Inject
-    ImageLoader mImageLoader;
-    @Inject
-    AppManager mAppManager;
     @Inject
     AccountManager accountManager;
 
@@ -71,11 +59,9 @@ public class SplashPresenter extends BasePresenter<SplashContract.Model, SplashC
         // 定时清理日志
         initLog();
 
-        new Thread() {
-            public void run() {
-                checkDDSReady();
-            }
-        }.start();
+        // 开启检查dds初始
+        RxSchedulers.doOnThread(mRootView, () -> checkDDSReady());
+
     }
 
     /**
@@ -121,7 +107,7 @@ public class SplashPresenter extends BasePresenter<SplashContract.Model, SplashC
                 e.printStackTrace();
             }
         } else {
-            mRootView.showDoAuthDialog();
+            RxSchedulers.doOnUIThread(mRootView, () -> mRootView.showDoAuthDialog());
         }
     }
 
@@ -193,9 +179,6 @@ public class SplashPresenter extends BasePresenter<SplashContract.Model, SplashC
     @Override
     public void onDestroy() {
         super.onDestroy();
-        this.mErrorHandler = null;
-        this.mAppManager = null;
-        this.mImageLoader = null;
-        this.mApplication = null;
+        this.accountManager = null;
     }
 }

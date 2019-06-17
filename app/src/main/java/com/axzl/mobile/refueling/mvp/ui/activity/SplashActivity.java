@@ -144,12 +144,10 @@ public class SplashActivity extends BaseActivity<SplashPresenter> implements Spl
      * 显示授权弹框给用户
      */
     public void showDoAuthDialog() {
-        runOnUiThread(() -> {
-            if (mDialog != null && mDialog.isShowing()) {
-                mDialog.dismiss();
-            }
-            mDialog.show();
-        });
+        if (mDialog != null && mDialog.isShowing()) {
+            mDialog.dismiss();
+        }
+        mDialog.show();
     }
 
 

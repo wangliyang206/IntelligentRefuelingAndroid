@@ -83,7 +83,7 @@ public class DuiUpdateObserver implements MessageObserver {
             if (mUpdateCallback != null) {
                 mUpdateCallback.onUpdate(ERROR, "更新失败,详情看Log");
             }
-            Timber.i(Tag, "what = " + what + ", error = " + error);
+            Timber.i(Tag + "what = " + what + ", error = " + error);
         }
 
         @Override

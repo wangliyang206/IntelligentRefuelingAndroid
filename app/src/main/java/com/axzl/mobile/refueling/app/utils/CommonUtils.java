@@ -2,6 +2,7 @@ package com.axzl.mobile.refueling.app.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.net.ConnectivityManager;
@@ -14,12 +15,15 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import com.axzl.mobile.refueling.R;
+import com.axzl.mobile.refueling.mvp.model.entity.AppInfo;
 import com.jess.arms.utils.ArmsUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import static android.os.Environment.MEDIA_MOUNTED;
@@ -34,6 +38,52 @@ import static android.os.Environment.MEDIA_MOUNTED;
  */
 
 public class CommonUtils {
+
+    /**
+     * 根据应用程序查询包名
+     *
+     * @param context 句柄
+     * @param name    应用程序名
+     * @return
+     */
+    public static AppInfo getAppMessage(Context context, String name) {
+        AppInfo app = null;
+        PackageManager packageManager = context.getPackageManager();
+        List<PackageInfo> installedPackages = packageManager.getInstalledPackages(0);
+        for (int i = 0; i < installedPackages.size(); i++) {
+            String appName = installedPackages.get(i).applicationInfo.loadLabel(packageManager).toString();
+            if (name.equals(appName)) {
+                app = new AppInfo();
+                //包名
+                app.setPageName(installedPackages.get(i).packageName);
+                //程序图标
+                app.setIcon(installedPackages.get(i).applicationInfo.loadIcon(packageManager));
+                //程序名称
+                app.setName(appName);
+                //应用程序的标示
+                int flag = installedPackages.get(i).applicationInfo.flags;
+                //判断是不是用户程序
+                if ((flag & installedPackages.get(i).applicationInfo.FLAG_SYSTEM) == 0) {
+                    //应用程序
+                    app.setUser(true);
+                } else {
+                    //系统程序
+                    app.setUser(false);
+                }
+                //判断是内部存储还是外部存储
+                if ((flag & installedPackages.get(i).applicationInfo.FLAG_EXTERNAL_STORAGE) == 0) {
+                    //内部
+                    app.setRow(true);
+                } else {
+                    //外部
+                    app.setRow(false);
+                }
+            }
+        }
+
+        return app;
+
+    }
 
     public static String getApplicationNameByPackageName(Context context, String packageName) {
         PackageManager pm = context.getPackageManager();
