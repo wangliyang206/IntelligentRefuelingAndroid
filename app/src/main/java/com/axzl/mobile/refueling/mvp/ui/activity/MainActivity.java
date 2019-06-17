@@ -315,16 +315,14 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     @Override
     public void showLoading() {
-        if (mDialog != null) {
+        if (mDialog != null && !mDialog.isShowing())
             mDialog.show();
-        }
     }
 
     @Override
     public void hideLoading() {
-        if (mDialog != null && mDialog.isShowing()) {
+        if (mDialog != null && mDialog.isShowing())
             mDialog.dismiss();
-        }
     }
 
     @Override

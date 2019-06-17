@@ -9,6 +9,7 @@ import com.aispeech.dui.dsk.duiwidget.CommandObserver;
 import com.axzl.mobile.refueling.app.utils.CommonUtils;
 import com.axzl.mobile.refueling.app.utils.EventBusTags;
 import com.axzl.mobile.refueling.mvp.model.entity.AppInfo;
+import com.blankj.utilcode.util.ThreadUtils;
 import com.jess.arms.widget.etoast2.Toast;
 
 import org.json.JSONObject;
@@ -73,12 +74,14 @@ public class DuiCommandObserver implements CommandObserver {
                 Observable.just("")
                         .subscribeOn(Schedulers.io())
                         .doOnSubscribe(disposable -> {
+                            Timber.i("###显示进度条："+ ThreadUtils.isMainThread());
                             // 显示进度条
                             EventBus.getDefault().post(true, EventBusTags.mainLoading);
                         })
                         .subscribeOn(AndroidSchedulers.mainThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .doFinally(() -> {
+                            Timber.i("###隐藏进度条："+ ThreadUtils.isMainThread());
                             // 隐藏进度条
                             EventBus.getDefault().post(false, EventBusTags.mainLoading);
                         })
@@ -88,10 +91,12 @@ public class DuiCommandObserver implements CommandObserver {
                             @Override
                             public void onSubscribe(Disposable d) {
                                 disposable = d;
+                                Timber.i("###onSubscribe："+ ThreadUtils.isMainThread());
                             }
 
                             @Override
                             public void onNext(String s) {
+                                Timber.i("###onNext："+ ThreadUtils.isMainThread());
                                 AppInfo app = CommonUtils.getAppMessage(mContent, w);
                                 if (app != null) {
                                     try {
@@ -105,11 +110,12 @@ public class DuiCommandObserver implements CommandObserver {
 
                             @Override
                             public void onError(Throwable e) {
-                                Timber.i("###onError" + e.getMessage());
+                                Timber.i("###onError：" + e.getMessage());
                             }
 
                             @Override
                             public void onComplete() {
+                                Timber.i("###onComplete："+ ThreadUtils.isMainThread());
                                 disposable.dispose();
                             }
                         });
