@@ -33,6 +33,8 @@ public class DuiUpdateObserver implements MessageObserver {
 
     // 注销当前更新消息
     public void unregist() {
+        this.mUpdateCallback = null;
+        this.ddsUpdateListener = null;
         DDS.getInstance().getAgent().unSubscribe(this);
     }
 

@@ -325,6 +325,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
             mDialog.dismiss();
     }
 
+    @Subscriber(tag = EventBusTags.mainOpenAppTips, mode = ThreadMode.POST)
     @Override
     public void showMessage(@NonNull String message) {
         checkNotNull(message);
