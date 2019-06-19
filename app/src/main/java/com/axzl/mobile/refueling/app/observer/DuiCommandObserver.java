@@ -9,7 +9,10 @@ import com.aispeech.dui.dsk.duiwidget.CommandObserver;
 import com.axzl.mobile.refueling.app.utils.CommonUtils;
 import com.axzl.mobile.refueling.app.utils.EventBusTags;
 import com.axzl.mobile.refueling.mvp.model.entity.AppInfo;
+import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.ThreadUtils;
+import com.jess.arms.widget.etoast2.EToast2;
+import com.jess.arms.widget.etoast2.Toast;
 
 import org.json.JSONObject;
 import org.simple.eventbus.EventBus;
@@ -31,6 +34,7 @@ public class DuiCommandObserver implements CommandObserver {
     private static final String COMMAND_CALL = "sys.action.call";
     private static final String COMMAND_SELECT = "sys.action.call.select";
     private static final String OPEN_WINDOW = "open_window";
+    private static final String NAVI_ROUTE = "navi.route";
     private String mSelectedPhone = null;
     private Context mContent;
 
@@ -40,7 +44,7 @@ public class DuiCommandObserver implements CommandObserver {
     // 注册当前更新消息
     public void regist(Context mContent) {
         this.mContent = mContent;
-        DDS.getInstance().getAgent().subscribe(new String[]{COMMAND_CALL, COMMAND_SELECT, OPEN_WINDOW},
+        DDS.getInstance().getAgent().subscribe(new String[]{COMMAND_CALL, COMMAND_SELECT, OPEN_WINDOW,NAVI_ROUTE},
                 this);
     }
 
@@ -63,7 +67,13 @@ public class DuiCommandObserver implements CommandObserver {
                 }
             } else if (COMMAND_SELECT.equals(command)) {
                 mSelectedPhone = new JSONObject(data).optString("phone");
-            } else if (OPEN_WINDOW.equals(command)) {
+            } else if(NAVI_ROUTE.equals(command)){
+                JSONObject jsonData = new JSONObject(data);
+//                String intentName = jsonData.optString("intentName");
+                String lat = jsonData.optString("lat");
+                String lng = jsonData.optString("lng");
+                goToGaodeMap(lat,lng);
+            }else if (OPEN_WINDOW.equals(command)) {
                 JSONObject jsonData = new JSONObject(data);
                 String intentName = jsonData.optString("intentName");
                 String w = jsonData.optString("w");
@@ -139,4 +149,22 @@ public class DuiCommandObserver implements CommandObserver {
         mContent.startActivity(intent);
     }
 
+    /**
+     * 跳转高德地图
+     */
+    private void goToGaodeMap(String latitude, String longitude) {
+        if (!AppUtils.isAppInstalled("com.autonavi.minimap")) {
+            Toast.makeText(mContent.getApplicationContext(), "请先安装高德地图客户端", EToast2.LENGTH_LONG);
+            return;
+        }
+
+        StringBuffer stringBuffer = new StringBuffer("androidamap://navi?sourceApplication=").append("amap");
+        stringBuffer.append("&lat=").append(latitude)
+                .append("&lon=").append(longitude)//.append("&keywords=" + "a1")
+                .append("&dev=").append(0)
+                .append("&style=").append(2);
+        Intent intent = new Intent("android.intent.action.VIEW", Uri.parse(stringBuffer.toString()));
+        intent.setPackage("com.autonavi.minimap");
+        mContent.startActivity(intent);
+    }
 }
