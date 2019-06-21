@@ -38,19 +38,34 @@ public class DuiCommandObserver implements CommandObserver {
     private String mSelectedPhone = null;
     private Context mContent;
 
+    private boolean isRegist = false;
+
     public DuiCommandObserver() {
     }
 
-    // 注册当前更新消息
+    /**
+     * 注册当前更新消息
+     */
     public void regist(Context mContent) {
         this.mContent = mContent;
-        DDS.getInstance().getAgent().subscribe(new String[]{COMMAND_CALL, COMMAND_SELECT, OPEN_WINDOW,NAVI_ROUTE},
+        this.isRegist = true;
+        DDS.getInstance().getAgent().subscribe(new String[]{COMMAND_CALL, COMMAND_SELECT, OPEN_WINDOW, NAVI_ROUTE},
                 this);
     }
 
-    // 注销当前更新消息
+    /**
+     * 注销当前更新消息
+     */
     public void unregist() {
+        this.isRegist = false;
         DDS.getInstance().getAgent().unSubscribe(this);
+    }
+
+    /**
+     * 当前是否注册监听
+     */
+    public boolean isRegist() {
+        return isRegist;
     }
 
     @Override
@@ -67,13 +82,13 @@ public class DuiCommandObserver implements CommandObserver {
                 }
             } else if (COMMAND_SELECT.equals(command)) {
                 mSelectedPhone = new JSONObject(data).optString("phone");
-            } else if(NAVI_ROUTE.equals(command)){
+            } else if (NAVI_ROUTE.equals(command)) {
                 JSONObject jsonData = new JSONObject(data);
 //                String intentName = jsonData.optString("intentName");
                 String lat = jsonData.optString("lat");
                 String lng = jsonData.optString("lng");
-                goToGaodeMap(lat,lng);
-            }else if (OPEN_WINDOW.equals(command)) {
+                goToGaodeMap(lat, lng);
+            } else if (OPEN_WINDOW.equals(command)) {
                 JSONObject jsonData = new JSONObject(data);
                 String intentName = jsonData.optString("intentName");
                 String w = jsonData.optString("w");

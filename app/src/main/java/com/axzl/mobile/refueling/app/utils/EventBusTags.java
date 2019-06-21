@@ -52,4 +52,26 @@ public interface EventBusTags {
      * 首页 打开应用技能 提示
      */
     String mainOpenAppTips = "MainOpenAPPTips_tag";
+
+    /**
+     * 首页 接收 DDS Service 中状态
+     */
+    String mainReceivingStatus = "mainReceivingStatus_tag";
+    /**
+     * 首页 刷新TextView
+     */
+    String mainRefreshTextView = "mainRefreshTextView_tag";
+    /**
+     * 首页 控制TextView
+     */
+    String mainControlTextView = "mainControlTextView_tag";
+    /**
+     * 首页 刷新 Adapter
+     */
+    String mainRefreshAdapter = "mainRefreshAdapter_tag";
+    /**
+     * 首页 控制数据集 删除最后一行
+     */
+    String mainMessagePollLast = "mainmainMessagePollLast_tag";
+
 }

@@ -17,10 +17,6 @@ import com.aispeech.dui.dds.DDS;
 import com.aispeech.dui.dds.exceptions.DDSNotInitCompleteException;
 import com.axzl.mobile.refueling.BuildConfig;
 import com.axzl.mobile.refueling.R;
-import com.axzl.mobile.refueling.app.observer.DuiCommandObserver;
-import com.axzl.mobile.refueling.app.observer.DuiMessageObserver;
-import com.axzl.mobile.refueling.app.observer.DuiNativeApiObserver;
-import com.axzl.mobile.refueling.app.observer.DuiUpdateObserver;
 import com.axzl.mobile.refueling.app.service.DDSService;
 import com.axzl.mobile.refueling.app.utils.EventBusTags;
 import com.axzl.mobile.refueling.app.utils.RxUtils;
@@ -53,7 +49,7 @@ import static com.jess.arms.utils.Preconditions.checkNotNull;
  * Description:首页
  * ================================================
  */
-public class MainActivity extends BaseActivity<MainPresenter> implements MainContract.View, DuiUpdateObserver.UpdateCallback, DuiMessageObserver.MessageCallback {
+public class MainActivity extends BaseActivity<MainPresenter> implements MainContract.View {
 
     /*--------------------------------控件信息--------------------------------*/
     @BindView(R.id.input_tv)
@@ -70,51 +66,24 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     @Inject
     LinkedList<MessageBean> mMessageList;                                                           // 当前消息容器
 
-    // 当前页面是否可见
-    private boolean mIsActivityShowing = false;
-    // 消息监听器
-    private DuiMessageObserver mMessageObserver;
-    // 命令监听器
-    private DuiCommandObserver mCommandObserver;
-    // 本地方法回调监听器
-    private DuiNativeApiObserver mNativeApiObserver;
-    // dds更新监听器
-    private DuiUpdateObserver mUpdateObserver;
     private MaterialDialog mDialog;
 
     @Override
-    protected void onStart() {
-        mIsActivityShowing = true;
-        mUpdateObserver.regist(this);
-        mCommandObserver.regist(this);
-        mNativeApiObserver.regist();
-        super.onStart();
-    }
-
-    @Override
     protected void onResume() {
-        // 注册消息监听器
-        mMessageObserver.regist(this, mMessageList);
-
         sendHiMessage();
         refreshTv("等待唤醒...");
-        enableWakeup();
-
         super.onResume();
     }
 
     @Override
     protected void onPause() {
-        mMessageObserver.unregist();
         refreshTv("等待唤醒...");
-        disableWakeup();
         super.onPause();
     }
 
     @Override
     protected void onStop() {
         AILog.d(TAG, "onStop() " + this.hashCode());
-        mIsActivityShowing = false;
         hideLoading();
         super.onStop();
     }
@@ -128,11 +97,6 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         this.mLayoutManager = null;
         this.mMessageList = null;
         this.mDialog = null;
-
-        mMessageObserver.unregist();
-        mUpdateObserver.unregist();
-        mCommandObserver.unregist();
-        mNativeApiObserver.unregist();
 
         if (!BuildConfig.IS_INDEPENDENCE) {
             // 非独立
@@ -170,9 +134,6 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         // 初始化控件
         initRecyclerView();
 
-        // 初始化监听器
-        initObserver();
-
         // 初始化Loading对话框
         mDialog = new MaterialDialog.Builder(this)
                 .content(R.string.common_execute)
@@ -187,20 +148,6 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     private void initRecyclerView() {
         ArmsUtils.configRecyclerView(mRecyclerView, mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
-    }
-
-    /**
-     * 初始化监听器
-     */
-    private void initObserver() {
-        // 消息监听器
-        mMessageObserver = new DuiMessageObserver();
-        // 命令监听器
-        mCommandObserver = new DuiCommandObserver();
-        // 本地方法回调监听器
-        mNativeApiObserver = new DuiNativeApiObserver(getApplicationContext());
-        // dds更新监听器
-        mUpdateObserver = new DuiUpdateObserver();
     }
 
     /**
@@ -239,31 +186,9 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     /**
      * 更新 tv状态
      */
+    @Subscriber(tag = EventBusTags.mainRefreshTextView, mode = ThreadMode.POST)
     private void refreshTv(final String text) {
         RxUtils.doOnUIThread(this, () -> mInputTv.setText(text));
-    }
-
-    /**
-     * 打开唤醒，调用后才能语音唤醒
-     */
-    void enableWakeup() {
-        try {
-            DDS.getInstance().getAgent().getWakeupEngine().enableWakeup();
-        } catch (DDSNotInitCompleteException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 关闭唤醒, 调用后将无法语音唤醒
-     */
-    void disableWakeup() {
-        try {
-            DDS.getInstance().getAgent().stopDialog();
-            DDS.getInstance().getAgent().getWakeupEngine().disableWakeup();
-        } catch (DDSNotInitCompleteException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -271,7 +196,6 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
      */
     @Subscriber(tag = EventBusTags.ddsInitSuccess, mode = ThreadMode.POST)
     private void DDSInitSuccess(String str) {
-        enableWakeup();
         refreshTv("等待唤醒...");
         // 此处等待200ms,等待wakeup节点完成初始成功
         // 我们已知此问题,待下一版本我们会将此等待去除,
@@ -299,11 +223,6 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     }
 
-    @Override
-    public Activity getActivity() {
-        return this;
-    }
-
     /**
      * 控制显示与隐藏进度
      */
@@ -315,18 +234,6 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
             hideLoading();
     }
 
-    @Override
-    public void showLoading() {
-        if (mDialog != null && !mDialog.isShowing())
-            mDialog.show();
-    }
-
-    @Override
-    public void hideLoading() {
-        if (mDialog != null && mDialog.isShowing())
-            mDialog.dismiss();
-    }
-
     @Subscriber(tag = EventBusTags.mainOpenAppTips, mode = ThreadMode.POST)
     @Override
     public void showMessage(@NonNull String message) {
@@ -335,21 +242,12 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         ArmsUtils.makeText(getApplicationContext(), message);
     }
 
-    @Override
-    public void launchActivity(@NonNull Intent intent) {
-        checkNotNull(intent);
-        ArmsUtils.startActivity(intent);
-    }
-
-    @Override
-    public void killMyself() {
-        finish();
-    }
-
     /**
      * 更新ui列表展示
      */
-    public void notifyItemInserted() {
+    @Subscriber(tag = EventBusTags.mainRefreshAdapter, mode = ThreadMode.POST)
+    private void notifyItemInserted(MessageBean bean) {
+        this.mMessageList.add(bean);
         RxUtils.doOnUIThread(this, () -> {
             mAdapter.notifyDataSetChanged();
             mRecyclerView.smoothScrollToPosition(mMessageList.size());
@@ -357,18 +255,19 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     }
 
     /**
-     * DuiMessageObserver中当前消息的回调
+     * 删除数据最后一行(去除重复数据)
      */
-    @Override
-    public void onMessage() {
-        notifyItemInserted();
+    @Subscriber(tag = EventBusTags.mainMessagePollLast, mode = ThreadMode.POST)
+    private void onMessagePollLast(String str) {
+        if (mMessageList != null)
+            mMessageList.pollLast();
     }
 
     /**
-     * DuiMessageObserver中当前状态的回调
+     * 接收DDS Service中服务状态
      */
-    @Override
-    public void onState(String state) {
+    @Subscriber(tag = EventBusTags.mainReceivingStatus, mode = ThreadMode.POST)
+    private void onState(String state) {
         switch (state) {
             case "avatar.silence":
                 refreshTv("等待唤醒...");
@@ -387,20 +286,41 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     }
 
     /**
-     * DuiUpdateObserver的更新dds回调
+     * 后台服务控制显示框是否可用
      */
-    @Override
-    public void onUpdate(final int type, String result) {
-        if (!mIsActivityShowing) {
-            return;
-        }
+    @Subscriber(tag = EventBusTags.mainControlTextView, mode = ThreadMode.POST)
+    private void setEnabledTv(Boolean val) {
         RxUtils.doOnUIThread(this, () -> {
-            if (type == DuiUpdateObserver.START) {
-                mInputTv.setEnabled(false);
-            } else if (type == DuiUpdateObserver.FINISH) {
-                mInputTv.setEnabled(true);
-            }
+            mInputTv.setEnabled(val);
         });
-        refreshTv(result);
+
+    }
+
+    @Override
+    public Activity getActivity() {
+        return this;
+    }
+
+    @Override
+    public void showLoading() {
+        if (mDialog != null && !mDialog.isShowing())
+            mDialog.show();
+    }
+
+    @Override
+    public void hideLoading() {
+        if (mDialog != null && mDialog.isShowing())
+            mDialog.dismiss();
+    }
+
+    @Override
+    public void launchActivity(@NonNull Intent intent) {
+        checkNotNull(intent);
+        ArmsUtils.startActivity(intent);
+    }
+
+    @Override
+    public void killMyself() {
+        finish();
     }
 }

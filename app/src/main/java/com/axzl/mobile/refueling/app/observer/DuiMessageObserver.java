@@ -10,8 +10,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.LinkedList;
-
 import timber.log.Timber;
 
 /**
@@ -21,13 +19,14 @@ public class DuiMessageObserver implements MessageObserver {
     private final String Tag = "DuiMessageObserver";
 
     public interface MessageCallback {
-        void onMessage();
+        void onMessageAdd(MessageBean bean);
+
+        void onMessagePollLast();
 
         void onState(String state);
     }
 
     private MessageCallback mMessageCallback;
-    private LinkedList<MessageBean> mMessageList;
     private boolean mIsFirstVar = true;
     private boolean mHasvar = false;
     private String[] mSubscribeKeys = new String[]{
@@ -40,9 +39,8 @@ public class DuiMessageObserver implements MessageObserver {
             "context.widget.media"};
 
     // 注册当前更新消息
-    public void regist(MessageCallback messageCallback, LinkedList<MessageBean> msgList) {
+    public void regist(MessageCallback messageCallback) {
         mMessageCallback = messageCallback;
-        mMessageList = msgList;
         DDS.getInstance().getAgent().subscribe(mSubscribeKeys, this);
     }
 
@@ -68,9 +66,8 @@ public class DuiMessageObserver implements MessageObserver {
                 }
                 bean.setText(txt);
                 bean.setType(MessageBean.TYPE_OUTPUT);
-                mMessageList.add(bean);
                 if (mMessageCallback != null) {
-                    mMessageCallback.onMessage();
+                    mMessageCallback.onMessageAdd(bean);
                 }
                 break;
             case "context.input.text":
@@ -84,32 +81,33 @@ public class DuiMessageObserver implements MessageObserver {
                             mHasvar = true;
                             bean.setText(var);
                             bean.setType(MessageBean.TYPE_INPUT);
-                            mMessageList.add(bean);
                             if (mMessageCallback != null) {
-                                mMessageCallback.onMessage();
+                                mMessageCallback.onMessageAdd(bean);
                             }
                         } else {
-                            mMessageList.pollLast();
+                            if (mMessageCallback != null) {
+                                mMessageCallback.onMessagePollLast();
+                            }
                             bean.setText(var);
                             bean.setType(MessageBean.TYPE_INPUT);
-                            mMessageList.add(bean);
                             if (mMessageCallback != null) {
-                                mMessageCallback.onMessage();
+                                mMessageCallback.onMessageAdd(bean);
                             }
                         }
                     }
                     if (jo.has("text")) {
                         if (mHasvar) {
-                            mMessageList.pollLast();
+                            if (mMessageCallback != null) {
+                                mMessageCallback.onMessagePollLast();
+                            }
                             mHasvar = false;
                             mIsFirstVar = true;
                         }
                         String text = jo.optString("text", "");
                         bean.setText(text);
                         bean.setType(MessageBean.TYPE_INPUT);
-                        mMessageList.add(bean);
                         if (mMessageCallback != null) {
-                            mMessageCallback.onMessage();
+                            mMessageCallback.onMessageAdd(bean);
                         }
                     }
                 } catch (JSONException e) {
@@ -127,9 +125,8 @@ public class DuiMessageObserver implements MessageObserver {
                     bean.setSubTitle(subTitle);
                     bean.setImgUrl(imgUrl);
                     bean.setType(MessageBean.TYPE_WIDGET_CONTENT);
-                    mMessageList.add(bean);
                     if (mMessageCallback != null) {
-                        mMessageCallback.onMessage();
+                        mMessageCallback.onMessageAdd(bean);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -159,10 +156,8 @@ public class DuiMessageObserver implements MessageObserver {
                     int itemsPerPage = jo.optInt("itemsPerPage");
                     bean.setItemsPerPage(itemsPerPage);
 
-                    mMessageList.add(bean);
-
                     if (mMessageCallback != null) {
-                        mMessageCallback.onMessage();
+                        mMessageCallback.onMessageAdd(bean);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -175,9 +170,8 @@ public class DuiMessageObserver implements MessageObserver {
                     String url = jo.optString("url");
                     bean.setUrl(url);
                     bean.setType(MessageBean.TYPE_WIDGET_WEB);
-                    mMessageList.add(bean);
                     if (mMessageCallback != null) {
-                        mMessageCallback.onMessage();
+                        mMessageCallback.onMessageAdd(bean);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -197,9 +191,8 @@ public class DuiMessageObserver implements MessageObserver {
                             }
                             bean.setUrl(url);
                             bean.setType(MessageBean.TYPE_WIDGET_WEB);
-                            mMessageList.add(bean);
                             if (mMessageCallback != null) {
-                                mMessageCallback.onMessage();
+                                mMessageCallback.onMessageAdd(bean);
                             }
                         }
                     }

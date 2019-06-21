@@ -61,7 +61,7 @@ android {
         testInstrumentationRunner rootProject.ext.dependencies["androidJUnitRunner"]
 
         //是否“自主”，完全独立的语音+我要加油；否则：依靠AIOS语音+我要加油；
-        buildConfigField "boolean", "IS_INDEPENDENCE", "true"
+        buildConfigField "boolean", "IS_INDEPENDENCE", "false"
 
         //是否使用本地测试数据
         buildConfigField "boolean", "IS_DEBUG_DATA", "false"
