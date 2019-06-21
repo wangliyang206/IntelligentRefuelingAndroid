@@ -60,7 +60,7 @@ public class SplashPresenter extends BasePresenter<SplashContract.Model, SplashC
         initFile();
 
         // 定时清理日志
-        initLog();
+//        initLog();
 
         // 开启检查dds初始
         RxUtils.doOnThread(mRootView, () -> checkDDSReady());

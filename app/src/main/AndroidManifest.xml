@@ -28,6 +28,9 @@
     <uses-permission android:name="android.permission.WRITE_CONTACTS" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
 
+    <!-- 广播-自启动 -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <application
         android:name="com.jess.arms.base.BaseApplication"
         android:allowBackup="true"
@@ -35,6 +38,7 @@
         android:label="${APP_NAME}"
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:persistent="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="label">
@@ -61,6 +65,17 @@
 
         <!-- 思必驰AI语音服务 -->
         <service android:name="com.axzl.mobile.refueling.app.service.DDSService" />
+
+        <!-- 开机自启 -->
+        <receiver
+            android:name="com.axzl.mobile.refueling.app.receiver.BootUpReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter android:priority="1000">
+                <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

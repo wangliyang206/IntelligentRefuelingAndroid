@@ -121,7 +121,7 @@ public class AppLifecyclesImpl implements AppLifecycles {
 
         } else {
             //正式环境
-            Timber.plant(new FileLoggingTree());
+//            Timber.plant(new FileLoggingTree());
         }
 
     }

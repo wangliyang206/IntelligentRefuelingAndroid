@@ -30,7 +30,7 @@ import timber.log.Timber;
  * 那么在CommandObserver的onCall方法中会回调topic为"call", data为
  */
 public class DuiCommandObserver implements CommandObserver {
-    private String TAG = "DuiCommandObserver";
+    private final String TAG = "DuiCommandObserver";
     private static final String COMMAND_CALL = "sys.action.call";
     private static final String COMMAND_SELECT = "sys.action.call.select";
     private static final String OPEN_WINDOW = "open_window";

@@ -18,7 +18,7 @@ import timber.log.Timber;
  * 客户端MessageObserver, 用于处理客户端动作的消息响应.
  */
 public class DuiMessageObserver implements MessageObserver {
-    private String Tag = "DuiMessageObserver";
+    private final String Tag = "DuiMessageObserver";
 
     public interface MessageCallback {
         void onMessage();

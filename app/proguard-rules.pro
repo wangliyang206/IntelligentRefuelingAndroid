@@ -218,6 +218,13 @@
 -keep interface com.zhy.autolayout.** { *; }
 
 ##-----------------------------------
+############ 思必驰语音-全链路 ########
+##-----------------------------------
+-dontwarn com.aispeech.**
+-keep public class com.aispeech.lasa{*;}
+-keep public class com.aispeech.dui.dds.luaBug{ *; }
+
+##-----------------------------------
 ############ 百度语音合成 ########
 ##-----------------------------------
 -dontwarn com.baidu.tts.**

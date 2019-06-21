@@ -11,7 +11,7 @@ import timber.log.Timber;
  * 更新Observer,用于更新当前dds组件
  */
 public class DuiUpdateObserver implements MessageObserver {
-    private String Tag = "DuiUpdateObserver";
+    private static final String Tag = "DuiUpdateObserver";
     public static final int START = 0; // 开始更新
     public static final int UPDATEING = 1; // 正在更新
     public static final int FINISH = 2;// 更新完成
@@ -41,6 +41,7 @@ public class DuiUpdateObserver implements MessageObserver {
     // 初始化更新
     private void initUpdate() {
         try {
+            Timber.i(Tag + " initUpdate");
             DDS.getInstance().getUpdater().update(ddsUpdateListener);
         } catch (DDSNotInitCompleteException e) {
             e.printStackTrace();
@@ -49,6 +50,7 @@ public class DuiUpdateObserver implements MessageObserver {
 
     @Override
     public void onMessage(String s, String s1) {
+        Timber.i(Tag + " onMessage s=" + s + " s1=" + s1);
         initUpdate();
     }
 
@@ -56,6 +58,7 @@ public class DuiUpdateObserver implements MessageObserver {
         @Override
         public void onUpdateFound(String detail) {
             try {
+                Timber.i(Tag + " onUpdateFound detail=" + detail);
                 if (mUpdateCallback != null) {
                     mUpdateCallback.onUpdate(START, "发现新版本");
                 }
@@ -67,6 +70,7 @@ public class DuiUpdateObserver implements MessageObserver {
 
         @Override
         public void onUpdateFinish() {
+            Timber.i(Tag + " onUpdateFinish");
             if (mUpdateCallback != null) {
                 mUpdateCallback.onUpdate(FINISH, "更新成功");
             }
@@ -75,6 +79,7 @@ public class DuiUpdateObserver implements MessageObserver {
 
         @Override
         public void onDownloadProgress(float progress) {
+            Timber.i(Tag + " onDownloadProgress progress=" + progress);
             if (mUpdateCallback != null) {
                 mUpdateCallback.onUpdate(UPDATEING, "正在更新 -> " + progress + " / 100");
             }
@@ -85,11 +90,12 @@ public class DuiUpdateObserver implements MessageObserver {
             if (mUpdateCallback != null) {
                 mUpdateCallback.onUpdate(ERROR, "更新失败,详情看Log");
             }
-            Timber.i(Tag + "what = " + what + ", error = " + error);
+            Timber.e(Tag + "what = " + what + ", error = " + error);
         }
 
         @Override
         public void onUpgrade(String version) {
+            Timber.i(Tag + " onUpgrade version=" + version);
             if (mUpdateCallback != null) {
                 mUpdateCallback.onUpdate(ERROR, "更新失败 -> 当前sdk版本过低，和dui平台上的dui内核不匹配，请更新sdk");
             }

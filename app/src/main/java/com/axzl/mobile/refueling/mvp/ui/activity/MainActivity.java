@@ -15,6 +15,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.aispeech.ailog.AILog;
 import com.aispeech.dui.dds.DDS;
 import com.aispeech.dui.dds.exceptions.DDSNotInitCompleteException;
+import com.axzl.mobile.refueling.BuildConfig;
 import com.axzl.mobile.refueling.R;
 import com.axzl.mobile.refueling.app.observer.DuiCommandObserver;
 import com.axzl.mobile.refueling.app.observer.DuiMessageObserver;
@@ -133,11 +134,12 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         mCommandObserver.unregist();
         mNativeApiObserver.unregist();
 
-        // 停止service, 释放dds组件
-        stopService(new Intent(MainActivity.this, DDSService.class));
+        if (!BuildConfig.IS_INDEPENDENCE) {
+            // 非独立
+            // 停止service, 释放dds组件
+            stopService(new Intent(MainActivity.this, DDSService.class));
+        }
 
-        // 释放
-        DDS.getInstance().release();
     }
 
     /**

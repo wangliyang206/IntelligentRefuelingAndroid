@@ -28,7 +28,7 @@ import timber.log.Timber;
  * 参见Android SDK集成文档: https://www.dui.ai/docs/operation/#/ct_common_Andriod_SDK
  */
 public class DDSService extends Service {
-    public String TAG = "DDSService";
+    public static final String TAG = "DDSService";
 
     public DDSService() {
     }
@@ -60,13 +60,14 @@ public class DDSService extends Service {
         @Override
         public void onInitComplete(boolean isFull) {
             if (isFull) {
+                Timber.i(TAG + " onInitComplete");
                 EventBus.getDefault().post("onInitComplete", EventBusTags.ddsInitSuccess);
             }
         }
 
         @Override
         public void onError(int what, final String msg) {
-            Timber.e(TAG, "Init onError: " + what + ", error: " + msg);
+            Timber.e(TAG + "Init onError: " + what + ", error: " + msg);
             new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show());
         }
     };
@@ -75,13 +76,13 @@ public class DDSService extends Service {
     private DDSAuthListener mAuthListener = new DDSAuthListener() {
         @Override
         public void onAuthSuccess() {
-            Timber.d(TAG, "onAuthSuccess");
+            Timber.i(TAG + " onAuthSuccess");
             EventBus.getDefault().post("onAuthSuccess", EventBusTags.ddsAuthSuccess);
         }
 
         @Override
         public void onAuthFailed(final String errId, final String error) {
-            Timber.e(TAG, "onAuthFailed: " + errId + ", error:" + error);
+            Timber.e(TAG + "onAuthFailed: " + errId + ", error:" + error);
             new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(getApplicationContext(),
                     "授权错误:" + errId + ":\n" + error + "\n请查看手册处理", Toast.LENGTH_SHORT).show());
             EventBus.getDefault().post("onAuthFailed", EventBusTags.ddsAuthFailed);
@@ -103,7 +104,6 @@ public class DDSService extends Service {
         config.addConfig(DDSConfig.K_PRODUCT_ID, "278582628"); // 产品ID -- 必填
         config.addConfig(DDSConfig.K_USER_ID, "aispeech");  // 用户ID -- 必填
         config.addConfig(DDSConfig.K_ALIAS_KEY, "test");   // 产品的发布分支 -- 必填
-        config.addConfig(DDSConfig.K_AUTH_TYPE, AuthType.PROFILE); //授权方式, 支持思必驰账号授权和profile文件授权 -- 必填
         config.addConfig(DDSConfig.K_PRODUCT_KEY, "72140d47d46018aed4df62e82b8acebb");// Product Key -- 必填
         config.addConfig(DDSConfig.K_PRODUCT_SECRET, "018c34b28ea9e8d2720e347b2332c936");// Product Secre -- 必填
         config.addConfig(DDSConfig.K_API_KEY, "3796da7fda1dbe00e58546245d034e73");  // 产品授权秘钥，服务端生成，用于产品授权 -- 必填
@@ -113,16 +113,16 @@ public class DDSService extends Service {
 
 
         // 资源更新配置项
-        config.addConfig(DDSConfig.K_DUICORE_ZIP, "duicore.zip"); // 预置在指定目录下的DUI内核资源包名, 避免在线下载内核消耗流量, 推荐使用
-        config.addConfig(DDSConfig.K_CUSTOM_ZIP, "custom.zip"); // 预置在指定目录下的DUI产品配置资源包名, 避免在线下载产品配置消耗流量, 推荐使用
-        config.addConfig(DDSConfig.K_USE_UPDATE_DUICORE, "false"); //设置为false可以关闭dui内核的热更新功能，可以配合内置dui内核资源使用
-        config.addConfig(DDSConfig.K_USE_UPDATE_NOTIFICATION, "false"); // 是否使用内置的资源更新通知栏
+//        config.addConfig(DDSConfig.K_DUICORE_ZIP, "duicore.zip"); // 预置在指定目录下的DUI内核资源包名, 避免在线下载内核消耗流量, 推荐使用
+//        config.addConfig(DDSConfig.K_CUSTOM_ZIP, "custom.zip"); // 预置在指定目录下的DUI产品配置资源包名, 避免在线下载产品配置消耗流量, 推荐使用
+//        config.addConfig(DDSConfig.K_USE_UPDATE_DUICORE, "false"); //设置为false可以关闭dui内核的热更新功能，可以配合内置dui内核资源使用
+//        config.addConfig(DDSConfig.K_USE_UPDATE_NOTIFICATION, "false"); // 是否使用内置的资源更新通知栏
 
         // 录音配置项
-//         config.addConfig(DDSConfig.K_RECORDER_MODE, "internal"); //录音机模式：external（使用外置录音机，需主动调用拾音接口）、internal（使用内置录音机，DDS自动录音）
-//         config.addConfig(DDSConfig.K_IS_REVERSE_AUDIO_CHANNEL, "false"); // 录音机通道是否反转，默认不反转
-//         config.addConfig(DDSConfig.K_AUDIO_SOURCE, MediaRecorder.AudioSource.DEFAULT); // 内置录音机数据源类型
-//         config.addConfig(DDSConfig.K_AUDIO_BUFFER_SIZE, (16000 * 1 * 16 * 100 / 1000)); // 内置录音机读buffer的大小
+        // config.addConfig(DDSConfig.K_RECORDER_MODE, "internal"); //录音机模式：external（使用外置录音机，需主动调用拾音接口）、internal（使用内置录音机，DDS自动录音）
+        // config.addConfig(DDSConfig.K_IS_REVERSE_AUDIO_CHANNEL, "false"); // 录音机通道是否反转，默认不反转
+        // config.addConfig(DDSConfig.K_AUDIO_SOURCE, AudioSource.DEFAULT); // 内置录音机数据源类型
+        // config.addConfig(DDSConfig.K_AUDIO_BUFFER_SIZE, (16000 * 1 * 16 * 100 / 1000)); // 内置录音机读buffer的大小
 
         // TTS配置项
         // config.addConfig(DDSConfig.K_STREAM_TYPE, AudioManager.STREAM_MUSIC); // 内置播放器的STREAM类型
@@ -151,12 +151,12 @@ public class DDSService extends Service {
         // config.addConfig(DDSConfig.K_TTS_DEBUG, "true");  // 用于tts音频调试, 开启后在 "/sdcard/Android/data/包名/cache/tts/" 目录下会自动生成tts音频
 
         // 麦克风阵列配置项
-        // config.addConfig(DDSConfig.K_MIC_TYPE, "1"); // 设置硬件采集模组的类型 0：无。默认值。 1：单麦回消 2：线性四麦 3：环形六麦 4：车载双麦 5：家具双麦
+        // config.addConfig(DDSConfig.K_MIC_TYPE, "1"); // 设置硬件采集模组的类型 0：无。默认值。 1：单麦回消 2：线性四麦 3：环形六麦 4：车载双麦 5：家具双麦 6: 环形四麦  7: 新车载双麦
         // config.addConfig(DDSConfig.K_MIC_ARRAY_AEC_CFG, "/data/aec.bin"); // 麦克风阵列aec资源的磁盘绝对路径,需要开发者确保在这个路径下这个资源存在
         // config.addConfig(DDSConfig.K_MIC_ARRAY_BEAMFORMING_CFG, "/data/beamforming.bin"); // 麦克风阵列beamforming资源的磁盘绝对路径，需要开发者确保在这个路径下这个资源存在
         // config.addConfig(DDSConfig.K_MIC_ARRAY_WAKEUP_CFG, "/data/wakeup_cfg.bin"); // 麦克风阵列wakeup配置资源的磁盘绝对路径，需要开发者确保在这个路径下这个资源存在。
 
-        Timber.i(TAG, "config->" + config.toString());
+        Timber.i(TAG + "config->" + config.toString());
         return config;
     }
 
@@ -184,6 +184,7 @@ public class DDSService extends Service {
         } else if (TextUtils.isEmpty(serial)) {
             serial = "unkown";
         }
+        Timber.i(TAG + "imei->" + imei + " serial" + serial);
         uuid = UUID.nameUUIDFromBytes((imei + serial).getBytes()).toString();
         return uuid;
     }
