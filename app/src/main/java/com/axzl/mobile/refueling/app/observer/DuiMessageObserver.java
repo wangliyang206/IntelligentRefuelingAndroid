@@ -1,10 +1,13 @@
 package com.axzl.mobile.refueling.app.observer;
 
+import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.aispeech.dui.dds.DDS;
 import com.aispeech.dui.dds.agent.MessageObserver;
 import com.axzl.mobile.refueling.mvp.model.entity.MessageBean;
+import com.axzl.mobile.refueling.mvp.ui.activity.MainActivity;
+import com.blankj.utilcode.util.ActivityUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,7 +55,7 @@ public class DuiMessageObserver implements MessageObserver {
 
     @Override
     public void onMessage(String message, String data) {
-        Timber.i(Tag+ "message : " + message + " data : " + data);
+        Timber.i(Tag + " message : " + message + " data : " + data);
         MessageBean bean = null;
         switch (message) {
             case "context.output.text":
@@ -64,10 +67,19 @@ public class DuiMessageObserver implements MessageObserver {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                bean.setText(txt);
-                bean.setType(MessageBean.TYPE_OUTPUT);
-                if (mMessageCallback != null) {
-                    mMessageCallback.onMessageAdd(bean);
+
+                // 如果当前界面属于关闭状态，则需要调起界面；其它按正常流程继续。
+                if (txt.contains("我在，有什么可以帮你") && !ActivityUtils.isActivityExistsInStack(MainActivity.class)) {
+                    Bundle options = new Bundle();
+                    options.putBoolean("isService", true);
+                    options.putString("tips", txt);
+                    ActivityUtils.startActivity(options, MainActivity.class);
+                } else {
+                    bean.setText(txt);
+                    bean.setType(MessageBean.TYPE_OUTPUT);
+                    if (mMessageCallback != null) {
+                        mMessageCallback.onMessageAdd(bean);
+                    }
                 }
                 break;
             case "context.input.text":

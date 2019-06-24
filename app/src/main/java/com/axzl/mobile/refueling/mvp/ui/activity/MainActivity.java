@@ -66,11 +66,22 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     @Inject
     LinkedList<MessageBean> mMessageList;                                                           // 当前消息容器
 
+    /**
+     * Loading 效果
+     */
     private MaterialDialog mDialog;
+    /**
+     * 是否是服务调起的
+     */
+    private boolean isService = false;
 
     @Override
     protected void onResume() {
-        sendHiMessage();
+        if (isService) {
+            isService = false;
+        } else {
+            sendHiMessage();
+        }
         refreshTv("等待唤醒...");
         super.onResume();
     }
@@ -140,6 +151,27 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                 .progress(true, 0)
                 .cancelable(false)
                 .build();
+
+        // 处理业务
+        getBundleValues();
+    }
+
+    /**
+     * 处理“语音服务”收到消息后调起界面
+     */
+    private void getBundleValues() {
+        Bundle bundle = this.getIntent().getExtras();
+        if (bundle != null) {
+            isService = bundle.getBoolean("isService", false);
+            if (isService) {
+                String tips = bundle.getString("tips", "");
+                MessageBean bean = new MessageBean();
+                bean.setText(tips);
+                bean.setType(MessageBean.TYPE_OUTPUT);
+                notifyItemInserted(bean);
+            }
+
+        }
     }
 
     /**
