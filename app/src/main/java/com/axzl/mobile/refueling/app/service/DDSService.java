@@ -15,6 +15,7 @@ import com.aispeech.dui.dds.DDSAuthListener;
 import com.aispeech.dui.dds.DDSConfig;
 import com.aispeech.dui.dds.DDSInitListener;
 import com.aispeech.dui.dds.exceptions.DDSNotInitCompleteException;
+import com.axzl.mobile.refueling.BuildConfig;
 import com.axzl.mobile.refueling.app.observer.DuiCommandObserver;
 import com.axzl.mobile.refueling.app.observer.DuiMessageObserver;
 import com.axzl.mobile.refueling.app.observer.DuiNativeApiObserver;
@@ -234,7 +235,11 @@ public class DDSService extends Service implements DDSAuthListener, DDSInitListe
         config.addConfig(DDSConfig.K_ALIAS_KEY, "test");   // 产品的发布分支 -- 必填
         config.addConfig(DDSConfig.K_PRODUCT_KEY, "72140d47d46018aed4df62e82b8acebb");// Product Key -- 必填
         config.addConfig(DDSConfig.K_PRODUCT_SECRET, "018c34b28ea9e8d2720e347b2332c936");// Product Secre -- 必填
-        config.addConfig(DDSConfig.K_API_KEY, "3796da7fda1dbe00e58546245d034e73");  // 产品授权秘钥，服务端生成，用于产品授权 -- 必填
+        if(BuildConfig.DEBUG){
+            config.addConfig(DDSConfig.K_API_KEY, "b030497735f51c987f1f77e75d107d7b");  // 产品授权秘钥，服务端生成，用于产品授权 -- 必填
+        }else {
+            config.addConfig(DDSConfig.K_API_KEY, "f0f9898b5f6a1dbd3b04bf345d107dba");  // 产品授权秘钥，服务端生成，用于产品授权 -- 必填
+        }
         config.addConfig(DDSConfig.K_DEVICE_ID, getDeviceId(getApplicationContext()));//填入唯一的deviceId -- 选填
 
         // 更多高级配置项,请参考文档: https://www.dui.ai/docs/ct_common_Andriod_SDK 中的 --> 四.高级配置项
