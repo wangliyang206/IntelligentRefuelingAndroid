@@ -85,11 +85,12 @@ public class SplashPresenter extends BasePresenter<SplashContract.Model, SplashC
                         doAutoAuth();
                     }
                 } catch (DDSNotInitCompleteException e) {
+                    AILog.e(TAG,e.getMessage());
                     e.printStackTrace();
                 }
                 break;
             } else {
-                AILog.w(TAG, "waiting  init complete finish...");
+                AILog.w(TAG, "waiting  init complete finish...#"+DDS.getInstance().getInitStatus());
                 RxUtils.doOnUIThread(mRootView, () -> EventBus.getDefault().post(true, EventBusTags.splashLoading));
             }
             try {

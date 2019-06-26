@@ -120,6 +120,8 @@ public class DDSService extends Service implements DDSAuthListener, DDSInitListe
      */
     @Override
     public void onInitComplete(boolean isFull) {
+        // isFull参数如果为false，则表示不完全初始化，缺失资源包，您需要等待资源包的更新下载完成或者内置一份资源包;
+        // 如果为true，则表示完全初始化，所有功能就绪。
         if (isFull) {
             Timber.i(TAG + " onInitComplete");
 
