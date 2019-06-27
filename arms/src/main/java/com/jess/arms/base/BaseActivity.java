@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.view.InflateException;
@@ -73,27 +74,6 @@ public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivi
     @Nullable
     protected P mPresenter;//如果当前页面逻辑简单, Presenter 可以为 null
 
-    @NonNull
-    @Override
-    public synchronized Cache<String, Object> provideCache() {
-        if (mCache == null) {
-            mCache = ArmsUtils.obtainAppComponentFromContext(this).cacheFactory().build(CacheType.ACTIVITY_CACHE);
-        }
-        return mCache;
-    }
-
-    @NonNull
-    @Override
-    public final Subject<ActivityEvent> provideLifecycleSubject() {
-        return mLifecycleSubject;
-    }
-
-    @Override
-    public View onCreateView(String name, Context context, AttributeSet attrs) {
-        View view = convertAutoView(name, context, attrs);
-        return view == null ? super.onCreateView(name, context, attrs) : view;
-    }
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,6 +102,27 @@ public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivi
         if (mPresenter != null)
             mPresenter.onDestroy();//释放资源
         this.mPresenter = null;
+    }
+
+    @NonNull
+    @Override
+    public synchronized Cache<String, Object> provideCache() {
+        if (mCache == null) {
+            mCache = ArmsUtils.obtainAppComponentFromContext(this).cacheFactory().build(CacheType.ACTIVITY_CACHE);
+        }
+        return mCache;
+    }
+
+    @NonNull
+    @Override
+    public final Subject<ActivityEvent> provideLifecycleSubject() {
+        return mLifecycleSubject;
+    }
+
+    @Override
+    public View onCreateView(String name, Context context, AttributeSet attrs) {
+        View view = convertAutoView(name, context, attrs);
+        return view == null ? super.onCreateView(name, context, attrs) : view;
     }
 
     /**
@@ -157,17 +158,30 @@ public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivi
     }
 
     /**
+     * 使用自定义颜色
+     * PS：R.color.colorAccent
+     */
+    public int useStatusBarColor() {
+        return -1;
+    }
+
+    /**
      * 设置状态栏为透明
      */
     private void setStatusBar() {
-        if (useStatusBar())
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                //SDK >= 21时, 取消状态栏的阴影
-                StatusBarCompat.translucentStatusBar(this, true);
+        if (useStatusBar()) {
+            if (useStatusBarColor() != -1) {
+                StatusBarCompat.setStatusBarColor(this, ContextCompat.getColor(this, useStatusBarColor()));
             } else {
-                //透明状态栏
-                StatusBarCompat.translucentStatusBar(this);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    //SDK >= 21时, 取消状态栏的阴影
+                    StatusBarCompat.translucentStatusBar(this, true);
+                } else {
+                    //透明状态栏
+                    StatusBarCompat.translucentStatusBar(this);
+                }
             }
+        }
     }
 
     public void onClick(View v) {
