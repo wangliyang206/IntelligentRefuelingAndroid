@@ -11,8 +11,6 @@ import com.jess.arms.cj.IRequestMapper;
 import com.jess.arms.utils.ArmsUtils;
 import com.jess.arms.utils.DeviceUtils;
 
-import javax.inject.Inject;
-
 /**
  * 包名： com.zqw.mobile.recycling.api
  * 对象名： RequestMapper
@@ -21,15 +19,13 @@ import javax.inject.Inject;
  * 邮箱：wangliyang206@163.com
  * 创建日期： 2017/3/24 14:36
  */
+public class RequestMapper implements IRequestMapper {
 
-public final class RequestMapper implements IRequestMapper {
-
-    private Context context;
+    private Context mContext;
     private AccountManager accountManager;
 
-    @Inject
-    public RequestMapper(Context context, AccountManager accountManager) {
-        this.context = context;
+    public RequestMapper(Context mContext, AccountManager accountManager) {
+        this.mContext = mContext;
         this.accountManager = accountManager;
     }
 
@@ -42,7 +38,7 @@ public final class RequestMapper implements IRequestMapper {
         request.setToken(token);
         request.setVersion(Constant.version);
 
-        request.setClient(getPhoneInfo(context));
+        request.setClient(getPhoneInfo(mContext));
         return request;
     }
 

@@ -1,5 +1,6 @@
 package com.axzl.mobile.refueling.di.module;
 
+import com.axzl.mobile.refueling.app.global.AccountManager;
 import com.jess.arms.di.scope.ActivityScope;
 
 import dagger.Binds;
@@ -27,4 +28,10 @@ public abstract class MainModule {
 
     @Binds
     abstract MainContract.Model bindMainModel(MainModel model);
+
+    @ActivityScope
+    @Provides
+    static AccountManager provideAccountManager(MainContract.View view) {
+        return new AccountManager(view.getActivity());
+    }
 }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <url name="/customize/open/app">
+        <cmd name="打开快捷加油"/>
+        <cmd name="快捷加油"/>
+        <cmd name="我要加油"/>
+        <cmd name="附近加油站"/>
+    </url>
+
+    <url name="/customize/list/select">
+        <cmd name="上一页"/>
+        <cmd name="下一页"/>
+        <cmd name="第一个"/>
+        <cmd name="第二个"/>
+        <cmd name="第三个"/>
+        <cmd name="第四个"/>
+        <cmd name="第五个"/>
+    </url>
+</root>

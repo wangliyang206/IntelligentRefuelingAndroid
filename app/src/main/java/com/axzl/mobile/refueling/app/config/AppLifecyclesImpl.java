@@ -17,11 +17,21 @@ package com.axzl.mobile.refueling.app.config;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.multidex.MultiDex;
+import android.view.WindowManager;
 
+import com.aispeech.aios.sdk.AIOSForCarSDK;
+import com.aispeech.aios.sdk.listener.AIOSReadyListener;
+import com.aispeech.aios.sdk.manager.AIOSAudioManager;
+import com.aispeech.aios.sdk.manager.AIOSCustomizeManager;
+import com.aispeech.aios.sdk.manager.AIOSUIManager;
 import com.aitangba.swipeback.ActivityLifecycleHelper;
 import com.axzl.mobile.refueling.BuildConfig;
+import com.axzl.mobile.refueling.app.global.AccountManager;
+import com.axzl.mobile.refueling.app.listener.BridgeAudioListener;
+import com.axzl.mobile.refueling.app.listener.CustomizeListener;
 import com.axzl.mobile.refueling.app.utils.AppCrashHandler;
 import com.axzl.mobile.refueling.app.utils.FileLoggingTree;
 import com.blankj.utilcode.util.Utils;
@@ -45,6 +55,7 @@ import timber.log.Timber;
  * ================================================
  */
 public class AppLifecyclesImpl implements AppLifecycles {
+    private static final String TAG = "AppLifecyclesImpl";
 
     @Override
     public void attachBaseContext(@NonNull Context base) {
@@ -74,15 +85,8 @@ public class AppLifecyclesImpl implements AppLifecycles {
 
         initLeakCanary(application);
 
-        //初始化极光消息推送
-//        initJPush(application);
-
-        // 初始化百度地图
-        // 在使用 SDK 各组间之前初始化 context 信息，传入 ApplicationContext
-//        SDKInitializer.initialize(application);
-
-        // 初始化定位
-//        initLocation(application);
+        //初始化AIOS
+        initAIOS(application);
 
         // 右滑关闭Activity
         application.registerActivityLifecycleCallbacks(ActivityLifecycleHelper.build());
@@ -144,5 +148,60 @@ public class AppLifecyclesImpl implements AppLifecycles {
         ArmsUtils.obtainAppComponentFromContext(application).extras()
                 .put(IntelligentCache.getKeyOfKeep(RefWatcher.class.getName())
                         , BuildConfig.USE_CANARY ? LeakCanary.install(application) : RefWatcher.DISABLED);
+    }
+
+
+    /**
+     * 初始化AIOS
+     */
+    private void initAIOS(Application application) {
+        AccountManager accountManager = new AccountManager(application);
+
+        AIOSForCarSDK.initialize(application, new AIOSReadyListener() {
+            @Override
+            public void onAIOSReady() {
+                Timber.i(TAG + " AIOSReadyListener onAIOS Ready");
+                //定制录音机
+                AIOSCustomizeManager.getInstance().customizeRecorder(
+                        accountManager.getIsAecEnabled(false),
+                        accountManager.getIsInterruptEnabled(false), false
+                );
+
+                //定制主唤醒词
+//                List<MajorWakeup> majorWakeups= new ArrayList<MajorWakeup>();
+//                majorWakeups.add(new MajorWakeup("你好小驰", "ni hao xiao chi", 0.13f));
+//                majorWakeups.add(new MajorWakeup("你好阿星", "ni hao a xing", 0.13f));
+//                AIOSCustomizeManager.getInstance().setMajorWakeup(majorWakeups);
+
+                //定制悬浮窗为全屏
+                WindowManager.LayoutParams layoutParams = AIOSUIManager.getInstance().obtainLayoutParams();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+                } else {
+                    layoutParams.type = WindowManager.LayoutParams.TYPE_PHONE;
+                }
+                layoutParams.flags = WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
+                AIOSUIManager.getInstance().setLayoutParams(layoutParams);
+
+                //设置音频管理监听器，请实现或者使用以下监听器
+                AIOSAudioManager.getInstance().registerAudioListener(new BridgeAudioListener());
+                //如果静态注册了自定义命令，请注册以下监听器
+                AIOSCustomizeManager.getInstance().registerCustomizeListener(new CustomizeListener(application));
+                AIOSCustomizeManager.getInstance().setScanAppEnabled(false);
+
+                AIOSCustomizeManager.getInstance().setWakeupThreshPercent(1.0f);
+            }
+
+            /**
+             * AIOS（Daemon或者Adapter）重启完成后将会调用该回调
+             */
+            @Override
+            public void onAIOSRebooted() {
+                Timber.i(TAG + " AIOSReadyListener onAIOS Rebooted");
+                //您可以选择此时跟随AIOS重启
+                //也可以在此时重新初始化：除了需要手动调用初始化接口外，还需要还原部分初始化接口外调用的主动接口
+                onAIOSReady();
+            }
+        });
     }
 }

@@ -5,14 +5,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.view.View;
 
 import com.axzl.mobile.refueling.R;
 import com.axzl.mobile.refueling.di.component.DaggerMainComponent;
 import com.axzl.mobile.refueling.mvp.contract.MainContract;
 import com.axzl.mobile.refueling.mvp.presenter.MainPresenter;
+import com.blankj.utilcode.util.ActivityUtils;
 import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
+
+import butterknife.OnClick;
 
 import static com.jess.arms.utils.Preconditions.checkNotNull;
 
@@ -34,7 +38,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     @Override
     public void setupActivityComponent(@NonNull AppComponent appComponent) {
-        DaggerMainComponent //如找不到该类,请编译一下项目
+        DaggerMainComponent
                 .builder()
                 .appComponent(appComponent)
                 .view(this)
@@ -44,12 +48,39 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     @Override
     public int initView(@Nullable Bundle savedInstanceState) {
-        return R.layout.activity_main; //如果你不需要框架帮你设置 setContentView(id) 需要自行设置,请返回 0
+        return R.layout.activity_main;
     }
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
+        mPresenter.initPresenter();
+    }
 
+    @OnClick({
+            R.id.btn_aios_open,
+            R.id.btn_aios_close,
+            R.id.btn_start_interaction,
+            R.id.btn_open_refueling
+    })
+    @Override
+    public void onClick(View v) {
+        super.onClick(v);
+        switch (v.getId()) {
+            case R.id.btn_aios_open:
+                mPresenter.setAIOS(true);
+                break;
+            case R.id.btn_aios_close:
+                mPresenter.setAIOS(false);
+                break;
+
+            case R.id.btn_start_interaction:
+                mPresenter.setSwitchVoiceWakeup(true);
+                mPresenter.startInteraction();
+                break;
+            case R.id.btn_open_refueling:
+                ActivityUtils.startActivity(SearchForGasStationsActivity.class);
+                break;
+        }
     }
 
     @Override

@@ -63,7 +63,8 @@ public class SplashActivity extends BaseActivity<SplashPresenter> implements Spl
      */
     @NeedsPermission({
             Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.RECORD_AUDIO
     })
     public void runApp() {
         mPresenter.initPresenter();

@@ -83,7 +83,33 @@ public final class AccountManager {
      * 定位 - 地址
      */
     private static final String ADDRESS = "address";
+
+
+    public static final String IS_AEC_ENABLED = "is_aec_enabled";
+    public static final String IS_INTERRUPT_ENABLED = "is_interrupt_enabled";
+    public static final String IS_AIOS_SWITCH = "is_aios_switch";
+    public static final String IS_NATIVE_SHORTCUT_ENABLE = "is_native_shortcut_enable";
+    public static final String AIOS_VOLUME = "aios_volume";
+    public static final String IS_SHOW_GLOBAL_MIC = "is_show_global_mic";
+    public static final String IS_ONESHOT_SWITCH = "is_oneshot_switch";
+    public static final String IS_WAKEUP_SWITCH= "is_wakeup_switch";
     /*----------------------------------------------操作对象-------------------------------------------------*/
+
+    public void setIsWakeupSwitch(boolean def){
+        spHelper.put(IS_WAKEUP_SWITCH,def);
+    }
+
+    public void setIsAiosSwitch(boolean def){
+        spHelper.put(IS_AIOS_SWITCH,def);
+    }
+
+    public boolean getIsAecEnabled(boolean def){
+        return spHelper.getPref(IS_AEC_ENABLED,def);
+    }
+
+    public boolean getIsInterruptEnabled(boolean def){
+        return spHelper.getPref(IS_INTERRUPT_ENABLED,def);
+    }
 
     private AppPreferencesHelper spHelper;
 

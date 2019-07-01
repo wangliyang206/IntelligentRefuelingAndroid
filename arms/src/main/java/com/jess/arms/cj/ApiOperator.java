@@ -10,11 +10,12 @@ import io.reactivex.functions.Function;
  * @author: 王力杨
  * @date: 16/5/24 上午10:01
  */
+
 public class ApiOperator {
     private IRequestMapper mapper;
 
-    public ApiOperator(IRequestMapper mapper) {
-        this.mapper = mapper;
+    public ApiOperator(IRequestMapper requestMapper) {
+        this.mapper = requestMapper;
     }
 
     public final <T, P> Observable<P> chain(T t, final ApiAction<T, P> action) {

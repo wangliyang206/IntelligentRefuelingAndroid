@@ -11,7 +11,7 @@
 
     <!--启动界面主题-->
     <style name="SplashTheme" parent="AppTheme">
-        <item name="android:windowBackground">@mipmap/bg_welcome</item>
+        <item name="android:windowBackground">@mipmap/start</item>
         <item name="android:windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

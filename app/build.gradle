@@ -64,7 +64,7 @@ android {
         buildConfigField "boolean", "AUTO_UPDATES", "true"
 
         //是否使用本地测试数据
-        buildConfigField "boolean", "IS_DEBUG_DATA", "false"
+        buildConfigField "boolean", "IS_DEBUG_DATA", "true"
 
         //使MultiDex支持
         multiDexEnabled true
@@ -220,6 +220,7 @@ dependencies {
     annotationProcessor(rootProject.ext.dependencies["butterknife-compiler"]) {
         exclude module: 'support-annotations'
     }
+    implementation rootProject.ext.dependencies["paginate"]
 
     //arms
     implementation project(':arms')
@@ -283,4 +284,6 @@ dependencies {
     }
     annotationProcessor rootProject.ext.dependencies["permission-processor"]
 
+    implementation files('libs/aios-sdk.190531.2.jar')
+    implementation files('libs/aios-sdk.190531.2-sources.jar')
 }
