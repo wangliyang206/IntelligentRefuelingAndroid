@@ -5,16 +5,17 @@ import android.app.Application;
 import com.aispeech.aios.sdk.AIOSForCarSDK;
 import com.aispeech.aios.sdk.manager.AIOSSystemManager;
 import com.axzl.mobile.refueling.app.global.AccountManager;
-import com.jess.arms.integration.AppManager;
+import com.axzl.mobile.refueling.mvp.contract.MainContract;
+import com.blankj.utilcode.util.ScreenUtils;
 import com.jess.arms.di.scope.ActivityScope;
-import com.jess.arms.mvp.BasePresenter;
 import com.jess.arms.http.imageloader.ImageLoader;
-
-import me.jessyan.rxerrorhandler.core.RxErrorHandler;
+import com.jess.arms.integration.AppManager;
+import com.jess.arms.mvp.BasePresenter;
 
 import javax.inject.Inject;
 
-import com.axzl.mobile.refueling.mvp.contract.MainContract;
+import me.jessyan.rxerrorhandler.core.RxErrorHandler;
+import timber.log.Timber;
 
 
 /**
@@ -47,24 +48,28 @@ public class MainPresenter extends BasePresenter<MainContract.Model, MainContrac
         super(model, rootView);
     }
 
-    public void initPresenter(){
-
+    public void initPresenter() {
+        Timber.i("###宽度=" + ScreenUtils.getScreenWidth() + "高度=" + ScreenUtils.getScreenHeight());
     }
 
-    /** 是否开启AIOS */
-    public void setAIOS(boolean isChecked){
+    /**
+     * 是否开启AIOS
+     */
+    public void setAIOS(boolean isChecked) {
         mAccountManager.setIsAiosSwitch(isChecked);
-        if(isChecked){
+        if (isChecked) {
             // 开启AIOS
             AIOSForCarSDK.enableAIOS();
-        }else {
+        } else {
             // 关闭AIOS
             AIOSForCarSDK.disableAIOS();
         }
     }
 
-    /** 是否开启录音 */
-    public void setRecorder(boolean isChecked){
+    /**
+     * 是否开启录音
+     */
+    public void setRecorder(boolean isChecked) {
         if (isChecked) {
             AIOSSystemManager.getInstance().startRecorder();
         } else {
@@ -72,13 +77,17 @@ public class MainPresenter extends BasePresenter<MainContract.Model, MainContrac
         }
     }
 
-    /** 手动唤醒AIOS */
-    public void startInteraction(){
+    /**
+     * 手动唤醒AIOS
+     */
+    public void startInteraction() {
         AIOSSystemManager.getInstance().startInteraction();
     }
 
-    /** 是否开启ACC */
-    public void setACC(boolean isChecked){
+    /**
+     * 是否开启ACC
+     */
+    public void setACC(boolean isChecked) {
         if (isChecked) {
             AIOSSystemManager.getInstance().setACCOn();
         } else {
@@ -86,8 +95,10 @@ public class MainPresenter extends BasePresenter<MainContract.Model, MainContrac
         }
     }
 
-    /** 开启语音唤醒 */
-    public void setSwitchVoiceWakeup(boolean isChecked){
+    /**
+     * 开启语音唤醒
+     */
+    public void setSwitchVoiceWakeup(boolean isChecked) {
         mAccountManager.setIsWakeupSwitch(isChecked);
         AIOSSystemManager.getInstance().setVoiceWakeupEnabled(isChecked);
     }
