@@ -35,6 +35,20 @@ public class DuiCommandObserver implements CommandObserver {
     private static final String COMMAND_SELECT = "sys.action.call.select";
     private static final String OPEN_WINDOW = "open_window";
     private static final String NAVI_ROUTE = "navi.route";
+
+    /**
+     * 选择油品
+     */
+    private static final String OILS = "oils";
+    /**
+     * 选择金额
+     */
+    private static final String OIL_PRICE = "oil_price";
+    /**
+     * 二维码
+     */
+    private static final String QR_CODE = "qr_code";
+
     private String mSelectedPhone = null;
     private Context mContent;
 
@@ -49,7 +63,7 @@ public class DuiCommandObserver implements CommandObserver {
     public void regist(Context mContent) {
         this.mContent = mContent;
         this.isRegist = true;
-        DDS.getInstance().getAgent().subscribe(new String[]{COMMAND_CALL, COMMAND_SELECT, OPEN_WINDOW, NAVI_ROUTE},
+        DDS.getInstance().getAgent().subscribe(new String[]{COMMAND_CALL, COMMAND_SELECT, OPEN_WINDOW, NAVI_ROUTE, OILS, OIL_PRICE, QR_CODE},
                 this);
     }
 
@@ -72,7 +86,13 @@ public class DuiCommandObserver implements CommandObserver {
     public void onCall(String command, String data) {
         Timber.i(TAG + "command: " + command + "  data: " + data);
         try {
-            if (COMMAND_CALL.equals(command)) {
+            if (OILS.equals(command)) {
+
+            } else if (OIL_PRICE.equals(command)) {
+
+            } else if (QR_CODE.equals(command)) {
+
+            } else if (COMMAND_CALL.equals(command)) {
                 String number = new JSONObject(data).optString("phone");
                 if (number == null) {
                     phoneDial(mSelectedPhone);

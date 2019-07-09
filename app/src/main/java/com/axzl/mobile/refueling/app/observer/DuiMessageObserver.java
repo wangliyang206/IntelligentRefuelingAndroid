@@ -52,6 +52,72 @@ public class DuiMessageObserver implements MessageObserver {
         DDS.getInstance().getAgent().unSubscribe(this);
     }
 
+    /**
+     * 模拟结果
+     */
+    private void result(int i) {
+        MessageBean bean = new MessageBean();
+
+        if (i == 1) {
+            MessageBean a1 = new MessageBean();
+            a1.setTitle("汽油90号");
+            a1.setSubTitle("");
+            bean.addMessageBean(a1);
+
+            MessageBean a2 = new MessageBean();
+            a2.setTitle("汽油92号");
+            a2.setSubTitle("");
+            bean.addMessageBean(a2);
+
+            MessageBean a3 = new MessageBean();
+            a3.setTitle("汽油95号");
+            a3.setSubTitle("");
+            bean.addMessageBean(a3);
+
+            MessageBean a4 = new MessageBean();
+            a4.setTitle("汽油98号");
+            a4.setSubTitle("");
+            bean.addMessageBean(a4);
+
+            MessageBean a5 = new MessageBean();
+            a5.setTitle("柴油0号");
+            a5.setSubTitle("");
+            bean.addMessageBean(a5);
+        } else {
+            MessageBean b1 = new MessageBean();
+            b1.setTitle("100元");
+            b1.setSubTitle("");
+            bean.addMessageBean(b1);
+
+            MessageBean b2 = new MessageBean();
+            b2.setTitle("200元");
+            b2.setSubTitle("");
+            bean.addMessageBean(b2);
+
+            MessageBean b3 = new MessageBean();
+            b3.setTitle("250元");
+            b3.setSubTitle("");
+            bean.addMessageBean(b3);
+
+            MessageBean b4 = new MessageBean();
+            b4.setTitle("300元");
+            b4.setSubTitle("");
+            bean.addMessageBean(b4);
+
+            MessageBean b5 = new MessageBean();
+            b5.setTitle("350元");
+            b5.setSubTitle("");
+            bean.addMessageBean(b5);
+        }
+
+        bean.setCurrentPage(1);
+        bean.setType(MessageBean.TYPE_WIDGET_LIST);
+        bean.setItemsPerPage(5);
+
+        if (mMessageCallback != null) {
+            mMessageCallback.onMessageAdd(bean);
+        }
+    }
 
     @Override
     public void onMessage(String message, String data) {
@@ -80,6 +146,21 @@ public class DuiMessageObserver implements MessageObserver {
                     if (mMessageCallback != null) {
                         mMessageCallback.onMessageAdd(bean);
                     }
+
+                    /* 以下是特殊处理 */
+                    if (txt.contains("请选择油品")) {
+                        result(1);
+                    } else if (txt.contains("请选择加油金额")) {
+                        result(2);
+                    } else if (txt.contains("操作成功，请及时扫描二维码进行支付。")) {
+                        MessageBean qrCode = new MessageBean();
+                        qrCode.setText(txt);
+                        qrCode.setType(MessageBean.TYPE_QR_CODE);
+                        if (mMessageCallback != null) {
+                            mMessageCallback.onMessageAdd(qrCode);
+                        }
+                    }
+
                 }
                 break;
             case "context.input.text":

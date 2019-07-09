@@ -9,6 +9,7 @@ import com.axzl.mobile.refueling.R;
 import com.axzl.mobile.refueling.mvp.model.entity.MessageBean;
 import com.axzl.mobile.refueling.mvp.ui.holder.IntputViewHolder;
 import com.axzl.mobile.refueling.mvp.ui.holder.OutputViewHolder;
+import com.axzl.mobile.refueling.mvp.ui.holder.QrViewHolder;
 import com.axzl.mobile.refueling.mvp.ui.holder.WebViewHolder;
 import com.axzl.mobile.refueling.mvp.ui.holder.WidgetContentViewHolder;
 import com.axzl.mobile.refueling.mvp.ui.holder.WidgetListViewHolder;
@@ -55,6 +56,9 @@ public class DialogAdapter extends DefaultAdapter<MessageBean> {
 
             case MessageBean.TYPE_WIDGET_MEDIA:
                 return new WebViewHolder(v);
+
+            case MessageBean.TYPE_QR_CODE:
+                return new QrViewHolder(v);
         }
         return new IntputViewHolder(v);
     }
@@ -80,6 +84,9 @@ public class DialogAdapter extends DefaultAdapter<MessageBean> {
 
             case MessageBean.TYPE_WIDGET_MEDIA:
                 return R.layout.msg_widget_web;
+
+            case MessageBean.TYPE_QR_CODE:
+                return R.layout.msg_widget_qr;
         }
         return R.layout.msg_input;
     }

@@ -23,9 +23,13 @@ public class ListWidgetAdapter extends BasePageAdapter<MessageBean, ListWidgetAd
     private int mLayoutId;
     private int mPosition;
 
-    /** 总数据源 */
+    /**
+     * 总数据源
+     */
     private List<MessageBean> mList;
-    /** 当前状态 */
+    /**
+     * 当前状态
+     */
     private String mState;
 
     public ListWidgetAdapter(Context context, @LayoutRes int itemLayoutId, int position, String mState, List<MessageBean> mList) {
@@ -70,7 +74,14 @@ public class ListWidgetAdapter extends BasePageAdapter<MessageBean, ListWidgetAd
                 holder.index.setText("");
             } else {
                 holder.title.setText(item.getTitle());
-                holder.subtitle.setText(item.getSubTitle());
+
+                if (item.getSubTitle().equals("")) {
+                    holder.subtitle.setVisibility(View.GONE);
+                    holder.subtitle.setText(item.getSubTitle());
+                } else {
+                    holder.subtitle.setVisibility(View.VISIBLE);
+                    holder.subtitle.setText(item.getSubTitle());
+                }
                 holder.index.setText(String.valueOf(position % (mRow * mColumn) + 1));
                 holder.itemView.setOnLongClickListener(new OnItemLongClickListener(adjustedPosition));
                 holder.itemView.setOnClickListener(new OnItemClickListener(adjustedPosition));

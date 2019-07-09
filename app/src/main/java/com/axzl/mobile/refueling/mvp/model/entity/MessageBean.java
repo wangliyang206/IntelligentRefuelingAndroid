@@ -7,12 +7,19 @@ import java.util.ArrayList;
  */
 
 public class MessageBean {
+    /** 系统输出 */
     public static final int TYPE_OUTPUT = 0;
+    /** 用户输入 */
     public static final int TYPE_INPUT = 1;
     public static final int TYPE_WIDGET_CONTENT = 2;
+    /** 平台返回 列表数据 */
     public static final int TYPE_WIDGET_LIST = 3;
+    /** 平台返回 网页地址 */
     public static final int TYPE_WIDGET_WEB = 4;
+    /** 平台返回 网页媒体 */
     public static final int TYPE_WIDGET_MEDIA = 5;
+    /** 二维码 */
+    public static final int TYPE_QR_CODE = 6;
 
     private int type;
     private String text;
@@ -33,7 +40,8 @@ public class MessageBean {
     private int mCurrentPage = 1;
     private boolean mFirstLayout = true;
 
-    private int itemsPerPage;// 每页的条数
+    /** 每页的条数 */
+    private int itemsPerPage;
 
     public int getType() {
         return type;
