@@ -1,10 +1,12 @@
 package com.axzl.mobile.refueling.mvp.presenter;
 
 import android.app.Application;
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.OnLifecycleEvent;
 
-import com.aispeech.aios.sdk.AIOSForCarSDK;
-import com.aispeech.aios.sdk.manager.AIOSSystemManager;
 import com.axzl.mobile.refueling.app.global.AccountManager;
+import com.axzl.mobile.refueling.app.service.LocationService;
+import com.axzl.mobile.refueling.app.service.MyLocationListener;
 import com.axzl.mobile.refueling.mvp.contract.MainContract;
 import com.blankj.utilcode.util.ScreenUtils;
 import com.jess.arms.di.scope.ActivityScope;
@@ -43,6 +45,11 @@ public class MainPresenter extends BasePresenter<MainContract.Model, MainContrac
     @Inject
     AccountManager mAccountManager;
 
+    /**
+     * 定位对象
+     */
+    private LocationService locationService;
+
     @Inject
     public MainPresenter(MainContract.Model model, MainContract.View rootView) {
         super(model, rootView);
@@ -50,57 +57,22 @@ public class MainPresenter extends BasePresenter<MainContract.Model, MainContrac
 
     public void initPresenter() {
         Timber.i("###宽度=" + ScreenUtils.getScreenWidth() + "高度=" + ScreenUtils.getScreenHeight());
+
+        // 开启定位
+        locationService = new LocationService(mApplication.getApplicationContext());
+        //定位回调监听
+        locationService.registerListener(new MyLocationListener(mApplication.getApplicationContext()));
+
     }
 
-    /**
-     * 是否开启AIOS
-     */
-    public void setAIOS(boolean isChecked) {
-        mAccountManager.setIsAiosSwitch(isChecked);
-        if (isChecked) {
-            // 开启AIOS
-            AIOSForCarSDK.enableAIOS();
-        } else {
-            // 关闭AIOS
-            AIOSForCarSDK.disableAIOS();
-        }
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    void onResume() {
+        this.locationService.onStart();
     }
 
-    /**
-     * 是否开启录音
-     */
-    public void setRecorder(boolean isChecked) {
-        if (isChecked) {
-            AIOSSystemManager.getInstance().startRecorder();
-        } else {
-            AIOSSystemManager.getInstance().stopRecorder();
-        }
-    }
-
-    /**
-     * 手动唤醒AIOS
-     */
-    public void startInteraction() {
-        AIOSSystemManager.getInstance().startInteraction();
-    }
-
-    /**
-     * 是否开启ACC
-     */
-    public void setACC(boolean isChecked) {
-        if (isChecked) {
-            AIOSSystemManager.getInstance().setACCOn();
-        } else {
-            AIOSSystemManager.getInstance().setACCOff();
-        }
-    }
-
-    /**
-     * 开启语音唤醒
-     */
-    public void setSwitchVoiceWakeup(boolean isChecked) {
-        mAccountManager.setIsWakeupSwitch(isChecked);
-        AIOSSystemManager.getInstance().setVoiceWakeupEnabled(isChecked);
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    void onPause() {
+        this.locationService.onStop();
     }
 
     @Override
@@ -111,5 +83,8 @@ public class MainPresenter extends BasePresenter<MainContract.Model, MainContrac
         this.mImageLoader = null;
         this.mApplication = null;
         this.mAccountManager = null;
+
+        this.locationService.onDestroy();
+        this.locationService = null;
     }
 }

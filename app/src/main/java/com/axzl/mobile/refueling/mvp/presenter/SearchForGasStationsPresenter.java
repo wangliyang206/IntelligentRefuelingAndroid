@@ -6,8 +6,6 @@ import android.arch.lifecycle.OnLifecycleEvent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.SupportActivity;
 
-import com.aispeech.aios.sdk.manager.AIOSSystemManager;
-import com.aispeech.aios.sdk.manager.AIOSTTSManager;
 import com.axzl.mobile.refueling.app.global.AccountManager;
 import com.axzl.mobile.refueling.app.global.Constant;
 import com.axzl.mobile.refueling.mvp.contract.SearchForGasStationsContract;
@@ -123,11 +121,6 @@ public class SearchForGasStationsPresenter extends BasePresenter<SearchForGasSta
                 // 显示“暂无信息”
                 mRootView.noInfo();
 
-                if (lastUserId == 1)
-                    searchResults(false);
-            } else {
-                if (lastUserId == 1)
-                    searchResults(true);
             }
 
             if (10 > lastUserId) {
@@ -175,11 +168,6 @@ public class SearchForGasStationsPresenter extends BasePresenter<SearchForGasSta
                                 // 显示“暂无信息”
                                 mRootView.noInfo();
 
-                                if (lastUserId == 1)
-                                    searchResults(false);
-                            } else {
-                                if (lastUserId == 1)
-                                    searchResults(true);
                             }
 
                             if (pullToRefresh)
@@ -195,27 +183,6 @@ public class SearchForGasStationsPresenter extends BasePresenter<SearchForGasSta
                                 mRootView.hasLoadedAllItems(true);
                         }
                     });
-        }
-    }
-
-    /**
-     * 处理搜索结果
-     */
-    private void searchResults(boolean val) {
-        if (val) {
-            // 第一步，语音播报
-            AIOSTTSManager.speak("为您找到如下结果，请问你要选择哪一个？");
-
-            // 第二步，调整界面优先级
-
-
-            // 第三步，手动唤醒语音识别
-            mAccountManager.setIsWakeupSwitch(true);
-            AIOSSystemManager.getInstance().setVoiceWakeupEnabled(true);
-            AIOSSystemManager.getInstance().startInteraction();
-
-        } else {
-            AIOSTTSManager.speak("抱歉，没有找到您想要的结果！");
         }
     }
 

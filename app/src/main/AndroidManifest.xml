@@ -3,22 +3,50 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.axzl.mobile.refueling">
     <!-- 允许程序读取或写入系统设置 -->
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" /> <!-- 广播-自启动 -->
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> <!-- 该权限用于读取手机状态,比如基于百度lbs定位雷达的附近的程序员功能，微博用于调用JNI -->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- 访问网络连接，可能产生GPRS流量 -->
-    <uses-permission android:name="android.permission.INTERNET" /> <!-- 网络连接 -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- WIFI -->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 读取日志权限 -->
-    <uses-permission android:name="android.permission.READ_LOGS" /> <!-- 往SDCard中写入数据的权限 -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- 读写存储卡 -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- 允许程序改变Wi-Fi连接状态 -->
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <!-- 广播-自启动 -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- 该权限用于读取手机状态,比如基于百度lbs定位雷达的附近的程序员功能，微博用于调用JNI -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!-- 访问网络连接，可能产生GPRS流量 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 网络连接 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- WIFI -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <!-- 读取日志权限 -->
+    <uses-permission android:name="android.permission.READ_LOGS" />
+    <!-- 往SDCard中写入数据的权限 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- 读写存储卡 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- 允许程序改变Wi-Fi连接状态 -->
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" /> <!-- 思必驰AI语音 -->
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <!-- 思必驰AI语音 -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.WRITE_CONTACTS" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
+
+    <!--用于进行网络定位-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!--用于访问GPS定位-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!--用于申请调用A-GPS模块-->
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+    <!--用于申请获取蓝牙信息进行室内定位-->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION"/>
+    <!-- 不是SDK需要的权限，是示例中的后台唤醒定位需要的权限 -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <!--如果设置了target >= 28 如果需要启动后台定位则必须声明这个权限-->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <!--如果您的应用需要后台定位权限，且有可能运行在Android Q设备上,并且设置了target>28，必须增加这个权限声明-->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
 
     <application
         android:name="com.jess.arms.base.BaseApplication"
@@ -31,8 +59,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="label">
-        <!-- 搜索附近加油站 -->
-        <activity android:name=".mvp.ui.activity.SearchForGasStationsActivity"></activity>
         <!-- 欢迎界面 -->
         <activity
             android:name=".mvp.ui.activity.SplashActivity"
@@ -46,40 +72,21 @@
         </activity>
         <!-- 首页 -->
         <activity android:name=".mvp.ui.activity.MainActivity" />
-        <!-- 收接通道 -->
-        <receiver
-            android:name=".app.receiver.BridgeReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="aios.intent.action.phone.BOOT" />
-                <action android:name="aios.intent.action.music.BOOT" />
-                <action android:name="aios.intent.action.map.BOOT" />
-            </intent-filter>
-        </receiver>
-        <!-- 服务关联 -->
-        <receiver
-            android:name="com.aispeech.aios.sdk.receiver.SDKReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-
-                <!-- 如果需要在应用停止时被拉起来，请接收该广播 -->
-                <action android:name="aios.intent.action.STATE" />
-                <!-- 如果需要在通信异常线程停止时被拉起来，请接收该广播 -->
-                <action android:name="aios.intent.action.START_SDK_NODE" />
-
-                <!-- 如果需要在aios-daemon重启时一起重启，请接收该广播并将android:persistent属性设为"true" -->
-                <action android:name="aios.intent.action.REBOOT" />
-                <action android:name="aios.intent.action.DEFAULT_BUS_SERVER_CHANGED" />
-            </intent-filter>
-        </receiver>
+        <!-- 搜索附近加油站 -->
+        <activity android:name=".mvp.ui.activity.SearchForGasStationsActivity" />
         <!-- Arms 配置 -->
         <meta-data
             android:name="com.axzl.mobile.refueling.app.global.GlobalConfiguration"
             android:value="ConfigModule" />
+
+        <!-- 高德定位 设置key -->
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="2154aa7289c9e682ea306a1c5d8f4cfa" />
+
+        <!-- 定位需要的服务 适配Android Q需要加上android:foregroundServiceType="location"-->
+        <service
+            android:name="com.amap.api.location.APSService"/>
     </application>
 
 </manifest>

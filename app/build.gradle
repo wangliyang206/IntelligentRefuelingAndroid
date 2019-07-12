@@ -284,6 +284,5 @@ dependencies {
     }
     annotationProcessor rootProject.ext.dependencies["permission-processor"]
 
-    implementation files('libs/aios-sdk.190531.2.jar')
-    implementation files('libs/aios-sdk.190531.2-sources.jar')
+    implementation files('libs/AMap2DMap_5.2.0_AMapLocation_4.7.0_20190708.jar')                    // 高德地图与定位
 }

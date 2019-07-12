@@ -57,26 +57,12 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     }
 
     @OnClick({
-            R.id.btn_aios_open,
-            R.id.btn_aios_close,
-            R.id.btn_start_interaction,
             R.id.btn_open_refueling
     })
     @Override
     public void onClick(View v) {
         super.onClick(v);
         switch (v.getId()) {
-            case R.id.btn_aios_open:
-                mPresenter.setAIOS(true);
-                break;
-            case R.id.btn_aios_close:
-                mPresenter.setAIOS(false);
-                break;
-
-            case R.id.btn_start_interaction:
-                mPresenter.setSwitchVoiceWakeup(true);
-                mPresenter.startInteraction();
-                break;
             case R.id.btn_open_refueling:
                 ActivityUtils.startActivity(SearchForGasStationsActivity.class);
                 break;

@@ -62,8 +62,11 @@ public class SplashActivity extends BaseActivity<SplashPresenter> implements Spl
      * 申请权限成功后的逻辑
      */
     @NeedsPermission({
-            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.RECORD_AUDIO
     })
     public void runApp() {
