@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
+    <com.amap.api.maps2d.MapView
+        android:id="@+id/mavi_mapview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <ImageView
         android:id="@+id/btn_open_refueling"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:text="我要加油"
-        app:layout_constraintLeft_toLeftOf="parent" />
-</android.support.constraint.ConstraintLayout>
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:src="@mipmap/unipay_pic_channel_icon1" />
+</RelativeLayout>
