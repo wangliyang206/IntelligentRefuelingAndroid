@@ -58,21 +58,21 @@ public class MainPresenter extends BasePresenter<MainContract.Model, MainContrac
     public void initPresenter() {
         Timber.i("###宽度=" + ScreenUtils.getScreenWidth() + "高度=" + ScreenUtils.getScreenHeight());
 
-        // 开启定位
-        locationService = new LocationService(mApplication.getApplicationContext());
-        //定位回调监听
-        locationService.registerListener(new MyLocationListener(mApplication.getApplicationContext()));
+//        // 开启定位
+//        locationService = new LocationService(mApplication.getApplicationContext());
+//        //定位回调监听
+//        locationService.registerListener(new MyLocationListener(mApplication.getApplicationContext()));
 
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     void onResume() {
-        this.locationService.onStart();
+//        this.locationService.onStart();
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     void onPause() {
-        this.locationService.onStop();
+//        this.locationService.onStop();
     }
 
     @Override
@@ -84,7 +84,7 @@ public class MainPresenter extends BasePresenter<MainContract.Model, MainContrac
         this.mApplication = null;
         this.mAccountManager = null;
 
-        this.locationService.onDestroy();
+//        this.locationService.onDestroy();
         this.locationService = null;
     }
 }
