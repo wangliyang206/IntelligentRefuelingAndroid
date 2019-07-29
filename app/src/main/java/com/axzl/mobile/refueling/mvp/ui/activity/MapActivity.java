@@ -69,13 +69,19 @@ public class MapActivity extends BaseActivity<MapPresenter> implements MapContra
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        this.mCurrentPosition = null;
-        this.mAmap = null;
         //在activity执行onDestroy时执行mMapView.onDestroy()，销毁地图
+        if (this.mAmap != null) {
+            this.mAmap.setMyLocationEnabled(false);
+            this.mAmap.clear();
+            this.mAmap = null;
+        }
+
         if (this.mMapView != null) {
             this.mMapView.onDestroy();
             this.mMapView = null;
         }
+
+        this.mCurrentPosition = null;
     }
 
     /**
