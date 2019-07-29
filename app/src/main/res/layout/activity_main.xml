@@ -3,27 +3,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.amap.api.maps2d.MapView
-        android:id="@+id/mavi_mapview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <ImageView
-        android:id="@+id/imvi_maplocation_icon"
+    <Button
+        android:id="@+id/btn_open_map"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="25dp"
-        android:layout_marginRight="25dp"
-        android:src="@mipmap/regulatory_map_location_icon" />
+        android:layout_marginTop="20dp"
+        android:text="打开地图"/>
 
-    <ImageView
+    <Button
         android:id="@+id/btn_open_refueling"
+        android:layout_below="@+id/btn_open_map"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="10dp"
-        android:src="@mipmap/unipay_pic_channel_icon1" />
+        android:text="快捷加油"/>
+
+    <Button
+        android:id="@+id/btn_open_lottery"
+        android:layout_below="@+id/btn_open_refueling"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="打开抽奖转盘"/>
 </RelativeLayout>
