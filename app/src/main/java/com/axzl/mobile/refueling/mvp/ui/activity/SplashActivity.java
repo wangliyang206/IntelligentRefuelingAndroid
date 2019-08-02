@@ -99,7 +99,7 @@ public class SplashActivity extends BaseActivity<SplashPresenter> implements Spl
     @Override
     public void showMessage(@NonNull String message) {
         checkNotNull(message);
-        ArmsUtils.makeText(getApplicationContext(), message);
+        ArmsUtils.snackbarText(message);
     }
 
     @Override

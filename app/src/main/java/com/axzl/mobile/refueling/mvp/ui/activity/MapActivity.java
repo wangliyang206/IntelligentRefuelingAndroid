@@ -200,8 +200,7 @@ public class MapActivity extends BaseActivity<MapPresenter> implements MapContra
     @Override
     public void showMessage(@NonNull String message) {
         checkNotNull(message);
-//        ArmsUtils.snackbarText(message);
-        ArmsUtils.makeText(getApplicationContext(), message);
+        ArmsUtils.snackbarText(message);
     }
 
     @Override

@@ -65,7 +65,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     @Override
     public void onClick(View v) {
         super.onClick(v);
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.btn_open_map:
                 ActivityUtils.startActivity(MapActivity.class);                                     // 打开地图
                 break;
@@ -96,8 +96,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     @Override
     public void showMessage(@NonNull String message) {
         checkNotNull(message);
-//        ArmsUtils.snackbarText(message);
-        ArmsUtils.makeText(getApplicationContext(), message);
+        ArmsUtils.snackbarText(message);
     }
 
     @Override

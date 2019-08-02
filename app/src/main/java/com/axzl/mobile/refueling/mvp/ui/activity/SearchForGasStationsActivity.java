@@ -12,7 +12,6 @@ import android.view.View;
 import com.axzl.mobile.refueling.R;
 import com.axzl.mobile.refueling.di.component.DaggerSearchForGasStationsComponent;
 import com.axzl.mobile.refueling.mvp.contract.SearchForGasStationsContract;
-import com.axzl.mobile.refueling.mvp.model.entity.GasStations;
 import com.axzl.mobile.refueling.mvp.presenter.SearchForGasStationsPresenter;
 import com.axzl.mobile.refueling.mvp.ui.adapter.GasStationsAdapter;
 import com.jess.arms.base.BaseActivity;
@@ -20,8 +19,6 @@ import com.jess.arms.base.DefaultAdapter;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
 import com.paginate.Paginate;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -146,7 +143,9 @@ public class SearchForGasStationsActivity extends BaseActivity<SearchForGasStati
         }
     }
 
-    /** 刷新 */
+    /**
+     * 刷新
+     */
     @Override
     public void onRefresh() {
         mPresenter.requestUsers(true);
