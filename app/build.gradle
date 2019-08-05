@@ -174,7 +174,7 @@ android {
     android.applicationVariants.all { variant ->
         variant.outputs.all {
             // 项目名-编译类型-版本号.apk
-            def appName = "我要加油";
+            def appName = "随便";
             def filesuffix = variant.buildType.name;
             def fileName = "${appName}-${filesuffix}-${versionName}.apk"
 

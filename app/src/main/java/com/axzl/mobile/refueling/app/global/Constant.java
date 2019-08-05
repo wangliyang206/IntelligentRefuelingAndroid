@@ -40,51 +40,24 @@ public interface Constant {
     String VIDEO_PATH = SDCardUtils.getSDCardPathByEnvironment() + "/Refueling/Video/";
 
     /*----------------------------------------------------业务变量-------------------------------------------------------*/
-
-    /**
-     * 是否是消息通知打开的
-     */
-    String IS_MSG_OPEN = "isMsgOpen";
-
-    /**
-     * 接收自定义消息
-     */
-    String MESSAGE_RECEIVED_ACTION = "com.axzl.mobile.refueling.MESSAGE_RECEIVED_ACTION";
-
     /**
      * API版本号
      */
     int version = 1;
 
-    /*** 默认展示20条 */
+    /**
+     * 默认展示20条
+     */
     int PAGESIZE = 20;
-    /*----------------------------------------------跳转设定---------------------------------------------*/
 
     /**
-     * 选择 营业执照
+     * 周一至周五使用的图标
      */
-    int SELECT_IMG_BUSINESS_REQUESTCODE = 1;
+    String ICON_SINGLE_DAY = "com.axzl.mobile.refueling.IconNormal";
 
     /**
-     * 选择 危险品经营许可证
+     * 周六、周日使用的图标
      */
-    int SELECT_IMG_LICENSE_REQUESTCODE = 2;
+    String ICON_DOUBLE_DAY = "com.axzl.mobile.refueling.IconFestival";
 
-    /**
-     * 裁剪图片
-     */
-    int CORP_CAMERA_IMAGE = 3;
-
-    /**
-     * 裁剪图片  危险品经营许可证
-     */
-    int CORP_CAMERA_IMAGE_LICENSE = 4;
-
-    /**
-     * 裁剪图片  营业执照
-     */
-    int CORP_CAMERA_IMAGE_BUSINESS = 5;
-
-    /** 图片参数key */
-    String IMAGE_URL = "IMAGE_URL";
 }

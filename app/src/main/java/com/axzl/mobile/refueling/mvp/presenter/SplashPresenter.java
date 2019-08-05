@@ -1,6 +1,8 @@
 package com.axzl.mobile.refueling.mvp.presenter;
 
 import android.app.Application;
+import android.content.ComponentName;
+import android.content.pm.PackageManager;
 
 import com.axzl.mobile.refueling.BuildConfig;
 import com.axzl.mobile.refueling.app.global.AccountManager;
@@ -8,6 +10,7 @@ import com.axzl.mobile.refueling.app.global.Constant;
 import com.axzl.mobile.refueling.mvp.contract.SplashContract;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ThreadUtils;
+import com.blankj.utilcode.util.TimeUtils;
 import com.jess.arms.di.scope.ActivityScope;
 import com.jess.arms.http.imageloader.ImageLoader;
 import com.jess.arms.integration.AppManager;
@@ -23,6 +26,7 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import me.jessyan.rxerrorhandler.core.RxErrorHandler;
+import timber.log.Timber;
 
 
 /**
@@ -65,9 +69,13 @@ public class SplashPresenter extends BasePresenter<SplashContract.Model, SplashC
         // 定时清理日志
         initLog();
 
+        // 计算工作日和休息日，切换相应的图标
+        initIcon();
+
         // 倒计时5秒后跳转至主界面
         jumbToMain();
     }
+
 
     /**
      * 创建文件夹
@@ -101,6 +109,24 @@ public class SplashPresenter extends BasePresenter<SplashContract.Model, SplashC
                 accountManager.setStartTime(++num);
             }
         }
+    }
+
+    /**
+     * 计算工作日和休息日，切换相应的图标
+     */
+    private void initIcon() {
+        // 初始化对象
+        PackageManager pm = mApplication.getPackageManager();
+        // 获取当前是星期几
+        String week = TimeUtils.getChineseWeek(TimeUtils.getNowDate());
+        if (week.contains("六") || week.contains("日")) {
+            pm.setComponentEnabledSetting(new ComponentName(mRootView.getActivity().getPackageName(),Constant.ICON_DOUBLE_DAY), PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+            pm.setComponentEnabledSetting(new ComponentName(mRootView.getActivity().getPackageName(),Constant.ICON_SINGLE_DAY), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+        } else {
+            pm.setComponentEnabledSetting(new ComponentName(mRootView.getActivity().getPackageName(),Constant.ICON_DOUBLE_DAY), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+            pm.setComponentEnabledSetting(new ComponentName(mRootView.getActivity().getPackageName(),Constant.ICON_SINGLE_DAY), PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+        }
+        Timber.i(" " + week);
     }
 
     /**

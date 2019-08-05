@@ -40,26 +40,54 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="label">
-        <activity android:name=".mvp.ui.activity.MapActivity"></activity>
+
+        <!-- 正常图标 -->
+        <activity-alias
+            android:name=".IconNormal"
+            android:enabled="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="${APP_NAME}"
+            android:targetActivity=".mvp.ui.activity.SplashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- 节日图标 -->
+        <activity-alias
+            android:name=".IconFestival"
+            android:enabled="false"
+            android:icon="@mipmap/app_logo"
+            android:label="${APP_NAME}"
+            android:targetActivity=".mvp.ui.activity.SplashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity-alias>
+
         <!-- 欢迎界面 -->
         <activity
             android:name=".mvp.ui.activity.SplashActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/SplashTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity> <!-- 首页 -->
-        <activity android:name=".mvp.ui.activity.MainActivity" /> <!-- 搜索附近加油站 -->
-        <activity android:name=".mvp.ui.activity.SearchForGasStationsActivity" /> <!-- Arms 配置 -->
+            android:theme="@style/SplashTheme"/>
+        <!-- 首页 -->
+        <activity android:name=".mvp.ui.activity.MainActivity" />
+        <!-- 搜索附近加油站 -->
+        <activity android:name=".mvp.ui.activity.SearchForGasStationsActivity" />
+        <!-- 地图 -->
+        <activity android:name=".mvp.ui.activity.MapActivity"/>
+        <!-- Arms 配置 -->
         <meta-data
             android:name="com.axzl.mobile.refueling.app.global.GlobalConfiguration"
-            android:value="ConfigModule" /> <!-- 高德定位 设置key -->
+            android:value="ConfigModule" />
+        <!-- 高德定位 设置key -->
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="2154aa7289c9e682ea306a1c5d8f4cfa" /> <!-- 定位需要的服务 适配Android Q需要加上android:foregroundServiceType="location" -->
+            android:value="2154aa7289c9e682ea306a1c5d8f4cfa" />
+        <!-- 定位需要的服务 适配Android Q需要加上android:foregroundServiceType="location" -->
         <service android:name="com.amap.api.location.APSService" />
     </application>
 
