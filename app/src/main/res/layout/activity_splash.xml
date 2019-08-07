@@ -15,26 +15,4 @@
             android:layout_height="640dp"
             android:scaleType="centerCrop" />
     </ScrollView>
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/weread_logo_iv"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="90dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/weread_signature"
-        android:visibility="invisible" />
-
-    <ImageView
-        android:id="@+id/weread_logo_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="78.0dip"
-        android:scaleType="centerCrop"
-        android:src="@drawable/logo_owspace"
-        android:visibility="invisible" />
-
 </RelativeLayout>

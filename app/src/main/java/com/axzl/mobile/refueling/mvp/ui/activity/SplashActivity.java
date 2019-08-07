@@ -220,7 +220,7 @@ public class SplashActivity extends BaseActivity<SplashPresenter> implements Spl
      */
     private void animWelcomeImage() {
         ObjectAnimator animator = ObjectAnimator.ofFloat(splashImg, "translationX", -100F);
-        animator.setDuration(1500L).start();
+        animator.setDuration(4000L).start();
         animator.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {

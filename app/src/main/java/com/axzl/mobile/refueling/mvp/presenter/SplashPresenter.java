@@ -83,14 +83,11 @@ public class SplashPresenter extends BasePresenter<SplashContract.Model, SplashC
         // 计算工作日和休息日，切换相应的图标
         initIcon();
 
-        // 展示内容
-        delaySplash();
+        // 倒计时3秒后展示广告
+        jumbToAd();
 
         // 请求启动页的图片
 //        loadSplashImage();
-
-        // 倒计时5秒后跳转至主界面
-//        jumbToMain();
     }
 
     /**
@@ -186,10 +183,10 @@ public class SplashPresenter extends BasePresenter<SplashContract.Model, SplashC
     }
 
     /**
-     * 倒计时5秒后跳转至主界面
+     * 倒计时3秒后展示广告
      */
-    private void jumbToMain() {
-        Observable.timer(5, TimeUnit.SECONDS)
+    private void jumbToAd() {
+        Observable.timer(3, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())                                          // 切换线程
                 .compose(RxLifecycleUtils.bindToLifecycle(mRootView))                               // 使用 Rxlifecycle,使 Disposable 和 Activity 一起销毁
                 .subscribe(new Observer<Long>() {
@@ -210,7 +207,8 @@ public class SplashPresenter extends BasePresenter<SplashContract.Model, SplashC
 
                     @Override
                     public void onComplete() {
-                        mRootView.jumbToMain();
+                        // 展示内容
+                        delaySplash();
                     }
                 });
     }
