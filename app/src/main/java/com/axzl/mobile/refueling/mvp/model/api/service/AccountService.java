@@ -1,14 +1,18 @@
 package com.axzl.mobile.refueling.mvp.model.api.service;
 
 import com.axzl.mobile.refueling.mvp.model.entity.GasStationsResponse;
+import com.axzl.mobile.refueling.mvp.model.entity.SplashResponse;
 import com.jess.arms.cj.GsonRequest;
 import com.jess.arms.cj.GsonResponse;
 
 import java.util.Map;
 
 import io.reactivex.Observable;
+import okhttp3.ResponseBody;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Url;
 
 /**
  * 包名： PACKAGE_NAME
@@ -62,4 +66,11 @@ public interface AccountService {
     @POST("/getSearchForStations")
     Observable<GsonResponse<GasStationsResponse>> getSearchForStations(@Body GsonRequest<Map<String, Object>> request);
 
+    // 获取启动页图片集
+    @POST("/loadSplashImage")
+    Observable<GsonResponse<SplashResponse>> loadSplashImage(@Body GsonRequest<Map<String, Object>> request);
+
+    // 下载图片
+    @GET()
+    Observable<ResponseBody> download(@Url String url);
 }

@@ -59,5 +59,4 @@ public interface Constant {
      * 周六、周日使用的图标
      */
     String ICON_DOUBLE_DAY = "com.axzl.mobile.refueling.IconFestival";
-
 }

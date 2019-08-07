@@ -6,9 +6,7 @@ import android.arch.lifecycle.OnLifecycleEvent;
 
 import com.axzl.mobile.refueling.app.global.AccountManager;
 import com.axzl.mobile.refueling.app.service.LocationService;
-import com.axzl.mobile.refueling.app.service.MyLocationListener;
 import com.axzl.mobile.refueling.mvp.contract.MainContract;
-import com.blankj.utilcode.util.ScreenUtils;
 import com.jess.arms.di.scope.ActivityScope;
 import com.jess.arms.http.imageloader.ImageLoader;
 import com.jess.arms.integration.AppManager;
@@ -17,7 +15,6 @@ import com.jess.arms.mvp.BasePresenter;
 import javax.inject.Inject;
 
 import me.jessyan.rxerrorhandler.core.RxErrorHandler;
-import timber.log.Timber;
 
 
 /**
@@ -56,8 +53,6 @@ public class MainPresenter extends BasePresenter<MainContract.Model, MainContrac
     }
 
     public void initPresenter() {
-        Timber.i("###宽度=" + ScreenUtils.getScreenWidth() + "高度=" + ScreenUtils.getScreenHeight());
-
 //        // 开启定位
 //        locationService = new LocationService(mApplication.getApplicationContext());
 //        //定位回调监听

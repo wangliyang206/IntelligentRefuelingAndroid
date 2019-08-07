@@ -2,27 +2,18 @@ package com.axzl.mobile.refueling.app.utils;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.graphics.Point;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Build;
-import android.os.Environment;
 import android.telephony.TelephonyManager;
-import android.text.TextUtils;
 import android.view.Display;
 import android.view.WindowManager;
 
 import com.axzl.mobile.refueling.R;
 import com.jess.arms.utils.ArmsUtils;
 
-import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.regex.Pattern;
-
-import static android.os.Environment.MEDIA_MOUNTED;
 
 /**
  * 包名： com.zqw.mobile.aptitude.app.utils
@@ -231,102 +222,5 @@ public class CommonUtils {
         } catch (Exception ex) {
             return "";
         }
-    }
-
-    public static boolean isConnected(Context context) {
-        ConnectivityManager conn = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo info = conn.getActiveNetworkInfo();
-        return (info != null && info.isConnected());
-    }
-
-
-    private static final String JPEG_FILE_PREFIX = "IMG_";
-    private static final String JPEG_FILE_SUFFIX = ".jpg";
-
-    public static File createTmpFile(Context context) throws IOException {
-        File dir = null;
-        if (TextUtils.equals(Environment.getExternalStorageState(), Environment.MEDIA_MOUNTED)) {
-            dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-            if (!dir.exists()) {
-                dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM + "/Camera");
-                if (!dir.exists()) {
-                    dir = getCacheDirectory(context, true);
-                }
-            }
-        } else {
-            dir = getCacheDirectory(context, true);
-        }
-        return File.createTempFile(JPEG_FILE_PREFIX, JPEG_FILE_SUFFIX, dir);
-    }
-
-
-    private static final String EXTERNAL_STORAGE_PERMISSION = "android.permission.WRITE_EXTERNAL_STORAGE";
-
-    /**
-     * Returns application cache directory. Cache directory will be created on SD card
-     * <i>("/Android/data/[app_package_name]/cache")</i> if card is mounted and app has appropriate permission. Else -
-     * Android defines cache directory on device's file system.
-     *
-     * @param context Application context
-     * @return Cache {@link File directory}.<br />
-     * <b>NOTE:</b> Can be null in some unpredictable cases (if SD card is unmounted and
-     * {@link android.content.Context#getCacheDir() Context.getCacheDir()} returns null).
-     */
-    public static File getCacheDirectory(Context context) {
-        return getCacheDirectory(context, true);
-    }
-
-    /**
-     * Returns application cache directory. Cache directory will be created on SD card
-     * <i>("/Android/data/[app_package_name]/cache")</i> (if card is mounted and app has appropriate permission) or
-     * on device's file system depending incoming parameters.
-     *
-     * @param context        Application context
-     * @param preferExternal Whether prefer external location for cache
-     * @return Cache {@link File directory}.<br />
-     * <b>NOTE:</b> Can be null in some unpredictable cases (if SD card is unmounted and
-     * {@link android.content.Context#getCacheDir() Context.getCacheDir()} returns null).
-     */
-    public static File getCacheDirectory(Context context, boolean preferExternal) {
-        File appCacheDir = null;
-        String externalStorageState;
-        try {
-            externalStorageState = Environment.getExternalStorageState();
-        } catch (NullPointerException e) { // (sh)it happens (Issue #660)
-            externalStorageState = "";
-        } catch (IncompatibleClassChangeError e) { // (sh)it happens too (Issue #989)
-            externalStorageState = "";
-        }
-        if (preferExternal && MEDIA_MOUNTED.equals(externalStorageState) && hasExternalStoragePermission(context)) {
-            appCacheDir = getExternalCacheDir(context);
-        }
-        if (appCacheDir == null) {
-            appCacheDir = context.getCacheDir();
-        }
-        if (appCacheDir == null) {
-            String cacheDirPath = "/data/data/" + context.getPackageName() + "/cache/";
-            appCacheDir = new File(cacheDirPath);
-        }
-        return appCacheDir;
-    }
-
-    private static boolean hasExternalStoragePermission(Context context) {
-        int perm = context.checkCallingOrSelfPermission(EXTERNAL_STORAGE_PERMISSION);
-        return perm == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private static File getExternalCacheDir(Context context) {
-        File dataDir = new File(new File(Environment.getExternalStorageDirectory(), "Android"), "data");
-        File appCacheDir = new File(new File(dataDir, context.getPackageName()), "cache");
-        if (!appCacheDir.exists()) {
-            if (!appCacheDir.mkdirs()) {
-                return null;
-            }
-            try {
-                new File(appCacheDir, ".nomedia").createNewFile();
-            } catch (IOException e) {
-            }
-        }
-        return appCacheDir;
     }
 }

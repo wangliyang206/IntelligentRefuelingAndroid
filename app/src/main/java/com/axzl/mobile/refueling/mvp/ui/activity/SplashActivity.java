@@ -1,6 +1,8 @@
 package com.axzl.mobile.refueling.mvp.ui.activity;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,16 +10,25 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.axzl.mobile.refueling.R;
 import com.axzl.mobile.refueling.di.component.DaggerSplashComponent;
 import com.axzl.mobile.refueling.mvp.contract.SplashContract;
 import com.axzl.mobile.refueling.mvp.presenter.SplashPresenter;
+import com.axzl.mobile.refueling.mvp.ui.widget.FixedImageView;
 import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.PermissionUtils;
 import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
+import com.jess.arms.http.imageloader.ImageLoader;
+import com.jess.arms.http.imageloader.glide.ImageConfigImpl;
 import com.jess.arms.utils.ArmsUtils;
 
+import javax.inject.Inject;
+
+import butterknife.BindView;
 import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.OnPermissionDenied;
 import permissions.dispatcher.RuntimePermissions;
 
 import static com.jess.arms.utils.Preconditions.checkNotNull;
@@ -30,6 +41,28 @@ import static com.jess.arms.utils.Preconditions.checkNotNull;
  */
 @RuntimePermissions
 public class SplashActivity extends BaseActivity<SplashPresenter> implements SplashContract.View {
+    @BindView(R.id.splash_img)
+    FixedImageView splashImg;
+
+    @Inject
+    ImageLoader mImageLoader;
+
+    /**
+     * 对话框
+     */
+    private MaterialDialog askDialog;
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        mImageLoader = null;
+
+        if (askDialog != null) {
+            askDialog.dismiss();
+            askDialog = null;
+        }
+    }
 
     @Override
     public void setupActivityComponent(@NonNull AppComponent appComponent) {
@@ -48,7 +81,7 @@ public class SplashActivity extends BaseActivity<SplashPresenter> implements Spl
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        //获取权限
+        // 获取权限
         SplashActivityPermissionsDispatcher.runAppWithPermissionCheck(this);
     }
 
@@ -71,6 +104,35 @@ public class SplashActivity extends BaseActivity<SplashPresenter> implements Spl
     })
     public void runApp() {
         mPresenter.initPresenter();
+    }
+
+    /**
+     * 拒绝权限后的提醒
+     */
+    @OnPermissionDenied({
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.RECORD_AUDIO
+    })
+    public void showMissingPermissionDialog() {
+
+        askDialog = new MaterialDialog.Builder(this)
+                .title(R.string.common_tips)
+                .content(R.string.common_permissions_denied_tips)
+                .positiveText(R.string.common_no)
+                .onPositive((dialog, which) -> {
+                    // 关闭
+                    killMyself();
+                })
+                .negativeText(R.string.common_setting)
+                .onNegative((dialog, which) -> {
+                    // 打开设置
+                    PermissionUtils.launchAppDetailsSettings();
+                }).cancelable(false)
+                .show();
     }
 
     /**
@@ -136,5 +198,49 @@ public class SplashActivity extends BaseActivity<SplashPresenter> implements Spl
     public void jumbToMain() {
         ActivityUtils.startActivity(MainActivity.class);
         killMyself();
+    }
+
+    /**
+     * 加载图片
+     */
+    @Override
+    public void loadImg(String url) {
+        mImageLoader.loadImage(getApplicationContext(),
+                ImageConfigImpl.builder().url(url)
+                        .errorPic(R.mipmap.splash_default)
+                        .placeholder(R.mipmap.splash_default)
+                        .imageView(splashImg).build());
+
+        // 开启动画
+        animWelcomeImage();
+    }
+
+    /**
+     * 开启动画
+     */
+    private void animWelcomeImage() {
+        ObjectAnimator animator = ObjectAnimator.ofFloat(splashImg, "translationX", -100F);
+        animator.setDuration(1500L).start();
+        animator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+//                jumbToMain();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
     }
 }
