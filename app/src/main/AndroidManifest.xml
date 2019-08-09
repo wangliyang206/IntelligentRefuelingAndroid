@@ -99,8 +99,6 @@
         <!-- 地图 -->
         <activity android:name=".mvp.ui.activity.MapActivity"/>
 
-        <!-- 下载图片服务 -->
-        <service android:name="com.axzl.mobile.refueling.app.service.DownloadService" />
         <!-- Arms 配置 -->
         <meta-data
             android:name="com.axzl.mobile.refueling.app.global.GlobalConfiguration"
