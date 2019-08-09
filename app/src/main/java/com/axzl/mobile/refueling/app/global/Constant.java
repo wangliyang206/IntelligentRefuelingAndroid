@@ -59,4 +59,9 @@ public interface Constant {
      * 周六、周日使用的图标
      */
     String ICON_DOUBLE_DAY = "com.axzl.mobile.refueling.IconFestival";
+
+    /**
+     * Bmob后端云
+     */
+    String BMOB_APPLICATION_KEY = "e7db8235cfd89bf48fda19ebab15e146";
 }

@@ -1,11 +1,8 @@
 package com.axzl.mobile.refueling.di.module;
 
 import com.axzl.mobile.refueling.app.global.AccountManager;
-import com.axzl.mobile.refueling.app.global.RequestMapper;
 import com.axzl.mobile.refueling.mvp.contract.SplashContract;
 import com.axzl.mobile.refueling.mvp.model.SplashModel;
-import com.jess.arms.cj.ApiOperator;
-import com.jess.arms.cj.IRequestMapper;
 import com.jess.arms.di.scope.ActivityScope;
 
 import dagger.Binds;
@@ -35,17 +32,5 @@ public abstract class SplashModule {
     @Provides
     static AccountManager provideAccountManager(SplashContract.View view) {
         return new AccountManager(view.getActivity());
-    }
-
-    @ActivityScope
-    @Provides
-    static IRequestMapper providerRequestMapper(SplashContract.View view, AccountManager mAccountManager) {
-        return new RequestMapper(view.getActivity(), mAccountManager);
-    }
-
-    @ActivityScope
-    @Provides
-    static ApiOperator providerOperator(IRequestMapper requestMapper) {
-        return new ApiOperator(requestMapper);
     }
 }

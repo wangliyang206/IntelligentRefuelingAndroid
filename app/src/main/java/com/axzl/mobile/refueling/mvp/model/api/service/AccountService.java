@@ -1,7 +1,6 @@
 package com.axzl.mobile.refueling.mvp.model.api.service;
 
 import com.axzl.mobile.refueling.mvp.model.entity.GasStationsResponse;
-import com.axzl.mobile.refueling.mvp.model.entity.SplashResponse;
 import com.jess.arms.cj.GsonRequest;
 import com.jess.arms.cj.GsonResponse;
 
@@ -65,10 +64,6 @@ public interface AccountService {
     // 搜索附近加油站
     @POST("/getSearchForStations")
     Observable<GsonResponse<GasStationsResponse>> getSearchForStations(@Body GsonRequest<Map<String, Object>> request);
-
-    // 获取启动页图片集
-    @POST("/loadSplashImage")
-    Observable<GsonResponse<SplashResponse>> loadSplashImage(@Body GsonRequest<Map<String, Object>> request);
 
     // 下载图片
     @GET()

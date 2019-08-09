@@ -23,6 +23,7 @@ import android.support.multidex.MultiDex;
 import com.aitangba.swipeback.ActivityLifecycleHelper;
 import com.axzl.mobile.refueling.BuildConfig;
 import com.axzl.mobile.refueling.app.global.AccountManager;
+import com.axzl.mobile.refueling.app.global.Constant;
 import com.axzl.mobile.refueling.app.utils.AppCrashHandler;
 import com.axzl.mobile.refueling.app.utils.FileLoggingTree;
 import com.blankj.utilcode.util.Utils;
@@ -34,6 +35,7 @@ import com.squareup.leakcanary.RefWatcher;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import butterknife.ButterKnife;
+import cn.bmob.v3.Bmob;
 import timber.log.Timber;
 
 /**
@@ -78,6 +80,9 @@ public class AppLifecyclesImpl implements AppLifecycles {
 
         // 初始化定位
         initLocation(application);
+
+        //初始化Bmob
+        Bmob.initialize(application, Constant.BMOB_APPLICATION_KEY);
 
         // 右滑关闭Activity
         application.registerActivityLifecycleCallbacks(ActivityLifecycleHelper.build());

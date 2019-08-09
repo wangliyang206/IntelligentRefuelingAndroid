@@ -7,23 +7,19 @@ import android.content.pm.PackageManager;
 import com.axzl.mobile.refueling.BuildConfig;
 import com.axzl.mobile.refueling.app.global.AccountManager;
 import com.axzl.mobile.refueling.app.global.Constant;
-import com.axzl.mobile.refueling.app.utils.RxUtils;
+import com.axzl.mobile.refueling.app.utils.CommonUtils;
 import com.axzl.mobile.refueling.mvp.contract.SplashContract;
-import com.axzl.mobile.refueling.mvp.model.entity.SplashResponse;
 import com.blankj.utilcode.util.FileUtils;
-import com.blankj.utilcode.util.ObjectUtils;
 import com.blankj.utilcode.util.ScreenUtils;
-import com.blankj.utilcode.util.SizeUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.jess.arms.di.scope.ActivityScope;
 import com.jess.arms.http.imageloader.ImageLoader;
+import com.jess.arms.http.imageloader.glide.GildeUtils;
 import com.jess.arms.integration.AppManager;
 import com.jess.arms.mvp.BasePresenter;
 import com.jess.arms.utils.RxLifecycleUtils;
 
-import java.io.File;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -33,7 +29,6 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import me.jessyan.rxerrorhandler.core.RxErrorHandler;
-import me.jessyan.rxerrorhandler.handler.ErrorHandleSubscriber;
 import timber.log.Timber;
 
 
@@ -71,8 +66,7 @@ public class SplashPresenter extends BasePresenter<SplashContract.Model, SplashC
      * 控制业务逻辑
      */
     public void initPresenter() {
-        Timber.i("###宽度=" + ScreenUtils.getScreenWidth() + "高度=" + ScreenUtils.getScreenHeight());
-        Timber.i("##控件宽度=" + SizeUtils.px2dp(720) + "控件高度=" + SizeUtils.px2dp(1280));
+        Timber.i("###宽度=" + ScreenUtils.getScreenWidth() + " 高度=" + ScreenUtils.getScreenHeight());
 
         // 创建文件夹
         initFile();
@@ -85,46 +79,20 @@ public class SplashPresenter extends BasePresenter<SplashContract.Model, SplashC
 
         // 倒计时3秒后展示广告
         jumbToAd();
-
-        // 请求启动页的图片
-//        loadSplashImage();
-    }
-
-    /**
-     * 请求启动页图片集
-     */
-    private void loadSplashImage() {
-        mModel.loadSplashImage(accountManager.getSplashImage())
-                .compose(RxUtils.applySchedulers(mRootView))                                        // 切换线程
-                .subscribe(new ErrorHandleSubscriber<SplashResponse>(mErrorHandler) {
-                    @Override
-                    public void onNext(SplashResponse response) {
-                        if (ObjectUtils.isNotEmpty(response.getInfoList())) {
-                            // 保存标识
-                            accountManager.setSplashImage(response.getMark());
-
-                            // 下载图片
-
-                        }
-
-                    }
-                });
     }
 
     /**
      * 加载图片
      */
     private void delaySplash() {
-        // 取到图片集
-        List<File> fileList = FileUtils.listFilesInDir(Constant.IMAGE_PATH);
-        int num = fileList.size();
-        if (num > 0) {                                                                              // SD中有很多图片
+        // 取到图片集(如果想做成图片来源于网络，请将下面这行替换成网络接口得到的数据集)
+        int num = CommonUtils.getAssetListCount(mRootView.getActivity());
+        if (num > 0) {                                                                              // 有图片
             // 生成一个随机数，(数据类型)(最小值+Math.random()*(最大值-最小值+1))
-            // 随机数 - 1 等于下标值
-            int index = ((int) (1 + Math.random() * (num - 1 + 1))) - 1;
-            Timber.i(" 随机数=" + num + "下标数=" + index);
-            mRootView.loadImg(fileList.get(index).getAbsolutePath());
-        } else {                                                                                     // SD中没有图片
+            int index = (int) (1 + Math.random() * (num - 1 + 1));
+            Timber.i("###总数量=" + num + " 随机数=" + index);
+            mRootView.loadImg(GildeUtils.getAssetsSource("images/" + index + ".jpg"));
+        } else {                                                                                     // 没有图片
             mRootView.loadImg("");
         }
     }
@@ -179,7 +147,7 @@ public class SplashPresenter extends BasePresenter<SplashContract.Model, SplashC
             pm.setComponentEnabledSetting(new ComponentName(mRootView.getActivity().getPackageName(), Constant.ICON_DOUBLE_DAY), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
             pm.setComponentEnabledSetting(new ComponentName(mRootView.getActivity().getPackageName(), Constant.ICON_SINGLE_DAY), PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
         }
-        Timber.i(" " + week);
+        Timber.i("###" + week);
     }
 
     /**

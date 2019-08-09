@@ -2,17 +2,16 @@ package com.axzl.mobile.refueling.app.utils;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Point;
-import android.os.Build;
+import android.content.res.AssetManager;
 import android.telephony.TelephonyManager;
-import android.view.Display;
-import android.view.WindowManager;
 
 import com.axzl.mobile.refueling.R;
 import com.jess.arms.utils.ArmsUtils;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
@@ -25,6 +24,22 @@ import java.util.regex.Pattern;
  */
 
 public class CommonUtils {
+
+    /**
+     * 获取assets的images目录中图片数量
+     */
+    public static int getAssetListCount(Context mContext) {
+        int imgCount = 0;
+        AssetManager assetManager = mContext.getAssets();
+        try {
+            // -2 代表 减去android-logo-shine和android-logo-mask
+            imgCount = Objects.requireNonNull(assetManager.list("images")).length - 2;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return imgCount;
+    }
 
     /**
      * 验证是否为浮点数
@@ -171,23 +186,6 @@ public class CommonUtils {
         }
         String val = cs.toString();
         return ((val != null && val.length() > 0 && (!val.equalsIgnoreCase("null"))) ? val : "");
-    }
-
-    /**
-     * 获取屏幕尺寸
-     */
-    public static Point getScreenSize(Context context) {
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        Point out = new Point();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            display.getSize(out);
-        } else {
-            int width = display.getWidth();
-            int height = display.getHeight();
-            out.set(width, height);
-        }
-        return out;
     }
 
     /***

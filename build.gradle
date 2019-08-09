@@ -21,6 +21,7 @@ allprojects {
         jcenter()
         maven { url "https://jitpack.io" }
         maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local/' }                        // PermissionsDispatcher 权限注解
+        maven { url "https://raw.github.com/bmob/bmob-android-sdk/master" }                         // Bmob的maven仓库地址--必填
     }
 }
 

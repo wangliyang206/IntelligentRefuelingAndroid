@@ -78,11 +78,6 @@ public final class AccountManager {
      * 定位 - 地址
      */
     private static final String ADDRESS = "address";
-
-    /**
-     * 启动页图片
-     */
-    public static final String SPLASH_IMAGE = "splashImage";
     /*----------------------------------------------操作对象-------------------------------------------------*/
 
     private AppPreferencesHelper spHelper;
@@ -92,14 +87,6 @@ public final class AccountManager {
         this.spHelper = new AppPreferencesHelper(context.getApplicationContext(), BuildConfig.SHARED_NAME_INVEST, 1);
 
         updateBugly();
-    }
-
-    public void setSplashImage(String str){
-        spHelper.put(SPLASH_IMAGE,str);
-    }
-
-    public String getSplashImage(){
-        return spHelper.getPref(SPLASH_IMAGE,"");
     }
 
     /**

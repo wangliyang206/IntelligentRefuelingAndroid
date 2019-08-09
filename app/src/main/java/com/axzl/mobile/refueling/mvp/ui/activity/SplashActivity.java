@@ -192,15 +192,6 @@ public class SplashActivity extends BaseActivity<SplashPresenter> implements Spl
     }
 
     /**
-     * 跳转到主界面
-     */
-    @Override
-    public void jumbToMain() {
-        ActivityUtils.startActivity(MainActivity.class);
-        killMyself();
-    }
-
-    /**
      * 加载图片
      */
     @Override
@@ -229,7 +220,7 @@ public class SplashActivity extends BaseActivity<SplashPresenter> implements Spl
 
             @Override
             public void onAnimationEnd(Animator animation) {
-//                jumbToMain();
+                jumbToMain();
             }
 
             @Override
@@ -242,5 +233,14 @@ public class SplashActivity extends BaseActivity<SplashPresenter> implements Spl
 
             }
         });
+    }
+
+
+    /**
+     * 跳转到主界面
+     */
+    public void jumbToMain() {
+        ActivityUtils.startActivity(MainActivity.class);
+        killMyself();
     }
 }

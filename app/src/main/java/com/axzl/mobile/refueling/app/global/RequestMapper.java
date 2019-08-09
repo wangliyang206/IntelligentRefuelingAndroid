@@ -57,8 +57,6 @@ public class RequestMapper implements IRequestMapper {
         loginBeanIn.setOsver(android.os.Build.VERSION.SDK_INT + "");
         loginBeanIn.setPpiheight(String.valueOf(ArmsUtils.getScreenHeidth(context)));
         loginBeanIn.setPpiwidth(String.valueOf(ArmsUtils.getScreenWidth(context)));
-        loginBeanIn.setOsver(android.os.Build.VERSION.SDK_INT + "");
-        // loginBeanIn.setDeskey(StringUtil.getRand(8));
 
         PackageManager pm = context.getPackageManager();
         try {
