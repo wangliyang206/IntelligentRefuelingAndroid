@@ -64,6 +64,14 @@ public class SplashActivity extends BaseActivity<SplashPresenter> implements Spl
         }
     }
 
+    /**
+     * 关闭滑动返回
+     */
+    @Override
+    public boolean isSupportSwipeBack() {
+        return false;
+    }
+
     @Override
     public void setupActivityComponent(@NonNull AppComponent appComponent) {
         DaggerSplashComponent
@@ -133,14 +141,6 @@ public class SplashActivity extends BaseActivity<SplashPresenter> implements Spl
                     PermissionUtils.launchAppDetailsSettings();
                 }).cancelable(false)
                 .show();
-    }
-
-    /**
-     * 关闭滑动返回
-     */
-    @Override
-    public boolean supportSlideBack() {
-        return false;
     }
 
     @Override

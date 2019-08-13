@@ -224,6 +224,7 @@ dependencies {
         exclude module: 'support-annotations'
     }
     implementation rootProject.ext.dependencies["paginate"]
+    implementation rootProject.ext.dependencies["cardview-v7"]
 
     //arms
     implementation project(':arms')
@@ -289,4 +290,8 @@ dependencies {
 
     implementation files('libs/AMap2DMap_5.2.0_AMapLocation_4.7.0_20190708.jar')                    // 高德地图与定位
     implementation 'cn.bmob.android:bmob-sdk:3.7.4'                                                 // Bmob后端云
+    implementation "com.mikepenz:materialdrawer:6.0.9"                                              // 适用于Android项目的灵活，易用，一体化抽屉库。(https://github.com/mikepenz/MaterialDrawer/tree/develop)
+    implementation 'com.mikepenz:itemanimators:1.0.2@aar'                                           // Item 动画
+    implementation 'com.mikepenz:google-material-typeface:3.0.1.1.original@aar'
+    implementation 'com.mikepenz:fontawesome-typeface:5.0.6.0@aar'
 }

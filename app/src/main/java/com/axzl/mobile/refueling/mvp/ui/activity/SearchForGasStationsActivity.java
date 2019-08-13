@@ -88,14 +88,6 @@ public class SearchForGasStationsActivity extends BaseActivity<SearchForGasStati
         return R.layout.activity_search_for_gas_stations;
     }
 
-    /**
-     * 关闭滑动返回
-     */
-    @Override
-    public boolean supportSlideBack() {
-        return false;
-    }
-
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
         // 初始化控件

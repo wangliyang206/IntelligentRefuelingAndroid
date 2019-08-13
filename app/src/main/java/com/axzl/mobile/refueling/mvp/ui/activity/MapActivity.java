@@ -89,7 +89,7 @@ public class MapActivity extends BaseActivity<MapPresenter> implements MapContra
      * 关闭滑动返回
      */
     @Override
-    public boolean supportSlideBack() {
+    public boolean isSupportSwipeBack() {
         return false;
     }
 

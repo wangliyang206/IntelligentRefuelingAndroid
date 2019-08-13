@@ -17,4 +17,20 @@
     <string name="common_exit">再按一次退出</string>
     <string name="common_setting">设置</string>
     <string name="common_permissions_denied_tips">当前应用缺少必要权限。请点击"设置"-"权限"-打开所需权限。</string>
+
+
+    <!-- MaterialDrawer -->
+    <string name="drawer_item_home">首页</string>
+    <string name="drawer_item_home_desc">首页简介</string>
+
+    <string name="drawer_item_lottery">抽奖</string>
+    <string name="drawer_item_lottery_LuckyMonkeyPane">幸运转盘</string>
+    <string name="drawer_item_lottery_Lottery">QQ运动积分抽奖</string>
+    <string name="drawer_item_lottery_WheelSurf">原生转盘抽奖</string>
+
+    <string name="drawer_item_icon">Icon视图</string>
+    <string name="drawer_item_icon_FontAwesome">FontAwesome</string>
+    <string name="drawer_item_icon_GoogleMaterial">GoogleMaterial</string>
+
+    <string name="drawer_item_setting">设置</string>
 </resources>

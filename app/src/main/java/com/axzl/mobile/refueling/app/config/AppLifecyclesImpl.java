@@ -17,19 +17,27 @@ package com.axzl.mobile.refueling.app.config;
 
 import android.app.Application;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.multidex.MultiDex;
+import android.widget.ImageView;
 
-import com.aitangba.swipeback.ActivityLifecycleHelper;
 import com.axzl.mobile.refueling.BuildConfig;
+import com.axzl.mobile.refueling.R;
 import com.axzl.mobile.refueling.app.global.AccountManager;
 import com.axzl.mobile.refueling.app.global.Constant;
 import com.axzl.mobile.refueling.app.utils.AppCrashHandler;
 import com.axzl.mobile.refueling.app.utils.FileLoggingTree;
 import com.blankj.utilcode.util.Utils;
 import com.jess.arms.base.delegate.AppLifecycles;
+import com.jess.arms.http.imageloader.glide.GlideArms;
 import com.jess.arms.integration.cache.IntelligentCache;
 import com.jess.arms.utils.ArmsUtils;
+import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
+import com.mikepenz.materialdrawer.util.DrawerImageLoader;
+import com.mikepenz.materialdrawer.util.DrawerUIUtils;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 import com.tencent.bugly.crashreport.CrashReport;
@@ -81,17 +89,55 @@ public class AppLifecyclesImpl implements AppLifecycles {
         // 初始化定位
         initLocation(application);
 
-        //初始化Bmob
+        // 初始化Bmob
         Bmob.initialize(application, Constant.BMOB_APPLICATION_KEY);
 
-        // 右滑关闭Activity
-        application.registerActivityLifecycleCallbacks(ActivityLifecycleHelper.build());
+        // 初始化MaterialDrawer
+        initMaterialDrawer();
 
     }
 
     @Override
     public void onTerminate(@NonNull Application application) {
 
+    }
+
+    /**
+     * 初始化MaterialDrawer
+     */
+    private void initMaterialDrawer() {
+
+        //initialize and create the image loader logic
+        DrawerImageLoader.init(new AbstractDrawerImageLoader() {
+            @Override
+            public void set(ImageView imageView, Uri uri, Drawable placeholder, String tag) {
+                GlideArms.with(imageView.getContext()).load(uri).placeholder(placeholder).into(imageView);
+            }
+
+            @Override
+            public void cancel(ImageView imageView) {
+                GlideArms.with(imageView.getContext()).clear(imageView);
+            }
+
+            @Override
+            public Drawable placeholder(Context ctx, String tag) {
+                //define different placeholders for different imageView targets
+                //default tags are accessible via the DrawerImageLoader.Tags
+                //custom ones can be checked via string. see the CustomUrlBasePrimaryDrawerItem LINE 111
+                if (DrawerImageLoader.Tags.PROFILE.name().equals(tag)) {
+                    return DrawerUIUtils.getPlaceHolder(ctx);
+                } else if (DrawerImageLoader.Tags.ACCOUNT_HEADER.name().equals(tag)) {
+                    return new IconicsDrawable(ctx).iconText(" ").backgroundColorRes(com.mikepenz.materialdrawer.R.color.primary).sizeDp(56);
+                } else if ("customUrlItem".equals(tag)) {
+                    return new IconicsDrawable(ctx).iconText(" ").backgroundColorRes(R.color.md_red_500).sizeDp(56);
+                }
+
+                //we use the default one for
+                //DrawerImageLoader.Tags.PROFILE_DRAWER_ITEM.name()
+
+                return super.placeholder(ctx, tag);
+            }
+        });
     }
 
     /**
