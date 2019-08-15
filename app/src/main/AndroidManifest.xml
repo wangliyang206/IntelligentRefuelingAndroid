@@ -64,11 +64,13 @@
             android:name=".mvp.ui.activity.SplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme" />
-        <!-- 正常图标 -->
+
+        <!-- 本地动态切换图标的缺点是：本地打包与线上android:enabled不一至的话会导致安装不成功 -->
+        <!-- 节日图标 -->
         <activity-alias
-            android:name=".IconNormal"
-            android:enabled="true"
-            android:icon="@mipmap/ic_launcher"
+            android:name=".IconFestival"
+            android:enabled="false"
+            android:icon="@mipmap/app_logo"
             android:label="${APP_NAME}"
             android:targetActivity=".mvp.ui.activity.SplashActivity">
             <intent-filter>
@@ -77,11 +79,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
-        <!-- 节日图标 -->
+        <!-- 正常图标 -->
         <activity-alias
-            android:name=".IconFestival"
-            android:enabled="false"
-            android:icon="@mipmap/app_logo"
+            android:name=".IconNormal"
+            android:enabled="true"
+            android:icon="@mipmap/ic_launcher"
             android:label="${APP_NAME}"
             android:targetActivity=".mvp.ui.activity.SplashActivity">
             <intent-filter>
@@ -99,7 +101,9 @@
         <!-- Icon视图之FontAwesome -->
         <activity android:name=".mvp.ui.activity.FontAwesomeActivity" />
         <!-- Icon视图之GoogleMaterial -->
-        <activity android:name=".mvp.ui.activity.GoogleMaterialActivity"/>
+        <activity android:name=".mvp.ui.activity.GoogleMaterialActivity" />
+        <!-- Icon视图之Octicons -->
+        <activity android:name=".mvp.ui.activity.OcticonsActivity"/>
         <!-- Arms 配置 -->
         <meta-data
             android:name="com.axzl.mobile.refueling.app.global.GlobalConfiguration"

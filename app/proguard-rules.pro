@@ -243,6 +243,15 @@
 -keep class com.amap.api.navi.**{*;}
 -keep class com.autonavi.**{*;}
 
+################AboutLibraries###############
+-keep class .R
+-keep class **.R$* {
+    <fields>;
+}
+-keepclasseswithmembers class **.R$* {
+    public static final int define_*;
+}
+
 ##-----------------------------------
 ############ 思必驰语音-全链路 ########
 ##-----------------------------------

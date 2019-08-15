@@ -3,8 +3,8 @@
     <string name="app_name">随便</string>
     <string name="app_name_debug">随便Test</string>
     <!--通用-->
-    <item name="tag_first" type="id"/>
-    <item name="tag_second" type="id"/>
+    <item name="tag_first" type="id" />
+    <item name="tag_second" type="id" />
 
     <string name="common_tips">温馨提示</string>
     <string name="common_no">取消</string>
@@ -31,6 +31,9 @@
     <string name="drawer_item_icon">Icon视图</string>
     <string name="drawer_item_icon_FontAwesome">FontAwesome</string>
     <string name="drawer_item_icon_GoogleMaterial">GoogleMaterial</string>
+    <string name="drawer_item_icon_Octicons">Octicons</string>
 
     <string name="drawer_item_setting">设置</string>
+    <string name="drawer_item_about">关于</string>
+    <string name="drawer_item_about_description">真的以为我能闭目不言\t\t早已远离世俗尘缘\t\t\t真的相信我已超然物外\t\t可将一切烦恼化青烟\t\t\t从未想过前世今生的界限\t\t竟是如此难以分辨\t\t\t从未念过往复轮回的记忆\t\t在滚滚红尘的世间\t\t\t一悲一喜 一枉然\t\t一草一木 一红颜</string>
 </resources>

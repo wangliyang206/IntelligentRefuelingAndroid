@@ -17,6 +17,8 @@ import com.blankj.utilcode.util.ActivityUtils;
 import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
+import com.mikepenz.aboutlibraries.Libs;
+import com.mikepenz.aboutlibraries.LibsBuilder;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -37,6 +39,7 @@ import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
+import com.mikepenz.octicons_typeface_library.Octicons;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -74,7 +77,6 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                 .build()
                 .inject(this);
     }
-
 
     @Override
     public int initView(@Nullable Bundle savedInstanceState) {
@@ -136,12 +138,14 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                                 new SecondaryDrawerItem().withName(R.string.drawer_item_lottery_Lottery).withLevel(2).withIcon(FontAwesome.Icon.faw_qq).withIdentifier(2001),
                                 new SecondaryDrawerItem().withName(R.string.drawer_item_lottery_WheelSurf).withLevel(2).withIcon(FontAwesome.Icon.faw_cloudscale).withIdentifier(2002)
                         ),
-                        new ExpandableDrawerItem().withName(R.string.drawer_item_icon).withIcon(GoogleMaterial.Icon.gmd_wallpaper).withIdentifier(19).withSelectable(false).withSubItems(
-                                new SecondaryDrawerItem().withName(R.string.drawer_item_icon_FontAwesome).withLevel(2).withIcon(GoogleMaterial.Icon.gmd_image).withIdentifier(2003),
-                                new SecondaryDrawerItem().withName(R.string.drawer_item_icon_GoogleMaterial).withLevel(2).withIcon(FontAwesome.Icon.faw_google).withIdentifier(2004)
+                        new ExpandableDrawerItem().withName(R.string.drawer_item_icon).withIcon(GoogleMaterial.Icon.gmd_image).withIdentifier(19).withSelectable(false).withSubItems(
+                                new SecondaryDrawerItem().withName(R.string.drawer_item_icon_FontAwesome).withLevel(2).withIcon(GoogleMaterial.Icon.gmd_wallpaper).withIdentifier(2003),
+                                new SecondaryDrawerItem().withName(R.string.drawer_item_icon_GoogleMaterial).withLevel(2).withIcon(FontAwesome.Icon.faw_google).withIdentifier(2004),
+                                new SecondaryDrawerItem().withName(R.string.drawer_item_icon_Octicons).withLevel(2).withIcon(GoogleMaterial.Icon.gmd_data_usage).withIdentifier(2005)
                         ),
                         new DividerDrawerItem(),
-                        new SecondaryDrawerItem().withName(R.string.drawer_item_setting).withIcon(GoogleMaterial.Icon.gmd_brightness_5).withIdentifier(20).withSelectable(false)
+                        new SecondaryDrawerItem().withName(R.string.drawer_item_setting).withIcon(GoogleMaterial.Icon.gmd_brightness_5).withIdentifier(20).withSelectable(false),
+                        new SecondaryDrawerItem().withName(R.string.drawer_item_about).withIcon(Octicons.Icon.oct_info).withIdentifier(21).withSelectable(false)
 
                 ) // add the items we want to use with our Drawer
                 .withOnDrawerItemClickListener((view, position, drawerItem) -> {
@@ -156,6 +160,17 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                             ActivityUtils.startActivity(FontAwesomeActivity.class);
                         } else if (drawerItem.getIdentifier() == 2004) {                            // Icon-GoogleMaterial
                             ActivityUtils.startActivity(GoogleMaterialActivity.class);
+                        } else if (drawerItem.getIdentifier() == 2005) {                            // Icon-Octicons
+                            ActivityUtils.startActivity(OcticonsActivity.class);
+                        } else if (drawerItem.getIdentifier() == 21) {
+                            ActivityUtils.startActivity(new LibsBuilder()
+                                    .withFields(R.string.class.getFields())
+                                    .withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
+                                    .withAboutIconShown(true)                                       // 显示图标
+                                    .withAboutVersionShown(true)                                    // 显示版本
+                                    .withAboutDescription(ArmsUtils.getString(getActivity(), R.string.drawer_item_about_description))                   // 关于描述
+                                    .withActivityTitle(ArmsUtils.getString(getApplicationContext(),R.string.drawer_item_about))                         // 标题
+                                    .intent(getActivity()));
                         } else {
                             showMessage(((Nameable) drawerItem).getName().getText(getActivity()));
                         }
