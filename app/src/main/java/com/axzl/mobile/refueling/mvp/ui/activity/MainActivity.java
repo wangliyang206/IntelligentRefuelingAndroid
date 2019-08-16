@@ -6,18 +6,23 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 
 import com.axzl.mobile.refueling.R;
+import com.axzl.mobile.refueling.app.global.Constant;
 import com.axzl.mobile.refueling.app.utils.CommonUtils;
 import com.axzl.mobile.refueling.di.component.DaggerMainComponent;
 import com.axzl.mobile.refueling.mvp.contract.MainContract;
 import com.axzl.mobile.refueling.mvp.presenter.MainPresenter;
+import com.axzl.mobile.refueling.mvp.ui.fragment.HomeFragment;
+import com.axzl.mobile.refueling.mvp.ui.fragment.SettingFragment;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
+import com.jess.arms.utils.Preconditions;
 import com.mikepenz.aboutlibraries.Libs;
 import com.mikepenz.aboutlibraries.LibsBuilder;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
@@ -41,7 +46,6 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 
 import static com.jess.arms.utils.Preconditions.checkNotNull;
 
@@ -55,8 +59,20 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    //save our header or result
+    private HomeFragment homeFragment;
+    private SettingFragment settingFragment;
+
+    /**
+     * 当前首页内容
+     */
+    private Fragment currentFragment = new Fragment();
+    /**
+     * 侧滑Menu 之 头部 对象
+     */
     private AccountHeader headerResult = null;
+    /**
+     * 侧滑Menu 之 内容 对象
+     */
     private Drawer result = null;
 
     /**
@@ -95,6 +111,15 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         mPresenter.initPresenter();
         setSupportActionBar(toolbar);
         initMaterialDrawer(savedInstanceState);
+        initFragment();
+    }
+
+    /** 初始化Fragment */
+    private void initFragment(){
+        homeFragment = HomeFragment.newInstance();
+        settingFragment = SettingFragment.newInstance();
+
+        onTabSelected(Constant.MAIN_HOME);
     }
 
     /**
@@ -140,20 +165,20 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                 .withItemAnimator(new AlphaCrossFadeAnimator())
                 .withAccountHeader(headerResult)                                                    // 设置左侧头部标题
                 .addDrawerItems(
-                        new PrimaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_home).withIdentifier(1),
-                        new ExpandableBadgeDrawerItem().withName(R.string.drawer_item_lottery).withIcon(FontAwesome.Icon.faw_gamepad).withIdentifier(18).withSelectable(false).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.md_red_700)).withBadge("100").withSubItems(
-                                new SecondaryDrawerItem().withName(R.string.drawer_item_lottery_LuckyMonkeyPane).withLevel(2).withIcon(FontAwesome.Icon.faw_empire).withIdentifier(2000),
-                                new SecondaryDrawerItem().withName(R.string.drawer_item_lottery_Lottery).withLevel(2).withIcon(FontAwesome.Icon.faw_qq).withIdentifier(2001),
-                                new SecondaryDrawerItem().withName(R.string.drawer_item_lottery_WheelSurf).withLevel(2).withIcon(FontAwesome.Icon.faw_cloudscale).withIdentifier(2002)
+                        new PrimaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_home).withIdentifier(Constant.MAIN_HOME),
+                        new ExpandableBadgeDrawerItem().withName(R.string.drawer_item_lottery).withIcon(FontAwesome.Icon.faw_gamepad).withIdentifier(999).withSelectable(false).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.md_red_700)).withBadge("100").withSubItems(
+                                new SecondaryDrawerItem().withName(R.string.drawer_item_lottery_LuckyMonkeyPane).withLevel(2).withIcon(FontAwesome.Icon.faw_empire).withIdentifier(Constant.MAIN_LOTTERY_WHEELFORTUNE),
+                                new SecondaryDrawerItem().withName(R.string.drawer_item_lottery_Lottery).withLevel(2).withIcon(FontAwesome.Icon.faw_qq).withIdentifier(Constant.MAIN_LOTTERY_QQ),
+                                new SecondaryDrawerItem().withName(R.string.drawer_item_lottery_WheelSurf).withLevel(2).withIcon(FontAwesome.Icon.faw_cloudscale).withIdentifier(Constant.MAIN_LOTTERY_WHEELSURF)
                         ),
-                        new ExpandableDrawerItem().withName(R.string.drawer_item_icon).withIcon(FontAwesome.Icon.faw_eye).withIdentifier(19).withSelectable(false).withSubItems(
-                                new SecondaryDrawerItem().withName(R.string.drawer_item_icon_FontAwesome).withLevel(2).withIcon(GoogleMaterial.Icon.gmd_wallpaper).withIdentifier(2003),
-                                new SecondaryDrawerItem().withName(R.string.drawer_item_icon_GoogleMaterial).withLevel(2).withIcon(FontAwesome.Icon.faw_google).withIdentifier(2004),
-                                new SecondaryDrawerItem().withName(R.string.drawer_item_icon_Octicons).withLevel(2).withIcon(GoogleMaterial.Icon.gmd_data_usage).withIdentifier(2005)
+                        new ExpandableDrawerItem().withName(R.string.drawer_item_icon).withIcon(FontAwesome.Icon.faw_eye).withIdentifier(998).withSelectable(false).withSubItems(
+                                new SecondaryDrawerItem().withName(R.string.drawer_item_icon_FontAwesome).withLevel(2).withIcon(GoogleMaterial.Icon.gmd_wallpaper).withIdentifier(Constant.MAIN_ICON_FONTAWESOME),
+                                new SecondaryDrawerItem().withName(R.string.drawer_item_icon_GoogleMaterial).withLevel(2).withIcon(FontAwesome.Icon.faw_google).withIdentifier(Constant.MAIN_ICON_GOOGLEMATERIAL),
+                                new SecondaryDrawerItem().withName(R.string.drawer_item_icon_Octicons).withLevel(2).withIcon(GoogleMaterial.Icon.gmd_data_usage).withIdentifier(Constant.MAIN_ICON_OCTICONS)
                         ),
                         new DividerDrawerItem(),
-                        new SecondaryDrawerItem().withName(R.string.drawer_item_setting).withIcon(FontAwesome.Icon.faw_cog).withIdentifier(20),
-                        new SecondaryDrawerItem().withName(R.string.drawer_item_about).withIcon(FontAwesome.Icon.faw_info).withIdentifier(21).withSelectable(false)
+                        new SecondaryDrawerItem().withName(R.string.drawer_item_setting).withIcon(FontAwesome.Icon.faw_cog).withIdentifier(Constant.MAIN_SETTING),
+                        new SecondaryDrawerItem().withName(R.string.drawer_item_about).withIcon(FontAwesome.Icon.faw_info).withIdentifier(Constant.MAIN_ABOUT).withSelectable(false)
 
                 ) // add the items we want to use with our Drawer
                 .withOnDrawerItemClickListener((view, position, drawerItem) -> {
@@ -164,25 +189,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                     //those items don't contain a drawerItem
 
                     if (drawerItem instanceof Nameable) {
-                        if (drawerItem.getIdentifier() == 2003) {                                   // Icon-FontAwesome
-                            ActivityUtils.startActivity(FontAwesomeActivity.class);
-                        } else if (drawerItem.getIdentifier() == 2004) {                            // Icon-GoogleMaterial
-                            ActivityUtils.startActivity(GoogleMaterialActivity.class);
-                        } else if (drawerItem.getIdentifier() == 2005) {                            // Icon-Octicons
-                            ActivityUtils.startActivity(OcticonsActivity.class);
-                        } else if (drawerItem.getIdentifier() == 21) {
-                            ActivityUtils.startActivity(new LibsBuilder()
-                                    .withFields(R.string.class.getFields())
-                                    .withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
-                                    .withAboutIconShown(true)                                       // 显示图标
-                                    .withAboutVersionShown(true)                                    // 显示版本
-                                    .withAboutDescription(ArmsUtils.getString(getActivity(), R.string.drawer_item_about_description))                   // 关于描述
-                                    .withActivityTitle(ArmsUtils.getString(getApplicationContext(), R.string.drawer_item_about))                         // 标题
-                                    .intent(getActivity()));
-                        } else {
-                            if (drawerItem.isSelectable())
-                                showMessage(((Nameable) drawerItem).getName().getText(getActivity()));
-                        }
+                        onTabSelected(drawerItem.getIdentifier());
                     }
 
                     return false;
@@ -202,25 +209,56 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     }
 
-    @OnClick({
-            R.id.btn_open_map,                                                                      // 打开地图
-            R.id.btn_open_refueling,                                                                // 快捷加油
-            R.id.btn_open_lottery                                                                   // 打开抽奖
-    })
-    @Override
-    public void onClick(View v) {
-        super.onClick(v);
-        switch (v.getId()) {
-            case R.id.btn_open_map:
-                ActivityUtils.startActivity(MapActivity.class);                                     // 打开地图
-                break;
-            case R.id.btn_open_refueling:                                                           // 快捷加油
-                ActivityUtils.startActivity(SearchForGasStationsActivity.class);
-                break;
-            case R.id.btn_open_lottery:                                                             // 打开抽奖
-                ActivityUtils.startActivity(MapActivity.class);
-                break;
+    /**
+     * 切换标签(Fragment)
+     */
+    private void onTabSelected(long position) {
+        if (position == Constant.MAIN_HOME) {                                                       // 首页
+            switchFragment(homeFragment).commit();
+        } else if (position == Constant.MAIN_LOTTERY_WHEELFORTUNE) {                                // 抽奖之幸运转盘
+
+        } else if (position == Constant.MAIN_LOTTERY_QQ) {                                          // 抽奖之QQ积分
+
+        } else if (position == Constant.MAIN_LOTTERY_WHEELSURF) {                                   // 抽奖之原生转盘
+
+        } else if (position == Constant.MAIN_ICON_FONTAWESOME) {                                    // Icon-FontAwesome
+            ActivityUtils.startActivity(FontAwesomeActivity.class);
+        } else if (position == Constant.MAIN_ICON_GOOGLEMATERIAL) {                                 // Icon-GoogleMaterial
+            ActivityUtils.startActivity(GoogleMaterialActivity.class);
+        } else if (position == Constant.MAIN_ICON_OCTICONS) {                                       // Icon-Octicons
+            ActivityUtils.startActivity(OcticonsActivity.class);
+        } else if (position == Constant.MAIN_SETTING) {                                             // 设置
+            switchFragment(settingFragment).commit();
+        } else if (position == Constant.MAIN_ABOUT) {                                               // 关于
+            ActivityUtils.startActivity(new LibsBuilder()
+                    .withFields(R.string.class.getFields())
+                    .withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
+                    .withAboutIconShown(true)                                                       // 显示图标
+                    .withAboutVersionShown(true)                                                    // 显示版本
+                    .withAboutDescription(ArmsUtils.getString(getActivity(), R.string.drawer_item_about_description))                   // 关于描述
+                    .withActivityTitle(ArmsUtils.getString(getApplicationContext(), R.string.drawer_item_about))                         // 标题
+                    .intent(getActivity()));
         }
+    }
+
+    /**
+     * fragment的切换
+     */
+    private FragmentTransaction switchFragment(Fragment targetFragment) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        Preconditions.checkNotNull(targetFragment);
+
+        if (!targetFragment.isAdded()) {
+            //第一次使用switchFragment()时currentFragment为null，所以要判断一下
+            if (currentFragment != null) {
+                transaction.hide(currentFragment);
+            }
+            transaction.add(R.id.frame_container, targetFragment, targetFragment.getClass().getName());
+        } else {
+            transaction.hide(currentFragment).show(targetFragment);
+        }
+        currentFragment = targetFragment;
+        return transaction;
     }
 
     @Override
@@ -260,7 +298,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         //add the values which need to be saved from the drawer to the bundle
         outState = result.saveInstanceState(outState);
         //add the values which need to be saved from the accountHeader to the bundle
-//        outState = headerResult.saveInstanceState(outState);
+        outState = headerResult.saveInstanceState(outState);
         super.onSaveInstanceState(outState);
     }
 

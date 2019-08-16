@@ -64,4 +64,28 @@ public interface Constant {
      * Bmob后端云
      */
     String BMOB_APPLICATION_KEY = "e7db8235cfd89bf48fda19ebab15e146";
+
+    /*----------------------------------------------------首页业务变量-------------------------------------------------------*/
+    /** 首页 */
+    int MAIN_HOME = 1;
+
+    /** 抽奖之幸运转盘 */
+    int MAIN_LOTTERY_WHEELFORTUNE = 2;
+    /** 抽奖之QQ积分 */
+    int MAIN_LOTTERY_QQ = 3;
+    /** 抽奖之原生转盘抽奖 */
+    int MAIN_LOTTERY_WHEELSURF = 4;
+
+    /** Icon视图 之 FontAwesome */
+    int MAIN_ICON_FONTAWESOME = 5;
+    /** Icon视图 之 GoogleMaterial */
+    int MAIN_ICON_GOOGLEMATERIAL = 6;
+    /** Icon视图 之 Octicons */
+    int MAIN_ICON_OCTICONS = 7;
+
+    /** 关于 */
+    int MAIN_ABOUT = 9;
+
+    /** 设置 */
+    int MAIN_SETTING = 10;
 }
