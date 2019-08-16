@@ -93,7 +93,7 @@
             </intent-filter>
         </activity-alias>
         <!-- 首页 -->
-        <activity android:name=".mvp.ui.activity.MainActivity" />
+        <activity android:name=".mvp.ui.activity.MainActivity"/>
         <!-- 搜索附近加油站 -->
         <activity android:name=".mvp.ui.activity.SearchForGasStationsActivity" />
         <!-- 地图 -->

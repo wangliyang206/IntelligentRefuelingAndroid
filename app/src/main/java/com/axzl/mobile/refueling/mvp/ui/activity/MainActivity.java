@@ -28,7 +28,6 @@ import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.holder.BadgeStyle;
-import com.mikepenz.materialdrawer.holder.StringHolder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.ExpandableBadgeDrawerItem;
 import com.mikepenz.materialdrawer.model.ExpandableDrawerItem;
@@ -39,7 +38,6 @@ import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
-import com.mikepenz.octicons_typeface_library.Octicons;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -66,6 +64,14 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     @Override
     public boolean isSupportSwipeBack() {
         return false;
+    }
+
+    /**
+     * 给状态栏设置颜色
+     */
+    @Override
+    public int useStatusBarColor() {
+        return R.color.colorPrimary;
     }
 
     @Override
@@ -129,23 +135,24 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                 .withActivity(this)
                 .withToolbar(toolbar)                                                               // 绑定ToolBar
                 .withHasStableIds(true)
+                .withTranslucentStatusBar(false)                                                     // 设置半透明statusBar模式
                 .withItemAnimator(new AlphaCrossFadeAnimator())
                 .withAccountHeader(headerResult)                                                    // 设置左侧头部标题
                 .addDrawerItems(
-                        new PrimaryDrawerItem().withName(R.string.drawer_item_home).withDescription(R.string.drawer_item_home_desc).withIcon(FontAwesome.Icon.faw_home).withIdentifier(1).withSelectable(false),
+                        new PrimaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_home).withIdentifier(1),
                         new ExpandableBadgeDrawerItem().withName(R.string.drawer_item_lottery).withIcon(FontAwesome.Icon.faw_gamepad).withIdentifier(18).withSelectable(false).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.md_red_700)).withBadge("100").withSubItems(
                                 new SecondaryDrawerItem().withName(R.string.drawer_item_lottery_LuckyMonkeyPane).withLevel(2).withIcon(FontAwesome.Icon.faw_empire).withIdentifier(2000),
                                 new SecondaryDrawerItem().withName(R.string.drawer_item_lottery_Lottery).withLevel(2).withIcon(FontAwesome.Icon.faw_qq).withIdentifier(2001),
                                 new SecondaryDrawerItem().withName(R.string.drawer_item_lottery_WheelSurf).withLevel(2).withIcon(FontAwesome.Icon.faw_cloudscale).withIdentifier(2002)
                         ),
-                        new ExpandableDrawerItem().withName(R.string.drawer_item_icon).withIcon(GoogleMaterial.Icon.gmd_image).withIdentifier(19).withSelectable(false).withSubItems(
+                        new ExpandableDrawerItem().withName(R.string.drawer_item_icon).withIcon(FontAwesome.Icon.faw_eye).withIdentifier(19).withSelectable(false).withSubItems(
                                 new SecondaryDrawerItem().withName(R.string.drawer_item_icon_FontAwesome).withLevel(2).withIcon(GoogleMaterial.Icon.gmd_wallpaper).withIdentifier(2003),
                                 new SecondaryDrawerItem().withName(R.string.drawer_item_icon_GoogleMaterial).withLevel(2).withIcon(FontAwesome.Icon.faw_google).withIdentifier(2004),
                                 new SecondaryDrawerItem().withName(R.string.drawer_item_icon_Octicons).withLevel(2).withIcon(GoogleMaterial.Icon.gmd_data_usage).withIdentifier(2005)
                         ),
                         new DividerDrawerItem(),
-                        new SecondaryDrawerItem().withName(R.string.drawer_item_setting).withIcon(GoogleMaterial.Icon.gmd_brightness_5).withIdentifier(20).withSelectable(false),
-                        new SecondaryDrawerItem().withName(R.string.drawer_item_about).withIcon(Octicons.Icon.oct_info).withIdentifier(21).withSelectable(false)
+                        new SecondaryDrawerItem().withName(R.string.drawer_item_setting).withIcon(FontAwesome.Icon.faw_cog).withIdentifier(20),
+                        new SecondaryDrawerItem().withName(R.string.drawer_item_about).withIcon(FontAwesome.Icon.faw_info).withIdentifier(21).withSelectable(false)
 
                 ) // add the items we want to use with our Drawer
                 .withOnDrawerItemClickListener((view, position, drawerItem) -> {
@@ -169,10 +176,11 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                                     .withAboutIconShown(true)                                       // 显示图标
                                     .withAboutVersionShown(true)                                    // 显示版本
                                     .withAboutDescription(ArmsUtils.getString(getActivity(), R.string.drawer_item_about_description))                   // 关于描述
-                                    .withActivityTitle(ArmsUtils.getString(getApplicationContext(),R.string.drawer_item_about))                         // 标题
+                                    .withActivityTitle(ArmsUtils.getString(getApplicationContext(), R.string.drawer_item_about))                         // 标题
                                     .intent(getActivity()));
                         } else {
-                            showMessage(((Nameable) drawerItem).getName().getText(getActivity()));
+                            if (drawerItem.isSelectable())
+                                showMessage(((Nameable) drawerItem).getName().getText(getActivity()));
                         }
                     }
 
@@ -185,13 +193,12 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         //only set the active selection or active profile if we do not recreate the activity
         if (savedInstanceState == null) {
             // set the selection to the item with the identifier 11
-            result.setSelection(21, false);
+            result.setSelection(1, false);
 
             //set the active profile
             headerResult.setActiveProfile(profile);
         }
 
-        result.updateBadge(4, new StringHolder(10 + ""));
     }
 
     @OnClick({
