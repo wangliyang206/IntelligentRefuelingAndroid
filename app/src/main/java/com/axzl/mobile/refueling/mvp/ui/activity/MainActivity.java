@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.axzl.mobile.refueling.R;
+import com.axzl.mobile.refueling.app.utils.CommonUtils;
 import com.axzl.mobile.refueling.di.component.DaggerMainComponent;
 import com.axzl.mobile.refueling.mvp.contract.MainContract;
 import com.axzl.mobile.refueling.mvp.presenter.MainPresenter;
@@ -269,7 +270,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         if (result != null && result.isDrawerOpen()) {
             result.closeDrawer();
         } else {
-            super.onBackPressed();
+            CommonUtils.exitSys(getActivity());
         }
     }
 }
