@@ -56,8 +56,8 @@ import static com.jess.arms.utils.Preconditions.checkNotNull;
  * ================================================
  */
 public class MainActivity extends BaseActivity<MainPresenter> implements MainContract.View {
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
+    @BindView(R.id.toba_mainactivity_toolbar)
+    Toolbar mToolbar;
 
     private HomeFragment homeFragment;
     private SettingFragment settingFragment;
@@ -109,13 +109,15 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
         mPresenter.initPresenter();
-        setSupportActionBar(toolbar);
+        setSupportActionBar(mToolbar);
         initMaterialDrawer(savedInstanceState);
         initFragment();
     }
 
-    /** 初始化Fragment */
-    private void initFragment(){
+    /**
+     * 初始化Fragment
+     */
+    private void initFragment() {
         homeFragment = HomeFragment.newInstance();
         settingFragment = SettingFragment.newInstance();
 
@@ -159,9 +161,9 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         //Create the drawer
         result = new DrawerBuilder()
                 .withActivity(this)
-                .withToolbar(toolbar)                                                               // 绑定ToolBar
+                .withToolbar(mToolbar)                                                              // 绑定ToolBar
                 .withHasStableIds(true)
-                .withTranslucentStatusBar(false)                                                     // 设置半透明statusBar模式
+                .withTranslucentStatusBar(false)                                                    // 设置半透明statusBar模式
                 .withItemAnimator(new AlphaCrossFadeAnimator())
                 .withAccountHeader(headerResult)                                                    // 设置左侧头部标题
                 .addDrawerItems(
@@ -214,6 +216,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
      */
     private void onTabSelected(long position) {
         if (position == Constant.MAIN_HOME) {                                                       // 首页
+            setTitle(R.string.drawer_item_home);
             switchFragment(homeFragment).commit();
         } else if (position == Constant.MAIN_LOTTERY_WHEELFORTUNE) {                                // 抽奖之幸运转盘
 
@@ -228,6 +231,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         } else if (position == Constant.MAIN_ICON_OCTICONS) {                                       // Icon-Octicons
             ActivityUtils.startActivity(OcticonsActivity.class);
         } else if (position == Constant.MAIN_SETTING) {                                             // 设置
+            setTitle(R.string.drawer_item_setting);
             switchFragment(settingFragment).commit();
         } else if (position == Constant.MAIN_ABOUT) {                                               // 关于
             ActivityUtils.startActivity(new LibsBuilder()
@@ -236,7 +240,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                     .withAboutIconShown(true)                                                       // 显示图标
                     .withAboutVersionShown(true)                                                    // 显示版本
                     .withAboutDescription(ArmsUtils.getString(getActivity(), R.string.drawer_item_about_description))                   // 关于描述
-                    .withActivityTitle(ArmsUtils.getString(getApplicationContext(), R.string.drawer_item_about))                         // 标题
+                    .withActivityTitle(ArmsUtils.getString(getApplicationContext(), R.string.drawer_item_about))                                                      // 标题
                     .intent(getActivity()));
         }
     }
