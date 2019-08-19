@@ -83,6 +83,9 @@ public interface Constant {
     /** Icon视图 之 Octicons */
     int MAIN_ICON_OCTICONS = 7;
 
+    /** 夜间模式 */
+    int MAIN_NIGHTMODE= 8;
+
     /** 关于 */
     int MAIN_ABOUT = 9;
 

@@ -34,6 +34,7 @@ import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.holder.BadgeStyle;
+import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.ExpandableBadgeDrawerItem;
 import com.mikepenz.materialdrawer.model.ExpandableDrawerItem;
@@ -41,6 +42,7 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SwitchDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
@@ -82,6 +84,17 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     public boolean isSupportSwipeBack() {
         return false;
     }
+
+    /**
+     * 夜间模式
+     */
+    private OnCheckedChangeListener onCheckedChangeListener = (drawerItem, buttonView, isChecked) -> {
+        if (drawerItem instanceof Nameable) {
+            showMessage("DrawerItem: " + ((Nameable) drawerItem).getName() + " - toggleChecked: " + isChecked);
+        } else {
+            showMessage("toggleChecked: " + isChecked);
+        }
+    };
 
     /**
      * 给状态栏设置颜色
@@ -174,10 +187,12 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                                 new SecondaryDrawerItem().withName(R.string.drawer_item_lottery_WheelSurf).withLevel(2).withIcon(FontAwesome.Icon.faw_cloudscale).withIdentifier(Constant.MAIN_LOTTERY_WHEELSURF)
                         ),
                         new ExpandableDrawerItem().withName(R.string.drawer_item_icon).withIcon(FontAwesome.Icon.faw_eye).withIdentifier(998).withSelectable(false).withSubItems(
-                                new SecondaryDrawerItem().withName(R.string.drawer_item_icon_FontAwesome).withLevel(2).withIcon(GoogleMaterial.Icon.gmd_wallpaper).withIdentifier(Constant.MAIN_ICON_FONTAWESOME),
-                                new SecondaryDrawerItem().withName(R.string.drawer_item_icon_GoogleMaterial).withLevel(2).withIcon(FontAwesome.Icon.faw_google).withIdentifier(Constant.MAIN_ICON_GOOGLEMATERIAL),
-                                new SecondaryDrawerItem().withName(R.string.drawer_item_icon_Octicons).withLevel(2).withIcon(GoogleMaterial.Icon.gmd_data_usage).withIdentifier(Constant.MAIN_ICON_OCTICONS)
+                                new SecondaryDrawerItem().withName(R.string.drawer_item_icon_FontAwesome).withLevel(2).withIcon(GoogleMaterial.Icon.gmd_wallpaper).withIdentifier(Constant.MAIN_ICON_FONTAWESOME).withSelectable(false),
+                                new SecondaryDrawerItem().withName(R.string.drawer_item_icon_GoogleMaterial).withLevel(2).withIcon(FontAwesome.Icon.faw_google).withIdentifier(Constant.MAIN_ICON_GOOGLEMATERIAL).withSelectable(false),
+                                new SecondaryDrawerItem().withName(R.string.drawer_item_icon_Octicons).withLevel(2).withIcon(GoogleMaterial.Icon.gmd_data_usage).withIdentifier(Constant.MAIN_ICON_OCTICONS).withSelectable(false)
                         ),
+                        new DividerDrawerItem(),
+                        new SwitchDrawerItem().withName(R.string.drawer_item_NightMode).withIcon(R.mipmap.sunny_night_day).withIdentifier(Constant.MAIN_NIGHTMODE).withChecked(false).withSelectable(false).withOnCheckedChangeListener(onCheckedChangeListener),
                         new DividerDrawerItem(),
                         new SecondaryDrawerItem().withName(R.string.drawer_item_setting).withIcon(FontAwesome.Icon.faw_cog).withIdentifier(Constant.MAIN_SETTING),
                         new SecondaryDrawerItem().withName(R.string.drawer_item_about).withIcon(FontAwesome.Icon.faw_info).withIdentifier(Constant.MAIN_ABOUT).withSelectable(false)
@@ -191,7 +206,11 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                     //those items don't contain a drawerItem
 
                     if (drawerItem instanceof Nameable) {
-                        onTabSelected(drawerItem.getIdentifier());
+                        if (drawerItem.getIdentifier() == Constant.MAIN_NIGHTMODE) {
+                            // 切换 夜间模式 时不关闭Drawer
+                            return true;
+                        } else
+                            onTabSelected(drawerItem.getIdentifier());
                     }
 
                     return false;

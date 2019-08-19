@@ -36,4 +36,6 @@
     <string name="drawer_item_setting">设置</string>
     <string name="drawer_item_about">关于</string>
     <string name="drawer_item_about_description">真的以为我能闭目不言\t\t早已远离世俗尘缘\t\t\t真的相信我已超然物外\t\t可将一切烦恼化青烟\t\t\t从未想过前世今生的界限\t\t竟是如此难以分辨\t\t\t从未念过往复轮回的记忆\t\t在滚滚红尘的世间\t\t\t一悲一喜 一枉然\t\t一草一木 一红颜</string>
+
+    <string name="drawer_item_NightMode">夜间模式</string>
 </resources>
