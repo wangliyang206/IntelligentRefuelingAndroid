@@ -20,6 +20,10 @@
 
 
     <!-- MaterialDrawer -->
+    <string name="drawer_item_AddAccount">新增帐户</string>
+    <string name="drawer_item_AddAccount_description">添加新的GitHub帐户</string>
+    <string name="drawer_item_ManageAccount">管理账户</string>
+
     <string name="drawer_item_home">首页</string>
     <string name="drawer_item_home_desc">首页简介</string>
 

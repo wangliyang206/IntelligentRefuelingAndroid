@@ -66,6 +66,12 @@ public interface Constant {
     String BMOB_APPLICATION_KEY = "e7db8235cfd89bf48fda19ebab15e146";
 
     /*----------------------------------------------------首页业务变量-------------------------------------------------------*/
+    /** 添加账户 */
+    int MAIN_ADDACCOUNT = 100000;
+
+    /** 管理账户 */
+    int MAIN_MANAGEACCOUNT = 100001;
+
     /** 首页 */
     int MAIN_HOME = 1;
 

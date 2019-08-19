@@ -156,14 +156,24 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                         profile,
 //                        profile2,
                         //don't ask but google uses 14dp for the add account icon in gmail but 20dp for the normal icons (like manage account)
-                        new ProfileSettingDrawerItem().withName("新增帐户").withDescription("添加新的GitHub帐户").withIcon(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_add).actionBar().paddingDp(5).colorRes(R.color.material_drawer_primary_text)).withIdentifier(100000),
-                        new ProfileSettingDrawerItem().withName("管理帐户").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(100001)
+                        new ProfileSettingDrawerItem().withName(R.string.drawer_item_AddAccount).withDescription(R.string.drawer_item_AddAccount_description).withIcon(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_add).actionBar().paddingDp(5).colorRes(R.color.material_drawer_primary_text)).withIdentifier(Constant.MAIN_ADDACCOUNT),
+                        new ProfileSettingDrawerItem().withName(R.string.drawer_item_ManageAccount).withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(Constant.MAIN_MANAGEACCOUNT)
                 )
                 .withOnAccountHeaderListener((view, profile1, current) -> {
                     //sample usage of the onProfileChanged listener
                     //if the clicked item has the identifier 1 add a new profile ;)
                     if (profile1 instanceof IDrawerItem) {
-                        showMessage(profile1.getName().getText(getActivity()));
+                        if (profile1.getIdentifier() == Constant.MAIN_ADDACCOUNT) {
+                            int count = 100 + headerResult.getProfiles().size() + 1;
+                            IProfile newProfile = new ProfileDrawerItem().withNameShown(true).withName("Batman" + count).withEmail("batman" + count + "@gmail.com").withIcon(R.drawable.profile6).withIdentifier(count);
+                            if (headerResult.getProfiles() != null) {
+                                //we know that there are 2 setting elements. set the new profile above them ;)
+                                headerResult.addProfile(newProfile, headerResult.getProfiles().size() - 2);
+                            } else {
+                                headerResult.addProfiles(newProfile);
+                            }
+                        } else
+                            showMessage(profile1.getName().getText(getActivity()));
                     }
                     //false if you have not consumed the event and it should close the drawer
                     return false;
