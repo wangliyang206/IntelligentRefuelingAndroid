@@ -1,16 +1,24 @@
 package com.axzl.mobile.refueling.mvp.ui.activity;
 
+import android.animation.Animator;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.axzl.mobile.refueling.R;
+import com.axzl.mobile.refueling.app.global.AccountManager;
 import com.axzl.mobile.refueling.app.global.Constant;
 import com.axzl.mobile.refueling.app.utils.CommonUtils;
 import com.axzl.mobile.refueling.di.component.DaggerMainComponent;
@@ -20,6 +28,8 @@ import com.axzl.mobile.refueling.mvp.ui.fragment.HomeFragment;
 import com.axzl.mobile.refueling.mvp.ui.fragment.SettingFragment;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.jess.arms.base.BaseActivity;
+import com.jess.arms.cj.colorful.Colorful;
+import com.jess.arms.cj.colorful.setter.ViewGroupSetter;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
 import com.jess.arms.utils.Preconditions;
@@ -34,6 +44,7 @@ import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.holder.BadgeStyle;
+import com.mikepenz.materialdrawer.icons.MaterialDrawerFont;
 import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.ExpandableBadgeDrawerItem;
@@ -46,6 +57,8 @@ import com.mikepenz.materialdrawer.model.SwitchDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 
@@ -61,21 +74,49 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     @BindView(R.id.toba_mainactivity_toolbar)
     Toolbar mToolbar;
 
-    private HomeFragment homeFragment;
-    private SettingFragment settingFragment;
+    @Inject
+    AccountManager mAccountManager;
 
+    /**
+     * 切换主题对象
+     */
+    private Colorful colorful;
+
+    /**
+     * 首页
+     */
+    private HomeFragment homeFragment;
+    /**
+     * 设置界面
+     */
+    private SettingFragment settingFragment;
     /**
      * 当前首页内容
      */
     private Fragment currentFragment = new Fragment();
+
     /**
      * 侧滑Menu 之 头部 对象
      */
     private AccountHeader headerResult = null;
+
     /**
      * 侧滑Menu 之 内容 对象
      */
     private Drawer result = null;
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        currentFragment = null;
+        homeFragment = null;
+        settingFragment = null;
+
+        colorful = null;
+        mAccountManager = null;
+        headerResult = null;
+        result = null;
+    }
 
     /**
      * 关闭滑动返回
@@ -90,19 +131,33 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
      */
     private OnCheckedChangeListener onCheckedChangeListener = (drawerItem, buttonView, isChecked) -> {
         if (drawerItem instanceof Nameable) {
-            showMessage("DrawerItem: " + ((Nameable) drawerItem).getName() + " - toggleChecked: " + isChecked);
+
+            // 切换主题
+            if (isChecked)
+                animChangeColor(R.style.AppNightTheme);
+            else
+                animChangeColor(R.style.AppDayTheme);
+
+            // 刷新状态栏
+            setStatusBar();
+            // 保存切换结果
+            mAccountManager.setNight(isChecked);
+
+            // 侧滑 - 头部-新增账户的Icon
+            headerResult.getProfiles().get(headerResult.getProfiles().size() - 2).withIcon(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_add).actionBar().paddingDp(5).colorRes(mAccountManager.getNight() ? R.color.material_drawer_dark_primary_text : R.color.material_drawer_primary_text));
+
+            // 侧滑 - 头部-小三角的颜色
+            TypedValue typedValue = new TypedValue();
+            getTheme().resolveAttribute(com.mikepenz.materialdrawer.R.attr.material_drawer_header_selection_text, typedValue, true);
+            ImageView mAccountSwitcherArrow = (ImageView)headerResult.getView().findViewById(R.id.material_drawer_account_header_text_switcher);
+            mAccountSwitcherArrow.setImageDrawable(new IconicsDrawable(this, MaterialDrawerFont.Icon.mdf_arrow_drop_down).sizeRes(R.dimen.material_drawer_account_header_dropdown).paddingRes(R.dimen.material_drawer_account_header_dropdown_padding).color(typedValue.data));
+
+            // 侧滑 - 刷新MateriaDrawer列表
+            result.getAdapter().notifyAdapterDataSetChanged();
         } else {
             showMessage("toggleChecked: " + isChecked);
         }
     };
-
-    /**
-     * 给状态栏设置颜色
-     */
-    @Override
-    public int useStatusBarColor() {
-        return R.color.colorPrimary;
-    }
 
     @Override
     public void setupActivityComponent(@NonNull AppComponent appComponent) {
@@ -121,10 +176,31 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        mPresenter.initPresenter();
+        // 绑定Toolbar
         setSupportActionBar(mToolbar);
+        // 初始化Menu侧滑
         initMaterialDrawer(savedInstanceState);
+        // 初始化Fragment
         initFragment();
+        // 初始化Colorful
+        setupColorful();
+        // 初始化业务逻辑
+        mPresenter.initPresenter();
+    }
+
+    /**
+     * 初始化
+     */
+    private void setupColorful() {
+        ViewGroupSetter toolbarSetter = new ViewGroupSetter(mToolbar, R.attr.colorPrimary);
+        ViewGroupSetter recyclerViewSetter = new ViewGroupSetter(result.getRecyclerView(), R.attr.material_drawer_background);
+        recyclerViewSetter.childViewTextColor(com.mikepenz.materialdrawer.R.id.material_drawer_account_header_name, R.attr.material_drawer_header_selection_text);
+        recyclerViewSetter.childViewTextColor(com.mikepenz.materialdrawer.R.id.material_drawer_account_header_email, R.attr.material_drawer_header_selection_text);
+
+        colorful = new Colorful.Builder(this)
+                .setter(toolbarSetter)
+                .setter(recyclerViewSetter)
+                .create();
     }
 
     /**
@@ -151,12 +227,11 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         headerResult = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withTranslucentStatusBar(true)
-                .withTextColor(Color.BLACK)
                 .addProfiles(
                         profile,
 //                        profile2,
                         //don't ask but google uses 14dp for the add account icon in gmail but 20dp for the normal icons (like manage account)
-                        new ProfileSettingDrawerItem().withName(R.string.drawer_item_AddAccount).withDescription(R.string.drawer_item_AddAccount_description).withIcon(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_add).actionBar().paddingDp(5).colorRes(R.color.material_drawer_primary_text)).withIdentifier(Constant.MAIN_ADDACCOUNT),
+                        new ProfileSettingDrawerItem().withName(R.string.drawer_item_AddAccount).withDescription(R.string.drawer_item_AddAccount_description).withIcon(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_add).actionBar().paddingDp(5).colorRes(mAccountManager.getNight() ? R.color.material_drawer_dark_primary_text : R.color.material_drawer_primary_text)).withIdentifier(Constant.MAIN_ADDACCOUNT),
                         new ProfileSettingDrawerItem().withName(R.string.drawer_item_ManageAccount).withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(Constant.MAIN_MANAGEACCOUNT)
                 )
                 .withOnAccountHeaderListener((view, profile1, current) -> {
@@ -202,7 +277,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                                 new SecondaryDrawerItem().withName(R.string.drawer_item_icon_Octicons).withLevel(2).withIcon(GoogleMaterial.Icon.gmd_data_usage).withIdentifier(Constant.MAIN_ICON_OCTICONS).withSelectable(false)
                         ),
                         new DividerDrawerItem(),
-                        new SwitchDrawerItem().withName(R.string.drawer_item_NightMode).withIcon(R.mipmap.sunny_night_day).withIdentifier(Constant.MAIN_NIGHTMODE).withChecked(false).withSelectable(false).withOnCheckedChangeListener(onCheckedChangeListener),
+                        new SwitchDrawerItem().withName(R.string.drawer_item_NightMode).withIcon(R.mipmap.sunny_night_day).withIdentifier(Constant.MAIN_NIGHTMODE).withChecked(mAccountManager.getNight()).withSelectable(false).withOnCheckedChangeListener(onCheckedChangeListener),
                         new DividerDrawerItem(),
                         new SecondaryDrawerItem().withName(R.string.drawer_item_setting).withIcon(FontAwesome.Icon.faw_cog).withIdentifier(Constant.MAIN_SETTING),
                         new SecondaryDrawerItem().withName(R.string.drawer_item_about).withIcon(FontAwesome.Icon.faw_info).withIdentifier(Constant.MAIN_ABOUT).withSelectable(false)
@@ -266,6 +341,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
             ActivityUtils.startActivity(new LibsBuilder()
                     .withFields(R.string.class.getFields())
                     .withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
+                    .withActivityTheme(mAccountManager.getNight() ? R.style.AppNightTheme : R.style.AppDayTheme)                                               // 设置主题
                     .withAboutIconShown(true)                                                       // 显示图标
                     .withAboutVersionShown(true)                                                    // 显示版本
                     .withAboutDescription(ArmsUtils.getString(getActivity(), R.string.drawer_item_about_description))                   // 关于描述
@@ -342,6 +418,50 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
             result.closeDrawer();
         } else {
             CommonUtils.exitSys(getActivity());
+        }
+    }
+
+
+    /**
+     * 给夜间模式增加一个动画,颜色渐变
+     *
+     * @param newTheme
+     */
+    private void animChangeColor(final int newTheme) {
+        final View rootView = getWindow().getDecorView();
+        rootView.setDrawingCacheEnabled(true);
+        rootView.buildDrawingCache(true);
+
+        final Bitmap localBitmap = Bitmap.createBitmap(rootView.getDrawingCache());
+        rootView.setDrawingCacheEnabled(false);
+        if (null != localBitmap && rootView instanceof ViewGroup) {
+            final View tmpView = new View(this);
+            tmpView.setBackgroundDrawable(new BitmapDrawable(getResources(), localBitmap));
+            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            ((ViewGroup) rootView).addView(tmpView, params);
+            tmpView.animate().alpha(0).setDuration(400).setListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    colorful.setTheme(newTheme);
+                    System.gc();
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    ((ViewGroup) rootView).removeView(tmpView);
+                    localBitmap.recycle();
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            }).start();
         }
     }
 }

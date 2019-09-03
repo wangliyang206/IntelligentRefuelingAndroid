@@ -19,6 +19,10 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 
+import com.axzl.mobile.refueling.R;
+import com.axzl.mobile.refueling.app.global.AccountManager;
+import com.axzl.mobile.refueling.mvp.ui.activity.SplashActivity;
+
 import timber.log.Timber;
 
 /**
@@ -31,10 +35,21 @@ import timber.log.Timber;
  * ================================================
  */
 public class ActivityLifecycleCallbacksImpl implements Application.ActivityLifecycleCallbacks {
+    private AccountManager accountManager = null;
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
         Timber.i(activity + " - onActivityCreated");
+
+        // 设置主题
+        if (!activity.getClass().getName().equals(SplashActivity.class.getName())) {
+            accountManager = new AccountManager(activity);
+            if (accountManager.getNight()) {
+                activity.setTheme(R.style.AppNightTheme);
+            } else {
+                activity.setTheme(R.style.AppDayTheme);
+            }
+        }
     }
 
     @Override
@@ -92,5 +107,6 @@ public class ActivityLifecycleCallbacksImpl implements Application.ActivityLifec
         Timber.i(activity + " - onActivityDestroyed");
         //横竖屏切换或配置改变时, Activity 会被重新创建实例, 但 Bundle 中的基础数据会被保存下来,移除该数据是为了保证重新创建的实例可以正常工作
         activity.getIntent().removeExtra("isInitToolbar");
+        accountManager = null;
     }
 }

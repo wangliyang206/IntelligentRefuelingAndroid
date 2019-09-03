@@ -58,11 +58,6 @@ public class GoogleMaterialActivity extends BaseActivity<GoogleMaterialPresenter
     }
 
     @Override
-    public int useStatusBarColor() {
-        return R.color.colorPrimary;
-    }
-
-    @Override
     public void setupActivityComponent(@NonNull AppComponent appComponent) {
         DaggerGoogleMaterialComponent
                 .builder()
@@ -85,6 +80,8 @@ public class GoogleMaterialActivity extends BaseActivity<GoogleMaterialPresenter
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // 设置标题
         getSupportActionBar().setTitle(R.string.drawer_item_icon_GoogleMaterial);
+        // 设置监听
+        mToolbar.setNavigationOnClickListener(v -> onBackPressed());
 
         // 初始化RecyclerView
         ArmsUtils.configRecyclerView(mRecyclerView, mLayoutManager);

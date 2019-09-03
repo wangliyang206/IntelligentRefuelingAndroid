@@ -75,11 +75,6 @@ public class OcticonsActivity extends BaseActivity<OcticonsPresenter> implements
     }
 
     @Override
-    public int useStatusBarColor() {
-        return R.color.colorPrimary;
-    }
-
-    @Override
     public void initData(@Nullable Bundle savedInstanceState) {
         // 绑定Toolbar
         setSupportActionBar(mToolbar);
@@ -87,6 +82,8 @@ public class OcticonsActivity extends BaseActivity<OcticonsPresenter> implements
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // 设置标题
         getSupportActionBar().setTitle(R.string.drawer_item_icon_Octicons);
+        // 设置监听
+        mToolbar.setNavigationOnClickListener(v -> onBackPressed());
 
         // 初始化RecyclerView
         ArmsUtils.configRecyclerView(mRecyclerView, mLayoutManager);

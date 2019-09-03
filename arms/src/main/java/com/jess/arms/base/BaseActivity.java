@@ -25,6 +25,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.InflateException;
 import android.view.View;
 
@@ -160,20 +161,23 @@ public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivi
     }
 
     /**
-     * 使用自定义颜色
-     * PS：R.color.colorAccent
+     * 根据主题使用不同的颜色。
+     * 如果想要纯透明，则需要重写此方法，返回值为 -1 即可。
      */
-    public int useStatusBarColor() {
-        return -1;
+    public int useStatusBarColor(){
+        TypedValue typedValue = new TypedValue();
+        getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true);
+        return typedValue.data;
     }
 
     /**
-     * 设置状态栏为透明
+     * 第一，设置状态栏为透明。
+     * 第二，此方法可起到刷新作用。
      */
-    private void setStatusBar() {
+    public void setStatusBar() {
         if (useStatusBar()) {
             if (useStatusBarColor() != -1) {
-                StatusBarCompat.setStatusBarColor(this, ContextCompat.getColor(this, useStatusBarColor()));
+                StatusBarCompat.setStatusBarColor(this, useStatusBarColor());
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     //SDK >= 21时, 取消状态栏的阴影

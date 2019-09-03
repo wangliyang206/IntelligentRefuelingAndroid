@@ -63,7 +63,6 @@ public final class AccountManager {
      */
     private final String START_TIME = "startTime";
 
-
     /**
      * 定位 - 经度
      */
@@ -78,6 +77,11 @@ public final class AccountManager {
      * 定位 - 地址
      */
     private static final String ADDRESS = "address";
+
+    /**
+     * 是否是夜间模式
+     */
+    public static final String IS_NIGHT = "night";
     /*----------------------------------------------操作对象-------------------------------------------------*/
 
     private AppPreferencesHelper spHelper;
@@ -300,5 +304,19 @@ public final class AccountManager {
      */
     public String getAddress() {
         return spHelper.getPref(ADDRESS, "");
+    }
+
+    /**
+     * 是否是夜间模式
+     */
+    public boolean getNight() {
+        return spHelper.getPref(IS_NIGHT, false);
+    }
+
+    /**
+     * 设置模式(true 夜间模式，false 日间模式)
+     */
+    public void setNight(boolean val) {
+        spHelper.put(IS_NIGHT, val);
     }
 }

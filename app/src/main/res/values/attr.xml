@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 自定义属性(用来操控日主题和夜主题) -->
+
+    <!-- 文字颜色 -->
+    <attr name="text_color" format="reference|color"/>
+    <!-- 按钮背景色 -->
+    <attr name="btn_bg" format="reference|color"/>
+    <!-- 视图背景色 -->
+    <attr name="root_view_bg" format="reference|color"/>
+    <!-- 工具栏颜色 -->
+    <attr name="toolbar_color" format="reference|color"/>
+    <!-- 悬浮的按钮 -->
+    <attr name="float_button_color" format="reference|color"/>
+    <!-- Tab背景色 -->
+    <attr name="tab_bg_color" format="reference|color"/>
+    <!-- Tab布局背景色 -->
+    <attr name="tab_layout_bg_color" format="reference|color"/>
+    <!-- 背景色 -->
+    <attr name="background_color" format="color"/>
+    <!-- Item背景色 -->
+    <attr name="item_bg_color" format="color"/>
+    <!-- 线 颜色 -->
+    <attr name="line_color" format="color"/>
+    <!-- list分割线颜色 -->
+    <attr name="list_divider_color" format="color"/>
+</resources>

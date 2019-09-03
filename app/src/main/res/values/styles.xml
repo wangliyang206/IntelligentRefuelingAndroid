@@ -2,19 +2,72 @@
 
     <!-- 默认主题. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
+        <!-- Toolbar导航栏的底色。 -->
         <item name="colorPrimary">@color/colorPrimary</item>
+        <!-- 状态栏的底色，注意这里只支持Android5.0以上的手机。 -->
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <!-- CheckBox，RadioButton，SwitchCompat等控件的点击选中颜色 -->
         <item name="colorAccent">@color/colorAccent</item>
+
+        <!--修改toolbar的Title(大标题)颜色-->
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <!--修改toolbar的subtitle(小标题)颜色-->
+        <item name="subtitleTextColor">@android:color/white</item>
+        <!--修改toolbar的图标颜色.-->
+        <item name="colorControlNormal">@android:color/white</item>
+
+        <!-- MaterialDrawer specific values -->
+        <item name="material_drawer_background">@color/material_drawer_background</item>
+        <item name="material_drawer_primary_text">@color/material_drawer_primary_text</item>
+        <item name="material_drawer_primary_icon">@color/material_drawer_primary_icon</item>
+        <item name="material_drawer_secondary_text">@color/material_drawer_secondary_text</item>
+        <item name="material_drawer_hint_text">@color/material_drawer_hint_text</item>
+        <item name="material_drawer_hint_icon">@color/material_drawer_hint_icon</item>
+        <item name="material_drawer_divider">@color/material_drawer_divider</item>
+        <item name="material_drawer_selected">@color/material_drawer_selected</item>
+        <item name="material_drawer_selected_text">@color/material_drawer_selected_text</item>
+        <item name="material_drawer_header_selection_text">@color/material_drawer_primary_text</item>
     </style>
 
     <!--启动界面主题-->
     <style name="SplashTheme" parent="AppTheme">
+        <!-- 设置背景图片 -->
         <item name="android:windowBackground">@mipmap/welcome_default</item>
+        <!-- 无标题 -->
         <item name="android:windowNoTitle">true</item>
+        <!-- 无ActionBar -->
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <!-- 全屏即无通知栏 -->
         <item name="android:windowFullscreen">true</item>
+        <!-- 是否有遮盖 -->
         <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <!--日间主题-->
+    <style name="AppDayTheme" parent="AppTheme">
+
+    </style>
+
+    <!--夜间主题-->
+    <style name="AppNightTheme" parent="AppTheme">
+        <!-- Toolbar导航栏的底色。 -->
+        <item name="colorPrimary">@color/nightColorPrimary</item>
+        <!-- 状态栏的底色，注意这里只支持Android5.0以上的手机。 -->
+        <item name="colorPrimaryDark">@color/nightColorPrimaryDark</item>
+        <!-- CheckBox，RadioButton，SwitchCompat等控件的点击选中颜色 -->
+        <item name="colorAccent">@color/nightColorAccent</item>
+
+        <!-- MaterialDrawer specific values -->
+        <item name="material_drawer_background">@color/material_drawer_dark_background</item>
+        <item name="material_drawer_primary_text">@color/material_drawer_dark_primary_text</item>
+        <item name="material_drawer_primary_icon">@color/material_drawer_dark_primary_icon</item>
+        <item name="material_drawer_secondary_text">@color/material_drawer_dark_secondary_text</item>
+        <item name="material_drawer_hint_text">@color/material_drawer_dark_hint_text</item>
+        <item name="material_drawer_hint_icon">@color/material_drawer_dark_hint_icon</item>
+        <item name="material_drawer_divider">@color/material_drawer_dark_divider</item>
+        <item name="material_drawer_selected">@color/material_drawer_dark_selected</item>
+        <item name="material_drawer_selected_text">@color/material_drawer_dark_selected_text</item>
+        <item name="material_drawer_header_selection_text">@color/material_drawer_header_selection_text</item>
     </style>
 </resources>
