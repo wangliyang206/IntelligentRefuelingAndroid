@@ -46,7 +46,9 @@
 
     <!--日间主题-->
     <style name="AppDayTheme" parent="AppTheme">
-
+        <!-- 视图背景颜色 -->
+        <item name="background_color">@color/backgroundColor</item>
+        <item name="text_color">@color/day_tx_color</item>
     </style>
 
     <!--夜间主题-->
@@ -57,7 +59,10 @@
         <item name="colorPrimaryDark">@color/nightColorPrimaryDark</item>
         <!-- CheckBox，RadioButton，SwitchCompat等控件的点击选中颜色 -->
         <item name="colorAccent">@color/nightColorAccent</item>
-
+        <!-- 视图背景颜色 -->
+        <item name="background_color">@color/nightBackground</item>
+        <!-- TextView 颜色 -->
+        <item name="text_color">@color/night_tx_color</item>
         <!-- MaterialDrawer specific values -->
         <item name="material_drawer_background">@color/material_drawer_dark_background</item>
         <item name="material_drawer_primary_text">@color/material_drawer_dark_primary_text</item>

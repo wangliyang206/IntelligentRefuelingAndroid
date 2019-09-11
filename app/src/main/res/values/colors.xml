@@ -4,12 +4,27 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="backgroundColor">@android:color/white</color>
+    <color name="day_tx_color">#212121</color>
 
     <!-- 夜间模式 -->
     <color name="nightColorPrimary">#222222</color>
     <color name="nightColorPrimaryDark">#252525</color>
-    <color name="nightColorAccent">#404040</color>
+    <color name="nightColorAccent">#008577</color>
+    <color name="nightBackground">#ff3c3c3c</color>
+    <color name="night_tx_color">#ACACAC</color>
 
-    <!-- 通用 -->
-    <color name="common_text_tips_color">#888888</color>
+    <!-- 字段颜色灰色 -->
+    <color name="main_button_normal_text">#aaaaaa</color>
+    <!-- 按钮点击效果 -->
+    <color name="button_background">#8ec31e</color>
+    <!-- 按钮获取焦点颜色 -->
+    <color name="button_normal_bak_blue">#45A7D8</color>
+
+    <!--Radio 样式-->
+    <drawable name="radio_no_checked_bg_color">#ffffff</drawable>
+    <drawable name="radio_checked_bg_color">#45A7D8</drawable>
+    <drawable name="radio_no_checked_text_color">#888888</drawable>
+    <drawable name="radio_checked_text_color">#ffffff</drawable>
+
 </resources>

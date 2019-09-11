@@ -46,7 +46,8 @@ public final class EventBusManager {
         return sInstance;
     }
 
-    private EventBusManager() { }
+    private EventBusManager() {
+    }
 
     /**
      * 注册订阅者, 允许在项目中同时依赖两个 EventBus, 只要您喜欢
@@ -88,6 +89,14 @@ public final class EventBusManager {
     public void post(Object event) {
         if (DEPENDENCY_ANDROID_EVENTBUS) {
             org.simple.eventbus.EventBus.getDefault().post(event);
+        } else if (DEPENDENCY_EVENTBUS) {
+            org.greenrobot.eventbus.EventBus.getDefault().post(event);
+        }
+    }
+
+    public void post(Object event, String tag) {
+        if (DEPENDENCY_ANDROID_EVENTBUS) {
+            org.simple.eventbus.EventBus.getDefault().post(event, tag);
         } else if (DEPENDENCY_EVENTBUS) {
             org.greenrobot.eventbus.EventBus.getDefault().post(event);
         }
@@ -152,9 +161,9 @@ public final class EventBusManager {
             } catch (Throwable th) {
                 try {
                     allMethods = clazz.getMethods();
-                }catch (Throwable th2){
+                } catch (Throwable th2) {
                     continue;
-                }finally {
+                } finally {
                     skipSuperClasses = true;
                 }
             }

@@ -1,6 +1,9 @@
 package com.axzl.mobile.refueling.di.module;
 
 import com.axzl.mobile.refueling.app.global.AccountManager;
+import com.axzl.mobile.refueling.mvp.ui.fragment.FortuneTellingFragment;
+import com.axzl.mobile.refueling.mvp.ui.fragment.HomeFragment;
+import com.axzl.mobile.refueling.mvp.ui.fragment.SettingFragment;
 import com.jess.arms.di.scope.ActivityScope;
 
 import dagger.Binds;
@@ -33,5 +36,23 @@ public abstract class MainModule {
     @Provides
     static AccountManager provideAccountManager(MainContract.View view) {
         return new AccountManager(view.getActivity());
+    }
+
+    @ActivityScope
+    @Provides
+    static HomeFragment provideHomeFragment() {
+        return HomeFragment.newInstance();
+    }
+
+    @ActivityScope
+    @Provides
+    static SettingFragment provideSettingFragment() {
+        return SettingFragment.newInstance();
+    }
+
+    @ActivityScope
+    @Provides
+    static FortuneTellingFragment provideFortuneTellingFragment() {
+        return FortuneTellingFragment.newInstance();
     }
 }

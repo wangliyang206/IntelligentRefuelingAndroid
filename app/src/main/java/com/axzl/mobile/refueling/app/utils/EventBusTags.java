@@ -28,5 +28,6 @@ package com.axzl.mobile.refueling.app.utils;
  * ================================================
  */
 public interface EventBusTags {
-
+    /** 首页 延迟 跳转 */
+    String HOME_DELAYED_JUMP = "homeDelayedJump";
 }

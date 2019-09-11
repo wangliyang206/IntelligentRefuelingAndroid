@@ -16,13 +16,20 @@
 package com.axzl.mobile.refueling.app.utils;
 
 import com.axzl.mobile.refueling.app.config.CommonRetryWithDelay;
+import com.axzl.mobile.refueling.mvp.model.entity.EventBusEntity;
+import com.jess.arms.integration.EventBusManager;
 import com.jess.arms.mvp.IView;
 import com.jess.arms.utils.RxLifecycleUtils;
 import com.trello.rxlifecycle2.LifecycleTransformer;
 import com.trello.rxlifecycle2.RxLifecycle;
 
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Observable;
 import io.reactivex.ObservableTransformer;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -37,6 +44,33 @@ import io.reactivex.schedulers.Schedulers;
 public class RxUtils {
 
     private RxUtils() {
+    }
+
+    /**
+     * 延迟工具
+     */
+    public static void startDelayed(final IView mRootView, long position) {
+        Observable.timer(400, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())                                          // 切换线程
+                .compose(RxLifecycleUtils.bindToLifecycle(mRootView))                               // 使用 Rxlifecycle,使 Disposable 和 Activity 一起销毁
+                .subscribe(new Observer<Long>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                    }
+
+                    @Override
+                    public void onNext(Long aLong) {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        EventBusManager.getInstance().post(new EventBusEntity(position));
+                    }
+                });
     }
 
     public static <T> ObservableTransformer<T, T> applySchedulers(final IView view) {

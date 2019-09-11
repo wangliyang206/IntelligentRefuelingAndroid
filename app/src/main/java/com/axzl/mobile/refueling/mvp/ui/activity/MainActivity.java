@@ -1,11 +1,8 @@
 package com.axzl.mobile.refueling.mvp.ui.activity;
 
-import android.animation.Animator;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,17 +10,18 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.axzl.mobile.refueling.R;
 import com.axzl.mobile.refueling.app.global.AccountManager;
 import com.axzl.mobile.refueling.app.global.Constant;
 import com.axzl.mobile.refueling.app.utils.CommonUtils;
+import com.axzl.mobile.refueling.app.utils.RxUtils;
 import com.axzl.mobile.refueling.di.component.DaggerMainComponent;
 import com.axzl.mobile.refueling.mvp.contract.MainContract;
+import com.axzl.mobile.refueling.mvp.model.entity.EventBusEntity;
 import com.axzl.mobile.refueling.mvp.presenter.MainPresenter;
+import com.axzl.mobile.refueling.mvp.ui.fragment.FortuneTellingFragment;
 import com.axzl.mobile.refueling.mvp.ui.fragment.HomeFragment;
 import com.axzl.mobile.refueling.mvp.ui.fragment.SettingFragment;
 import com.blankj.utilcode.util.ActivityUtils;
@@ -58,6 +56,8 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 
+import org.simple.eventbus.Subscriber;
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -76,20 +76,26 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     @Inject
     AccountManager mAccountManager;
+    /**
+     * 首页
+     */
+    @Inject
+    HomeFragment homeFragment;
+    /**
+     * 五行八字
+     */
+    @Inject
+    FortuneTellingFragment fortuneTellingFragment;
+    /**
+     * 设置界面
+     */
+    @Inject
+    SettingFragment settingFragment;
 
     /**
      * 切换主题对象
      */
     private Colorful colorful;
-
-    /**
-     * 首页
-     */
-    private HomeFragment homeFragment;
-    /**
-     * 设置界面
-     */
-    private SettingFragment settingFragment;
     /**
      * 当前首页内容
      */
@@ -111,6 +117,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         currentFragment = null;
         homeFragment = null;
         settingFragment = null;
+        fortuneTellingFragment = null;
 
         colorful = null;
         mAccountManager = null;
@@ -134,9 +141,9 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
             // 切换主题
             if (isChecked)
-                animChangeColor(R.style.AppNightTheme);
+                CommonUtils.animChangeColor(this, colorful, R.style.AppNightTheme);
             else
-                animChangeColor(R.style.AppDayTheme);
+                CommonUtils.animChangeColor(this, colorful, R.style.AppDayTheme);
 
             // 刷新状态栏
             setStatusBar();
@@ -149,7 +156,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
             // 侧滑 - 头部-小三角的颜色
             TypedValue typedValue = new TypedValue();
             getTheme().resolveAttribute(com.mikepenz.materialdrawer.R.attr.material_drawer_header_selection_text, typedValue, true);
-            ImageView mAccountSwitcherArrow = (ImageView)headerResult.getView().findViewById(R.id.material_drawer_account_header_text_switcher);
+            ImageView mAccountSwitcherArrow = (ImageView) headerResult.getView().findViewById(R.id.material_drawer_account_header_text_switcher);
             mAccountSwitcherArrow.setImageDrawable(new IconicsDrawable(this, MaterialDrawerFont.Icon.mdf_arrow_drop_down).sizeRes(R.dimen.material_drawer_account_header_dropdown).paddingRes(R.dimen.material_drawer_account_header_dropdown_padding).color(typedValue.data));
 
             // 侧滑 - 刷新MateriaDrawer列表
@@ -180,8 +187,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         setSupportActionBar(mToolbar);
         // 初始化Menu侧滑
         initMaterialDrawer(savedInstanceState);
-        // 初始化Fragment
-        initFragment();
+        // 加载第一个Fragment
+        onTabSelected(Constant.MAIN_HOME);
         // 初始化Colorful
         setupColorful();
         // 初始化业务逻辑
@@ -200,17 +207,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         colorful = new Colorful.Builder(this)
                 .setter(toolbarSetter)
                 .setter(recyclerViewSetter)
+                .backgroundColor(R.id.frame_container, R.attr.background_color)
                 .create();
-    }
-
-    /**
-     * 初始化Fragment
-     */
-    private void initFragment() {
-        homeFragment = HomeFragment.newInstance();
-        settingFragment = SettingFragment.newInstance();
-
-        onTabSelected(Constant.MAIN_HOME);
     }
 
     /**
@@ -266,6 +264,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                 .withAccountHeader(headerResult)                                                    // 设置左侧头部标题
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_home).withIdentifier(Constant.MAIN_HOME),
+                        new PrimaryDrawerItem().withName(R.string.drawer_item_fortune_telling).withIcon(FontAwesome.Icon.faw_earlybirds).withIdentifier(Constant.MAIN_FORTUNETELLING),
                         new ExpandableBadgeDrawerItem().withName(R.string.drawer_item_lottery).withIcon(FontAwesome.Icon.faw_gamepad).withIdentifier(999).withSelectable(false).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.md_red_700)).withBadge("100").withSubItems(
                                 new SecondaryDrawerItem().withName(R.string.drawer_item_lottery_LuckyMonkeyPane).withLevel(2).withIcon(FontAwesome.Icon.faw_empire).withIdentifier(Constant.MAIN_LOTTERY_WHEELFORTUNE),
                                 new SecondaryDrawerItem().withName(R.string.drawer_item_lottery_Lottery).withLevel(2).withIcon(FontAwesome.Icon.faw_qq).withIdentifier(Constant.MAIN_LOTTERY_QQ),
@@ -322,22 +321,30 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         if (position == Constant.MAIN_HOME) {                                                       // 首页
             setTitle(R.string.drawer_item_home);
             switchFragment(homeFragment).commit();
+        } else if (position == Constant.MAIN_FORTUNETELLING) {                                      // 五行八字
+            setTitle(R.string.drawer_item_fortune_telling);
+            switchFragment(fortuneTellingFragment).commit();
         } else if (position == Constant.MAIN_LOTTERY_WHEELFORTUNE) {                                // 抽奖之幸运转盘
 
         } else if (position == Constant.MAIN_LOTTERY_QQ) {                                          // 抽奖之QQ积分
 
         } else if (position == Constant.MAIN_LOTTERY_WHEELSURF) {                                   // 抽奖之原生转盘
 
-        } else if (position == Constant.MAIN_ICON_FONTAWESOME) {                                    // Icon-FontAwesome
-            ActivityUtils.startActivity(FontAwesomeActivity.class);
-        } else if (position == Constant.MAIN_ICON_GOOGLEMATERIAL) {                                 // Icon-GoogleMaterial
-            ActivityUtils.startActivity(GoogleMaterialActivity.class);
-        } else if (position == Constant.MAIN_ICON_OCTICONS) {                                       // Icon-Octicons
-            ActivityUtils.startActivity(OcticonsActivity.class);
         } else if (position == Constant.MAIN_SETTING) {                                             // 设置
             setTitle(R.string.drawer_item_setting);
             switchFragment(settingFragment).commit();
-        } else if (position == Constant.MAIN_ABOUT) {                                               // 关于
+        } else {
+            // 各别窗口采用延迟跳转方式
+            RxUtils.startDelayed(this, position);
+        }
+    }
+
+    /**
+     * 延迟跳转
+     */
+    @Subscriber
+    public void delayedJump(EventBusEntity eventBusEntity) {
+        if (eventBusEntity.getPosition() == Constant.MAIN_ABOUT) {                                  // 关于
             ActivityUtils.startActivity(new LibsBuilder()
                     .withFields(R.string.class.getFields())
                     .withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
@@ -347,6 +354,12 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                     .withAboutDescription(ArmsUtils.getString(getActivity(), R.string.drawer_item_about_description))                   // 关于描述
                     .withActivityTitle(ArmsUtils.getString(getApplicationContext(), R.string.drawer_item_about))                                                      // 标题
                     .intent(getActivity()));
+        } else if (eventBusEntity.getPosition() == Constant.MAIN_ICON_FONTAWESOME) {                // Icon-FontAwesome
+            ActivityUtils.startActivity(FontAwesomeActivity.class);
+        } else if (eventBusEntity.getPosition() == Constant.MAIN_ICON_GOOGLEMATERIAL) {             // Icon-GoogleMaterial
+            ActivityUtils.startActivity(GoogleMaterialActivity.class);
+        } else if (eventBusEntity.getPosition() == Constant.MAIN_ICON_OCTICONS) {                   // Icon-Octicons
+            ActivityUtils.startActivity(OcticonsActivity.class);
         }
     }
 
@@ -421,47 +434,4 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         }
     }
 
-
-    /**
-     * 给夜间模式增加一个动画,颜色渐变
-     *
-     * @param newTheme
-     */
-    private void animChangeColor(final int newTheme) {
-        final View rootView = getWindow().getDecorView();
-        rootView.setDrawingCacheEnabled(true);
-        rootView.buildDrawingCache(true);
-
-        final Bitmap localBitmap = Bitmap.createBitmap(rootView.getDrawingCache());
-        rootView.setDrawingCacheEnabled(false);
-        if (null != localBitmap && rootView instanceof ViewGroup) {
-            final View tmpView = new View(this);
-            tmpView.setBackgroundDrawable(new BitmapDrawable(getResources(), localBitmap));
-            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            ((ViewGroup) rootView).addView(tmpView, params);
-            tmpView.animate().alpha(0).setDuration(400).setListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    colorful.setTheme(newTheme);
-                    System.gc();
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    ((ViewGroup) rootView).removeView(tmpView);
-                    localBitmap.recycle();
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animation) {
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animation) {
-
-                }
-            }).start();
-        }
-    }
 }

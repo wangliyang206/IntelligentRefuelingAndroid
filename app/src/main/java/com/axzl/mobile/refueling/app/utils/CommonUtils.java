@@ -1,16 +1,25 @@
 package com.axzl.mobile.refueling.app.utils;
 
+import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.telephony.TelephonyManager;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.axzl.mobile.refueling.R;
+import com.axzl.mobile.refueling.app.utils.chinesecalendar.Consts;
+import com.jess.arms.cj.colorful.Colorful;
 import com.jess.arms.utils.ArmsUtils;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -24,6 +33,111 @@ import java.util.regex.Pattern;
  */
 
 public class CommonUtils {
+
+    /**
+     * 给夜间模式增加一个动画,颜色渐变
+     *
+     * @param newTheme
+     */
+    public static void animChangeColor(Context mContext, Colorful colorful, final int newTheme) {
+        final View rootView = ((Activity)mContext).getWindow().getDecorView();
+        rootView.setDrawingCacheEnabled(true);
+        rootView.buildDrawingCache(true);
+
+        final Bitmap localBitmap = Bitmap.createBitmap(rootView.getDrawingCache());
+        rootView.setDrawingCacheEnabled(false);
+        if (null != localBitmap && rootView instanceof ViewGroup) {
+            final View tmpView = new View(mContext);
+            tmpView.setBackgroundDrawable(new BitmapDrawable(mContext.getResources(), localBitmap));
+            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            ((ViewGroup) rootView).addView(tmpView, params);
+            tmpView.animate().alpha(0).setDuration(400).setListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    colorful.setTheme(newTheme);
+                    System.gc();
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    ((ViewGroup) rootView).removeView(tmpView);
+                    localBitmap.recycle();
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            }).start();
+        }
+    }
+
+    /// <summary>
+    /// 测试某位是否为真
+    /// </summary>
+    /// <param name="num"></param>
+    /// <param name="bitpostion"></param>
+    /// <returns></returns>
+    public static boolean BitTest32(int num, int bitpostion) throws Exception {
+
+        if ((bitpostion > 31) || (bitpostion < 0))
+            throw new Exception("Error Param: bitpostion[0-31]:" + bitpostion);
+
+        int bit = 1 << bitpostion;
+
+        if ((num & bit) == 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public static final int daysBetween(Date late, Date early) {
+
+        Calendar calst = Calendar.getInstance();
+        Calendar caled = Calendar.getInstance();
+        calst.setTime(early);
+        caled.setTime(late);
+        //设置时间为0时
+        calst.set(Calendar.HOUR_OF_DAY, 0);
+        calst.set(Calendar.MINUTE, 0);
+        calst.set(Calendar.SECOND, 0);
+        caled.set(Calendar.HOUR_OF_DAY, 0);
+        caled.set(Calendar.MINUTE, 0);
+        caled.set(Calendar.SECOND, 0);
+//        System.out.println("1  "+caled.getTime().getTime()/1000+"  "+calst.getTime().getTime()/1000);
+//        System.out.println("2  "+(caled.getTime().getTime()/1000-calst.getTime().getTime()/1000)/ 3600 / 24);
+        //得到两个日期相差的天数
+        int days = (int) (((caled.getTime().getTime() / 1000) - (calst.getTime().getTime() / 1000)) / 3600 / 24);
+//        System.out.println("3  "+late.toString()+"  "+early.toString());
+        return days;
+    }
+
+    //计算两个日期相差年数
+    public static int yearDateDiff(Date date2, Date date1) {
+        Calendar calBegin = Calendar.getInstance(); //获取日历实例
+        Calendar calEnd = Calendar.getInstance();
+        calBegin.setTime(date1); //字符串按照指定格式转化为日期
+        calEnd.setTime(date2);
+        return calEnd.get(Calendar.YEAR) - calBegin.get(Calendar.YEAR);
+    }
+
+    /// <summary>
+    /// 将0-9转成汉字形式
+    /// </summary>
+    /// <param name="n"></param>
+    /// <returns></returns>
+    public static String ConvertNumToChineseNum(char nn) {
+        int i = Integer.parseInt(nn + "");
+        if ((i < 0) || (i > 9)) return "";
+        return Consts.HZNum[i] + "";
+
+    }
 
     /**
      * 获取assets的images目录中图片数量

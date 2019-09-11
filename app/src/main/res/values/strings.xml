@@ -27,6 +27,8 @@
     <string name="drawer_item_home">首页</string>
     <string name="drawer_item_home_desc">首页简介</string>
 
+    <string name="drawer_item_fortune_telling">五行八字</string>
+
     <string name="drawer_item_lottery">抽奖</string>
     <string name="drawer_item_lottery_LuckyMonkeyPane">幸运转盘</string>
     <string name="drawer_item_lottery_Lottery">QQ运动积分抽奖</string>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- 公历、农历 -->
+    <RadioGroup
+        android:id="@+id/ragr_fortune_calendar"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/radio_fortune_g"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/radio_left_bg_selector"
+            android:button="@null"
+            android:checked="true"
+            android:gravity="center"
+            android:scaleType="fitXY"
+            android:tag="0"
+            android:text="阳历(公历)"
+            android:textColor="@color/radio_button_selector" />
+
+        <RadioButton
+            android:id="@+id/radio_fortune_n"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="-2dp"
+            android:layout_weight="1"
+            android:background="@drawable/radio_right_bg_selector"
+            android:button="@null"
+            android:gravity="center"
+            android:scaleType="fitXY"
+            android:tag="1"
+            android:text="阴历(农历)"
+            android:textColor="@color/radio_button_selector" />
+    </RadioGroup>
+
+</LinearLayout>

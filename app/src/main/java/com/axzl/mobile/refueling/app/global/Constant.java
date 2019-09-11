@@ -97,4 +97,7 @@ public interface Constant {
 
     /** 设置 */
     int MAIN_SETTING = 10;
+
+    /** 五行八字 */
+    int MAIN_FORTUNETELLING = 11;
 }
