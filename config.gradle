@@ -53,7 +53,7 @@ ext {
                 "paginate"                 : "com.github.markomilos:paginate:0.5.1",
                 "vlayout"                  : "com.alibaba.android:vlayout:1.1.0@aar",
                 "autosize"                 : "me.jessyan:autosize:1.1.1",
-                "swipeback"                : "com.aitangba:swipeback:1.0.3",                        // 侧滑关闭(https://github.com/XBeats/and_swipeback)
+                "swipeback"                : "cn.bingoogolapple:bga-swipebacklayout:1.2.0@aar",     // 侧滑关闭，注意：必须和support-v4一起使用；(https://github.com/bingoogolapple/BGASwipeBackLayout-Android)
                 // 状态栏透明(https://github.com/niorgai/StatusBarCompat)
                 "statusbarcompatx"         : "com.github.niorgai:StatusBarCompat:2.3.1",            // After AndroidX
                 "statusbarcompat"          : "com.github.niorgai:StatusBarCompat:2.1.4",            // Before AndroidX

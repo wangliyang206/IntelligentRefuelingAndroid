@@ -28,7 +28,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
      * 关闭滑动返回
      */
     @Override
-    public boolean supportSlideBack() {
+    public boolean isSupportSwipeBack() {
         return false;
     }
 

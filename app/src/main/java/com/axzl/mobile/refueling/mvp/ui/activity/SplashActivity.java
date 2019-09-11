@@ -73,7 +73,7 @@ public class SplashActivity extends BaseActivity<SplashPresenter> implements Spl
      * 关闭滑动返回
      */
     @Override
-    public boolean supportSlideBack() {
+    public boolean isSupportSwipeBack() {
         return false;
     }
 

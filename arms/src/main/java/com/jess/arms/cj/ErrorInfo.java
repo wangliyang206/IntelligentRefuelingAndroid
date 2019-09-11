@@ -12,10 +12,6 @@ public class ErrorInfo {
     private Integer errorcode;
     // 错误提示
     private String errormessage = "";
-    // 错误原因
-    private String cause = "";
-    // 解决方式
-    private String action = "";
 
     public Integer getErrorcode() {
         return errorcode;
@@ -31,21 +27,5 @@ public class ErrorInfo {
 
     public void setErrormessage(String errormessage) {
         this.errormessage = errormessage;
-    }
-
-    public String getCause() {
-        return cause;
-    }
-
-    public void setCause(String cause) {
-        this.cause = cause;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
     }
 }

@@ -20,7 +20,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.multidex.MultiDex;
 
-import com.aitangba.swipeback.ActivityLifecycleHelper;
 import com.axzl.mobile.refueling.BuildConfig;
 import com.axzl.mobile.refueling.app.utils.AppCrashHandler;
 import com.axzl.mobile.refueling.app.utils.FileLoggingTree;
@@ -83,9 +82,6 @@ public class AppLifecyclesImpl implements AppLifecycles {
 
         // 初始化定位
 //        initLocation(application);
-
-        // 右滑关闭Activity
-        application.registerActivityLifecycleCallbacks(ActivityLifecycleHelper.build());
 
     }
 

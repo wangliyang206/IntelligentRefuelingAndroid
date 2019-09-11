@@ -25,13 +25,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.InflateException;
-import android.view.MotionEvent;
 import android.view.View;
 
-import com.aitangba.swipeback.ActivityLifecycleHelper;
-import com.aitangba.swipeback.SlideActivityCallback;
-import com.aitangba.swipeback.SwipeBackHelper;
 import com.jess.arms.R;
 import com.jess.arms.base.delegate.IActivity;
 import com.jess.arms.integration.cache.Cache;
@@ -45,6 +42,7 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import cn.bingoogolapple.swipebacklayout.BGASwipeBackHelper;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
 import qiu.niorgai.StatusBarCompat;
@@ -65,7 +63,7 @@ import static com.jess.arms.utils.ThirdViewUtil.convertAutoView;
  * <a href="https://github.com/JessYanCoding">Follow me</a>
  * ================================================
  */
-public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivity implements IActivity, ActivityLifecycleable, SwipeBackHelper.SlideBackManager {
+public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivity implements IActivity, ActivityLifecycleable, BGASwipeBackHelper.Delegate {
     protected final String TAG = this.getClass().getSimpleName();
     private final BehaviorSubject<ActivityEvent> mLifecycleSubject = BehaviorSubject.create();
     private Cache<String, Object> mCache;
@@ -76,6 +74,9 @@ public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivi
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        // 「必须在 Application 的 onCreate 方法中执行 BGASwipeBackHelper.init 来初始化滑动返回」
+        // 在 super.onCreate(savedInstanceState) 之前调用该方法
+        initSwipeBackFinish();
         super.onCreate(savedInstanceState);
         try {
             int layoutResID = initView(savedInstanceState);
@@ -150,28 +151,33 @@ public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivi
         return true;
     }
 
+    //#######################################################以下是CJ添加的通用需求####################################################
+
     /**
-     * 是否使用StatusBar,默认为使用(true)，
+     * 是否设置状态栏为透明,默认为使用(true)，
      */
     public boolean useStatusBar() {
         return true;
     }
 
     /**
-     * 使用自定义颜色
-     * PS：R.color.colorAccent
+     * 根据主题使用不同的颜色。
+     * 如果想要纯透明，则需要重写此方法，返回值为 -1 即可。
      */
-    public int useStatusBarColor() {
-        return -1;
+    public int useStatusBarColor(){
+        TypedValue typedValue = new TypedValue();
+        getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true);
+        return typedValue.data;
     }
 
     /**
-     * 设置状态栏为透明
+     * 第一，设置状态栏为透明。
+     * 第二，此方法可起到刷新作用。
      */
-    private void setStatusBar() {
+    public void setStatusBar() {
         if (useStatusBar()) {
             if (useStatusBarColor() != -1) {
-                StatusBarCompat.setStatusBarColor(this, ContextCompat.getColor(this, useStatusBarColor()));
+                StatusBarCompat.setStatusBarColor(this, useStatusBarColor());
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     //SDK >= 21时, 取消状态栏的阴影
@@ -188,52 +194,76 @@ public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivi
 
     }
 
-    private SwipeBackHelper mSwipeBackHelper;
+    protected BGASwipeBackHelper mSwipeBackHelper;
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (!supportSlideBack()) {
-            return super.dispatchTouchEvent(ev);
-        }
-        if (mSwipeBackHelper == null) {
-            mSwipeBackHelper = new SwipeBackHelper(this, new SlideActivityAdapter());
-            // 滑动返回触发finish
-            mSwipeBackHelper.setOnSlideFinishListener(new SwipeBackHelper.OnSlideFinishListener() {
-                @Override
-                public void onFinish() {
-                    BaseActivity.this.finish();
-                    overridePendingTransition(android.R.anim.fade_in, R.anim.hold_on);
-                }
-            });
-        }
-        return mSwipeBackHelper.processTouchEvent(ev) || super.dispatchTouchEvent(ev);
+    /**
+     * 初始化滑动返回。在 super.onCreate(savedInstanceState) 之前调用该方法
+     */
+    private void initSwipeBackFinish() {
+        mSwipeBackHelper = new BGASwipeBackHelper(this, this);
+
+        // 「必须在 Application 的 onCreate 方法中执行 BGASwipeBackHelper.init 来初始化滑动返回」
+        // 下面几项可以不配置，这里只是为了讲述接口用法。
+
+        // 设置滑动返回是否可用。默认值为 true
+        mSwipeBackHelper.setSwipeBackEnable(true);
+        // 设置是否仅仅跟踪左侧边缘的滑动返回。默认值为 true
+        mSwipeBackHelper.setIsOnlyTrackingLeftEdge(true);
+        // 设置是否是微信滑动返回样式。默认值为 true
+        mSwipeBackHelper.setIsWeChatStyle(true);
+        // 设置阴影资源 id。默认值为 R.drawable.bga_sbl_shadow
+        mSwipeBackHelper.setShadowResId(R.drawable.bga_sbl_shadow);
+        // 设置是否显示滑动返回的阴影效果。默认值为 true
+        mSwipeBackHelper.setIsNeedShowShadow(true);
+        // 设置阴影区域的透明度是否根据滑动的距离渐变。默认值为 true
+        mSwipeBackHelper.setIsShadowAlphaGradient(true);
+        // 设置触发释放后自动滑动返回的阈值，默认值为 0.3f
+        mSwipeBackHelper.setSwipeBackThreshold(0.3f);
+        // 设置底部导航条是否悬浮在内容上，默认值为 false
+        mSwipeBackHelper.setIsNavigationBarOverlap(false);
     }
 
+    /**
+     * 是否支持滑动返回。这里在父类中默认返回 true 来支持滑动返回，如果某个界面不想支持滑动返回则重写该方法返回 false 即可
+     *
+     * @return
+     */
     @Override
-    public boolean supportSlideBack() {
+    public boolean isSupportSwipeBack() {
         return true;
     }
 
+    /**
+     * 正在滑动返回
+     *
+     * @param slideOffset 从 0 到 1
+     */
     @Override
-    public boolean canBeSlideBack() {
-        return true;
+    public void onSwipeBackLayoutSlide(float slideOffset) {
+    }
+
+    /**
+     * 没达到滑动返回的阈值，取消滑动返回动作，回到默认状态
+     */
+    @Override
+    public void onSwipeBackLayoutCancel() {
+    }
+
+    /**
+     * 滑动返回执行完毕，销毁当前 Activity
+     */
+    @Override
+    public void onSwipeBackLayoutExecuted() {
+        mSwipeBackHelper.swipeBackward();
     }
 
     @Override
-    public void finish() {
-        if (mSwipeBackHelper != null) {
-            mSwipeBackHelper.finishSwipeImmediately();
-            mSwipeBackHelper = null;
+    public void onBackPressed() {
+        // 正在滑动返回的时候取消返回按钮事件
+        if (mSwipeBackHelper.isSliding()) {
+            return;
         }
-        super.finish();
+        mSwipeBackHelper.backward();
     }
 
-    // 独立获取上一个Activity
-    private static class SlideActivityAdapter implements SlideActivityCallback {
-
-        @Override
-        public Activity getPreviousActivity() {
-            return ActivityLifecycleHelper.getPreviousActivity();
-        }
-    }
 }
